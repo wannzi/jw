@@ -2,9 +2,9 @@
    <div class="app">
       <div class="U_head">
          <div class="left">
-            <button class="btn1" @click="showPopUp1()">添加用户</button>
-            <button class="btn2" @click="showPopUp2()">删除用户</button>
-            <button class="btn3">重置密码</button>
+            <button class="btn1" @click="showPopUp('popup1')">添加用户</button>
+            <button class="btn2" @click="showPopUp('popup2')">删除用户</button>
+            <button class="btn3" @click="showPopUp('popup3')">重置密码</button>
          </div>
 
          <div class="right">
@@ -40,7 +40,7 @@
                </label>
             </td>
             <td class="user_operate">
-               <button class="btn1 table_btn">编辑</button>
+               <button class="btn1 table_btn" @click="editUser(user)">编辑</button>
                <button class="btn2 table_btn">删除</button>
                <button class="btn3 table_btn">重置密码</button>
             </td>
@@ -54,28 +54,140 @@
             {{ page }}
          </button>
          <button> 下 </button>
-         <!-- 根据 totalPages 动态生成更多按钮 -->
+
       </div>
 
-      <!-- 弹窗组件 -->
 
-      <PopUps :id="popup1" :visible="isShowPopUp1" @update:visible="updateVisible">
-         <h3>1</h3>
-      </PopUps>
-      <PopUps :id="popup2" :visible="isShowPopUp2" @update:visible="updateVisible">
-         <h3>1</h3>
-      </PopUps>
-      
+
+
+
+      <!-- 弹窗 -->
+      <!-- 添加用户弹窗 -->
+      <div v-if="popup1Visible" class="dialog-backdrop" @click.self="closePopup('popup1')">
+         <div class="dialog-content" @click.stop>
+            <form>
+               <h2>添加用户信息</h2>
+
+               <div>
+                  <label for="name">账号:</label>
+                  <input id="name" type="text">
+               </div>
+               <div>
+                  <label for="name">姓名:</label>
+                  <input id="name" type="text">
+               </div>
+               <div>
+                  <label for="department">部门:</label>
+
+                  <select id="department">
+                     <option value="技术部">技术部</option>
+                     <option value="人事部">人事部</option>
+                     <option value="财务部">财务部</option>
+                     <option value="市场部">市场部</option>
+                     <option value="销售部">销售部</option>
+                  </select>
+               </div>
+               <div>
+                  <label for="department">职务:</label>
+                  <input id="department" type="text">
+               </div>
+               <div>
+                  <label for="phone">电话:</label>
+                  <input id="phone" type="text">
+               </div>
+
+
+               <button type="submit">保存</button>
+               <button>取消</button>
+            </form>
+            <button @click="closePopup('popup1')">关闭</button>
+         </div>
+      </div>
+
+      <!-- 删除用户弹窗 -->
+      <div v-if="popup2Visible" class="dialog-backdrop" @click.self="closePopup('popup2')">
+         <div class="dialog-content" @click.stop>
+            <!-- ... 删除用户弹窗中的内容 ... -->
+            <h3>确定要删除这些用户吗？</h3>
+            <form action="">
+               <div v-for="user in users" :key="user.account">
+                  <div v-if="user.selected">
+                     <label for="account">{{ user.account }}</label>
+                     <label for="name">{{ user.name }}</label>
+                  </div>
+
+               </div>
+            </form>
+            <button @click="closePopup('popup2')">关闭</button>
+         </div>
+      </div>
+      <!-- 重置密码弹窗 -->
+      <div v-if="popup3Visible" class="dialog-backdrop" @click.self="closePopup('popup3')">
+         <div class="dialog-content" @click.stop>
+            <!-- ... 重置密码弹窗中的内容 ... -->
+            <h3>确定重置这些用户的密码吗？</h3>
+            <form action="">
+               <div v-for="user in users" :key="user.account">
+                  <div v-if="user.selected">
+                     <label for="account">{{ user.account }}</label>
+                     <label for="name">{{ user.name }}</label>
+                  </div>
+
+               </div>
+            </form>
+            <button @click="closePopup('popup3')">关闭</button>
+         </div>
+      </div>
+     <!-- 编辑用户弹窗 -->
+<div v-if="popup4Visible" class="dialog-backdrop" @click.self="closePopup('popup4')">
+    <div class="dialog-content" @click.stop>
+        <form @submit.prevent="saveUser">
+            <h2>编辑用户信息</h2>
+
+            <div>
+                <label for="edit-account">账号:</label>
+                <input id="edit-account" type="text" v-model="editingUser.account">
+            </div>
+            <div>
+                <label for="edit-name">姓名:</label>
+                <input id="edit-name" type="text" v-model="editingUser.name">
+            </div>
+            <div>
+                <label for="edit-department">部门:</label>
+                <input id="edit-department" type="text" v-model="editingUser.department">
+            </div>
+            <div>
+                <label for="edit-office">职务:</label>
+                <input id="edit-office" type="text" v-model="editingUser.office">
+            </div>
+            <div>
+                <label for="edit-phone">电话:</label>
+                <input id="edit-phone" type="text" v-model="editingUser.phone">
+            </div>
+
+            <button type="submit">保存</button>
+            <button @click="closePopup('popup4')">取消</button>
+        </form>
+        <button @click="closePopup('popup4')">关闭</button>
+    </div>
+</div>
+
+
+
+
+
+
+
 
    </div>
 </template>
 <script>
-import PopUps from "@/components/PopUps";
-import popupMixin from "@/mixins/popupMixin";
+
+
 
 export default {
    name: 'UserManagement',
-   mixins: [popupMixin],
+
    data() {
       return {
          // 表格数据
@@ -99,6 +211,12 @@ export default {
          totalPages: 5,
          totalEntries: 0,
          allSelected: false,
+         // 弹窗状态
+         popup1Visible: false,
+         popup2Visible: false,
+         popup3Visible: false,
+         popup4Visible: false,
+         editingUser: null, // 当前正在编辑的用户
 
       };
    },
@@ -120,6 +238,28 @@ export default {
          }
 
       },
+      // 弹窗开关
+      showPopUp(popupId) {
+         this[popupId + 'Visible'] = true;
+      },
+      closePopup(popupId) {
+         this[popupId + 'Visible'] = false;
+      },
+      // 编辑用户方法
+      editUser(user) {
+         this.editingUser = Object.assign({}, user); // 创建一个用户的深拷贝
+         this.popup4Visible = true; // 显示编辑窗口
+      },
+      // 保存编辑
+      saveUser() {
+        const index = this.users.findIndex(u => u.account === this.editingUser.account);
+        if (index !== -1) {
+            this.users.splice(index, 1, this.editingUser);
+            this.closePopup('popup4');
+        }
+    }
+
+
 
 
 
@@ -134,12 +274,9 @@ export default {
             pages.push(i);
          }
          return pages;
-      }
+      },
    },
-   components: {
-      //自定义弹窗组件
-      PopUps
-   }
+
 }
 </script>
 
@@ -311,5 +448,28 @@ input:checked+.slider:before {
    background-color: #409EFF;
    /* 选中页码的背景颜色 */
    color: white;
+}
+</style>
+
+<style>
+.dialog-backdrop {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 11;
+}
+
+.dialog-content {
+   background: white;
+   padding: 20px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   position: relative;
+   z-index: 11;
 }
 </style>
