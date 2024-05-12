@@ -3,8 +3,8 @@
       <div class="U_head">
          <div class="left">
             <button class="btn1" @click="showPopUp('popup1')">添加用户</button>
-            <button class="btn2" @click="showPopUp('popup2')">删除用户</button>
-            <button class="btn3" @click="showPopUp('popup3')">重置密码</button>
+            <button class="btn2" @click="prepareDeleteUser()">删除用户</button>
+            <button class="btn3" @click="prepareResetPassword()">重置密码</button>
          </div>
 
          <div class="right">
@@ -14,7 +14,7 @@
       </div>
 
       <!-- 表格 -->
-      <table>
+      <table class="main_table">
          <tr>
             <th><input type="checkbox" @change="toggleAll" v-model="allSelected" />全选</th>
             <th>账号</th>
@@ -41,8 +41,8 @@
             </td>
             <td class="user_operate">
                <button class="btn1 table_btn" @click="editUser(user)">编辑</button>
-               <button class="btn2 table_btn">删除</button>
-               <button class="btn3 table_btn">重置密码</button>
+               <button class="btn2 table_btn" @click="prepareDeleteUser(user)">删除</button>
+               <button class="btn3 table_btn" @click="prepareResetPassword(user)">重置密码</button>
             </td>
          </tr>
       </table>
@@ -104,73 +104,85 @@
          </div>
       </div>
 
+
       <!-- 删除用户弹窗 -->
       <div v-if="popup2Visible" class="dialog-backdrop" @click.self="closePopup('popup2')">
-         <div class="dialog-content" @click.stop>
-            <!-- ... 删除用户弹窗中的内容 ... -->
-            <h3>确定要删除这些用户吗？</h3>
-            <form action="">
-               <div v-for="user in users" :key="user.account">
-                  <div v-if="user.selected">
+         <div class="dialog-content" @click.stop v-if="selectedUsers.length">
+            <!-- 根据选择的用户数量显示不同的标题 -->
+            <h3 v-if="selectedUsers.length === 1">确定要删除这个用户吗？</h3>
+            <h3 v-else>确定要删除这些用户吗？</h3>
+            <table>
+               <div v-for="user in selectedUsers" :key="user.account">
+                  <th>
                      <label for="account">{{ user.account }}</label>
                      <label for="name">{{ user.name }}</label>
-                  </div>
-
+                  </th>
                </div>
-            </form>
+            </table>
+            <button @click="deleteUser()">删除</button>
+            <button @click="closePopup('popup2')">关闭</button>
+         </div>
+         <div class="dialog-content" @click.stop v-else>
+            <h3>请选择要删除的用户</h3>
             <button @click="closePopup('popup2')">关闭</button>
          </div>
       </div>
+
       <!-- 重置密码弹窗 -->
       <div v-if="popup3Visible" class="dialog-backdrop" @click.self="closePopup('popup3')">
-         <div class="dialog-content" @click.stop>
+         <div class="dialog-content" @click.stop v-if="selectedUsers.length">
             <!-- ... 重置密码弹窗中的内容 ... -->
             <h3>确定重置这些用户的密码吗？</h3>
-            <form action="">
-               <div v-for="user in users" :key="user.account">
-                  <div v-if="user.selected">
+            <table action="">
+               <div v-for="user in selectedUsers" :key="user.account">
+                  <th>
                      <label for="account">{{ user.account }}</label>
                      <label for="name">{{ user.name }}</label>
-                  </div>
+                  </th>
 
                </div>
-            </form>
+            </table>
+            <button @click="resetPassword()">重置</button>
+            <button @click="closePopup('popup3')">关闭</button>
+         </div>
+         <div class="dialog-content" @click.stop v-else>
+            <h3>请选择要重置密码的用户</h3>
             <button @click="closePopup('popup3')">关闭</button>
          </div>
       </div>
-     <!-- 编辑用户弹窗 -->
-<div v-if="popup4Visible" class="dialog-backdrop" @click.self="closePopup('popup4')">
-    <div class="dialog-content" @click.stop>
-        <form @submit.prevent="saveUser">
-            <h2>编辑用户信息</h2>
+      <!-- 编辑用户弹窗 -->
+      <div v-if="popup4Visible" class="dialog-backdrop" @click.self="closePopup('popup4')">
+         <div class="dialog-content" @click.stop>
+            <form @submit.prevent="saveUser">
+               <h2>编辑用户信息</h2>
 
-            <div>
-                <label for="edit-account">账号:</label>
-                <input id="edit-account" type="text" v-model="editingUser.account">
-            </div>
-            <div>
-                <label for="edit-name">姓名:</label>
-                <input id="edit-name" type="text" v-model="editingUser.name">
-            </div>
-            <div>
-                <label for="edit-department">部门:</label>
-                <input id="edit-department" type="text" v-model="editingUser.department">
-            </div>
-            <div>
-                <label for="edit-office">职务:</label>
-                <input id="edit-office" type="text" v-model="editingUser.office">
-            </div>
-            <div>
-                <label for="edit-phone">电话:</label>
-                <input id="edit-phone" type="text" v-model="editingUser.phone">
-            </div>
+               <div>
+                  <label for="edit-account">账号:</label>
+                  <input id="edit-account" type="text" v-model="editingUser.account" readonly>
+               </div>
+               <div>
+                  <label for="edit-name">姓名:</label>
+                  <input id="edit-name" type="text" v-model="editingUser.name">
+               </div>
+               <div>
+                  <label for="edit-department">部门:</label>
+                  <input id="edit-department" type="text" v-model="editingUser.department">
+               </div>
+               <div>
+                  <label for="edit-office">职务:</label>
+                  <input id="edit-office" type="text" v-model="editingUser.office">
+               </div>
+               <div>
+                  <label for="edit-phone">电话:</label>
+                  <input id="edit-phone" type="text" v-model="editingUser.phone">
+               </div>
 
-            <button type="submit">保存</button>
-            <button @click="closePopup('popup4')">取消</button>
-        </form>
-        <button @click="closePopup('popup4')">关闭</button>
-    </div>
-</div>
+               <button type="submit">保存</button>
+               <button @click="closePopup('popup4')">取消</button>
+            </form>
+            <button @click="closePopup('popup4')">关闭</button>
+         </div>
+      </div>
 
 
 
@@ -217,6 +229,8 @@ export default {
          popup3Visible: false,
          popup4Visible: false,
          editingUser: null, // 当前正在编辑的用户
+         userToDelete: null, // 即将删除的用户
+         selectedUsers: [], // 批量删除的用户
 
       };
    },
@@ -252,12 +266,51 @@ export default {
       },
       // 保存编辑
       saveUser() {
-        const index = this.users.findIndex(u => u.account === this.editingUser.account);
-        if (index !== -1) {
+         const index = this.users.findIndex(u => u.account === this.editingUser.account);
+         if (index !== -1) {
             this.users.splice(index, 1, this.editingUser);
             this.closePopup('popup4');
-        }
-    }
+         }
+      },
+      // 删除用户方法
+      prepareDeleteUser(user = null) {
+         if (user) {
+            // 单个用户删除
+            this.selectedUsers = [user];
+         } else {
+            // 批量删除
+            this.selectedUsers = this.users.filter(u => u.selected);
+         }
+         
+         this.showPopUp('popup2');
+      },
+      deleteUser() {
+         this.selectedUsers.forEach(user => {
+            const index = this.users.indexOf(user);
+            if (index !== -1) {
+               this.users.splice(index, 1);
+            }
+         });
+         alert('删除成功');
+         this.closePopup('popup2');
+         // 清空选中的用户数组
+         this.selectedUsers = [];
+      },
+      // 重置密码方法
+      prepareResetPassword(user = null) {
+         if (user) {
+            // 单个用户重置密码
+            this.selectedUsers = [user];
+         } else {
+            // 批量重置密码
+            this.selectedUsers = this.users.filter(u => u.selected);
+         }
+         this.showPopUp('popup3');
+      },
+      resetPassword() {
+         alert('密码重置成功');
+         this.closePopup('popup3');
+      },
 
 
 

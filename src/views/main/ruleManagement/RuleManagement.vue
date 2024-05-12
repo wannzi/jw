@@ -14,7 +14,7 @@
       </div>
 
       <!-- 表格 -->
-      <table>
+      <table class="main_table">
          <tr>
             <th><input type="checkbox" @change="toggleAll" v-model="allSelected" />全选</th>
             <th>规则名称</th>
@@ -77,7 +77,8 @@ export default {
          currentPage: 2,
          pageSize: 10,
          totalPages: 5,
-         totalEntries: 0
+         totalEntries: 0,
+         allSelected: false,
       };
    },
    created() {

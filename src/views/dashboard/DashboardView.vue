@@ -199,7 +199,7 @@ button {
 
 <style>
 
-table {
+.main_table {
     margin-left: 69px;
     width: 90%;
     background-color: #ffffff;
@@ -208,7 +208,7 @@ table {
     /* 移除单元格之间的间距 */
  }
  
- table th {
+ .main_table th {
     border: 1px solid #c7bdbd;
     padding: none;
     color: #4095e5;
@@ -220,7 +220,7 @@ table {
  
  
  
- table td {
+ .main_table td {
     width: 60px;
     height: 55px;
     border: 1px solid #c7bdbd;

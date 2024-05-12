@@ -14,7 +14,7 @@
        </div>
  
        <!-- 表格 -->
-       <table>
+       <table class="main_table">
           <tr>
              <th><input type="checkbox" @change="toggleAll()" v-model="allSelected" />全选</th>
              <th>文件名称</th>
@@ -74,16 +74,13 @@
              { fileName:'党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true , selected: false },
              { fileName:'党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true , selected: false },
              { fileName:'党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true , selected: false },
-        
-            
- 
- 
           ],
           //当前页码
           currentPage: 2,
           pageSize: 10,
           totalPages: 5,
-          totalEntries: 0
+          totalEntries: 0,
+          allSelected: false,
        };
     },
     created() {

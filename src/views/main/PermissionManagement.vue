@@ -13,7 +13,7 @@
        </div>
  
        <!-- 表格 -->
-       <table>
+       <table class="main_table">
           <tr>
              <th>序号</th>
              <th>账号</th>
@@ -96,7 +96,8 @@
           currentPage: 2,
           pageSize: 10,
           totalPages: 5,
-          totalEntries: 0
+          totalEntries: 0,
+          
        };
     },
     created() {
