@@ -334,7 +334,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .U_head {
    display: flex;
    justify-content: space-between;
@@ -419,7 +419,7 @@ export default {
 }
 </style>
 
-<style>
+<style scoped>
 table .user_operate {
    width: 100px;
 }
@@ -504,25 +504,4 @@ input:checked+.slider:before {
 }
 </style>
 
-<style>
-.dialog-backdrop {
-   position: fixed;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   background-color: rgba(0, 0, 0, 0.5);
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   z-index: 11;
-}
 
-.dialog-content {
-   background: white;
-   padding: 20px;
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   position: relative;
-   z-index: 11;
-}
-</style>

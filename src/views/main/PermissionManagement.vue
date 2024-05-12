@@ -174,7 +174,7 @@
  }
  </style>
  
- <style>
+ <style scoped>
 
  
  table .per_operate {

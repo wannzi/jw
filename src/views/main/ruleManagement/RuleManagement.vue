@@ -3,7 +3,7 @@
       <div class="U_head">
          <div class="left">
             <button class="btn1">新建规则</button>
-            <button class="btn2">删除规则</button>
+            <button class="btn2" @click="prepareRuleDel()">删除规则</button>
             
          </div>
 
@@ -36,8 +36,9 @@
            
             <td class="rule_operate">
                <button class="btn1 table_btn">编辑</button>
-               <button class="btn2 table_btn">删除</button>
-               <button class="btn3 table_btn">设为公共规则</button>
+               <button class="btn2 table_btn" @click="prepareRuleDel(user)">删除</button>
+               <button class="btn3 table_btn" v-if="user.isPublic === false" @click="changeRuleStatus(user)">设为公共规则</button>
+               <button v-else class="btn3 table_btn private_btn" @click="changeRuleStatus(user)">设为私有规则</button>
             </td>
          </tr>
       </table>
@@ -51,25 +52,46 @@
          <button> 下 </button>
          <!-- 根据 totalPages 动态生成更多按钮 -->
       </div>
+
+
+      <!-- 弹窗 -->
+      <!-- 删除规则弹窗 -->
+      <div v-if="ruleDelVisible" class="dialog-backdrop" @click.self="closePopup()">
+         <div class="dialog-content" @click.stop >
+            
+            <h3>确认删除以下规则?</h3>
+            <table>
+                <tr v-for="(user, index) in selectedUsers" :key="index">
+                    <th>{{ user.ruleName }}</th>
+               </tr>
+            </table>
+            <button @click="deleteRule()">删除</button>
+            <button @click="closePopup()">关闭</button>
+         </div>
+         
+      </div>
    </div>
 </template>
 <script>
+
+
 export default {
    name: 'UserManagement',
    data() {
       return {
          // 表格数据
          users: [
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' , selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+
              
 
          ],
@@ -79,9 +101,13 @@ export default {
          totalPages: 5,
          totalEntries: 0,
          allSelected: false,
+         // 弹窗状态
+         ruleDelVisible: false,
+         selectedUsers: [],
       };
    },
    created() {
+         
    },
    methods: {
       // 更改页码
@@ -98,8 +124,46 @@ export default {
             this.users.forEach(user => user.selected = false); // 全部取消选中
          }
         
+      },
+
+      // 处理删除规则逻辑
+      prepareRuleDel(user = null){
+
+         if (user) {
+            // 单个用户删除
+            this.selectedUsers = [user];
+         } else {
+            // 批量删除
+            this.selectedUsers = this.users.filter(u => u.selected);
+         }
+
+
+         this.ruleDelVisible = true;
+      },
+      deleteRule() {
+         this.selectedUsers.forEach(user => {
+            const index = this.users.indexOf(user);
+            if (index !== -1) {
+               this.users.splice(index, 1);
+            }
+         });
+         alert('删除成功');
+         this.closePopup('popup2');
+         // 清空选中的用户数组
+         this.selectedUsers = [];
+      }, 
+      closePopup() {
+         this.ruleDelVisible = false;
+      },
+       // 处理规则状态
+       changeRuleStatus(user) {
+         this.$set(user, 'isPublic', !user.isPublic);
+         
       }
+     
    },
+
+   // 计算属性
    computed: {
       
       // 更新页码
@@ -110,13 +174,15 @@ export default {
             pages.push(i);
          }
          return pages;
-      }
-   }
+      },
+      
+      
+   },
 }
 </script>
 
 
-<style>
+<style scoped>
 .U_head {
    display: flex;
    justify-content: space-between;
@@ -160,6 +226,9 @@ export default {
    padding-left: 10px;
    padding-right: 10px;
 }
+.private_btn{
+   background-color: #67c23a;
+}
 
 .U_head .right input {
    height: 3vh;
@@ -193,7 +262,7 @@ export default {
 }
 </style>
 
-<style>
+<style scoped>
 
 
 table .rule_operate {
