@@ -80,7 +80,9 @@ export default {
    background-position: center;
    background-repeat: no-repeat;
    z-index: 0;
+   
 }
+
 
 button {
    border-radius:4px;
@@ -100,7 +102,7 @@ button {
    z-index: 10;
 
    padding-top: 8px;
-   font-size: 30px; /* 默认字体大小 */
+   font-size: 2vw; /* 默认字体大小 */
 
    
 
@@ -124,7 +126,7 @@ button {
 }
 
 .left-nav {
-   width: 10%;
+   width: 10vw;
    height: 100%;
    
    position: fixed;
@@ -140,8 +142,8 @@ button {
    
 }
 .left-nav button {
-   width: 140px;
-   height:43px;
+   width: 7vw;
+   height:4.3vh;
    margin-bottom: 39px;
    color: #b4fdff;
    background-color: #075a9a;
@@ -174,7 +176,7 @@ button {
       top: 0;
       right: 0px;
       z-index: 8;
-      width: 88%;
+      width: 88vw;
       height: 100%;
       
    }
@@ -201,7 +203,8 @@ button {
 
 .main_table {
     margin-left: 69px;
-    width: 90%;
+    /* height: 30vh; */
+    width: 80vw;
     background-color: #ffffff;
     margin-top: 30px;
     border-collapse: collapse;
@@ -212,8 +215,8 @@ button {
     border: 1px solid #c7bdbd;
     padding: none;
     color: #4095e5;
-    width: 60px;
-    height: 45px;
+    width: 8vw;
+    height: 4.5vh;
  }
 
 
@@ -222,7 +225,7 @@ button {
  
  .main_table td {
     width: 60px;
-    height: 55px;
+    height: 5.3vh;
     border: 1px solid #c7bdbd;
  }
 </style>
@@ -247,5 +250,33 @@ button {
    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
    position: relative;
    z-index: 11;
+}
+</style>
+
+<style>
+.page {
+   display: flex;
+   justify-content: center;
+   margin-top: 30px;
+   position: absolute;
+   right: 8vw;
+   height: 30px;
+   /* width: 300px; */
+
+}
+
+.page button {
+   border: none;
+   margin-left: 10px;
+   height: 30px;
+   width: 28px;
+
+
+}
+
+.activePage {
+   background-color: #409EFF;
+   /* 选中页码的背景颜色 */
+   color: white;
 }
 </style>

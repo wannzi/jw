@@ -319,30 +319,3 @@ input:checked+.slider:before {
 }
 </style>
 
-<style>
-.page {
-   display: flex;
-   justify-content: center;
-   margin-top: 30px;
-   position: absolute;
-   left: 78%;
-   height: 30px;
-   /* width: 300px; */
-
-}
-
-.page button {
-   border: none;
-   margin-left: 10px;
-   height: 30px;
-   width: 28px;
-
-
-}
-
-.activePage {
-   background-color: #409EFF;
-   /* 选中页码的背景颜色 */
-   color: white;
-}
-</style>

@@ -220,7 +220,15 @@ export default {
 }
 
 .table_btn {
+   width: 3vw;
+   height: 28px;
+   margin-left: 20px;
+   padding-left: 10px;
+   padding-right: 10px;
+}
 
+.table_btn:last-child {
+   width: 6vw;
    height: 28px;
    margin-left: 20px;
    padding-left: 10px;
@@ -265,12 +273,8 @@ export default {
 <style scoped>
 
 
-table .rule_operate {
-   width: 100px;
-}
-
-table td:first-child {
-   width: 1px;
+table .rule_operate{
+   width: 12vw;
 }
 
 
@@ -321,28 +325,3 @@ input:checked+.slider:before {
 }
 </style>
 
-<style>
-.page {
-   display: flex;
-   justify-content: center;
-   margin-top: 30px;
-   position: absolute;
-   left: 78%;
-   height: 30px;
-   /* width: 300px; */
-
-}
-
-.page button {
-   border: none;
-   margin-left: 10px;
-   height: 30px;
-   width: 28px;
-
-
-}
-.activePage {
-  background-color: #409EFF; /* 选中页码的背景颜色 */
-  color: white;
-}
-</style>
