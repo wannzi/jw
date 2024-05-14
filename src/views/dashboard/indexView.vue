@@ -58,7 +58,7 @@ export default {
    background-size: cover;
    background-position: center;
    background-repeat: no-repeat;
-   height: 70px;
+   height: 60px;
    width: 100%;
    color: #32fff6;
    z-index: 10;
@@ -84,6 +84,9 @@ export default {
 
 
 
+}
+button {
+   border-radius: 5% ;
 }
 
 </style>
