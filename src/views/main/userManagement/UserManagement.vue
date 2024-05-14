@@ -374,6 +374,7 @@ export default {
 .table_btn {
    width: 3vw;
    height: 28px;
+   font-size: 0.8vw;
    margin-left: 20px;
    padding-left: 10px;
    padding-right: 10px;
