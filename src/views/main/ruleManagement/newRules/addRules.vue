@@ -9,9 +9,12 @@
                     <span></span>
                     <span>{{ item.name }}</span>
                 </div>
-                <div class="field" v-for="(field) in item.fields" :key="field" v-if="item.expand" draggable="true">
-                    <span></span>
-                    <span>{{ field }}</span>
+                <div class="field" v-for="(field) in item.fields" :key="field" draggable="true">
+                    <div v-if="item.expand">
+                        <span></span>
+                        <span>{{ field }}</span>
+                    </div>
+
                 </div>
             </div>
 
@@ -37,10 +40,32 @@
             <div class="addRules_bottom">
                 <div class="center_title">
                     规则明细：
+                    <span style="color:#edbd15 ;height: 50%;">(当前规则：XXX规则)</span>
                 </div>
-                <div class="cemter_table">
-                    <table>
-
+                <div class="center_table_box">
+                    <table class="center_table">
+                        <tr>
+                            <th>子规则ID</th>
+                            <th>子规则描述</th>
+                            <th>匹配字段1</th>
+                            <th>关系符</th>
+                            <th>匹配字段2</th>
+                            <th>匹配数值</th>
+                            <th>操作</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>匹配XXXXX</td>
+                            <td>XXXX表，XXXX字段</td>
+                            <td>&&(逻辑与)</td>
+                            <td>XXXX表，XXXX字段</td>
+                            <td>匹配数值</td>
+                            <td>
+                                <button>编辑</button>
+                                <button>删除</button>
+                            </td>
+                        </tr>
+                           
                     </table>
                 </div>
             </div>
@@ -65,7 +90,7 @@
                 <div class="symbols">
                     <span class="symbol_constant" draggable="true"></span>
                     <span class="symbol_constant" draggable="true"></span>
-                 
+
 
                 </div>
             </div>
@@ -331,7 +356,7 @@ export default {
 .symbol_box .symbol_title {
     font-size: 1.2vw;
     color: #f5c106;
-  
+
 }
 
 .symbols {
@@ -355,4 +380,32 @@ export default {
     color: #fff;
     text-align: center;
 }
+</style>
+<!-- 中间表格 -->
+<style>
+    .center_table_box {
+       
+        margin-left: 3vw;
+        padding-top: 7vh;
+    }
+    .center_table {
+        width: 67vw;
+        border-collapse: collapse;
+        color: aliceblue;
+        font-size: 1vw;
+    }
+    .center_table th {
+        border: 2px solid #c7bdbd;
+        
+        height: 5vh;
+        padding-left: 1.5vw;
+        padding-right: 1.5vw;
+      
+    }
+    .center_table td {
+        border: 2px solid #c7bdbd;
+        height: 5vh;
+        padding-left: 1.5vw;
+        padding-right: 1.5vw;
+    }
 </style>
