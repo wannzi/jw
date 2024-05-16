@@ -61,23 +61,23 @@
                <span>导入</span>
             </span>
 
-            <span class="icon_head">
+            <span class="icon_head" @click="showNav(2)" :class="{ navActive:this.$route.name === 'ExportFunction'}">
                <img src="../../../assets/UserManagement/传入(白)_afferent.png" style="transform: scaleX(-1);">
                <span>导出</span>
             </span>
-            <span class="icon_head">
+            <span class="icon_head" @click="showNav(3)" :class="{ navActive:this.$route.name === 'SaveFunction'}">
                <img src="../../../assets/UserManagement/保存_save.png">
                <span>保存</span>
             </span>
-            <span class="icon_head">
+            <span class="icon_head" @click="showNav(4)" :class="{ navActive:this.$route.name === 'DeleteFunction'}">
                <img src="../../../assets/UserManagement/删除_delete.png">
                <span>删除</span>
             </span>
-            <span class="icon_head">
+            <span class="icon_head" @click="showNav(5)" :class="{ navActive:this.$route.name === 'SearchFunction'}">
                <img src="../../../assets/UserManagement/查找_find.png">
                <span>检索</span>
             </span>
-            <span class="icon_head">
+            <span class="icon_head" @click="showNav(6)" :class="{ navActive:this.$route.name === 'CompareFunction'}">
                <img src="../../../assets/UserManagement/对比_contrast.png">
                <span>比对</span>
             </span>
@@ -148,7 +148,20 @@ export default {
       showResultsList() {
          this.resultsListIsShow = !this.resultsListIsShow;
       },
-   
+      // 展示导出页面
+      showNav(nav) {
+         if(nav==2){
+         this.$router.push({name:'ExportFunction'});
+         }if(nav==3){
+         this.$router.push({name:'SaveFunction'});
+         }if(nav==4){
+         this.$router.push({name:'DeleteFunction'});
+         }if(nav==5){
+         this.$router.push({name:'SearchFunction'});
+         }else if(nav==6){
+         this.$router.push({name:'CompareFunction'});
+         }
+      },
 
 
    }
@@ -312,4 +325,10 @@ export default {
 .icon_head:last-child {
    border-right: none;
 }
+</style>
+<style>
+   .navActive{
+      color: aqua;
+   }
+   
 </style>

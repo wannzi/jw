@@ -8,6 +8,7 @@ import FileManagement from '@/views/main/FileManagement.vue';
 import RuleManagement from '@/views/main/ruleManagement/RuleManagement.vue';
 import AddRules from '@/views/main/ruleManagement/newRules/addRules.vue';
 import FileComparison from '@/views/system/fileComparison/fileComparison.vue';
+import ExportFunction from '@/views/system/fileComparison/function/exportFunction.vue';
 
 Vue.use(Router);
 
@@ -56,7 +57,34 @@ export default new Router({
                 {
                     path: 'fileComparison',
                     name: 'FileComparison',
-                    component: FileComparison
+                    component: FileComparison,
+                    children:[
+                        {
+                            path: 'exportFunction',
+                            name: 'ExportFunction',
+                            component: ExportFunction,
+                        },
+                        {
+                            path:'saveFunction',
+                            name: 'SaveFunction',
+                            component:()=>import('@/views/system/fileComparison/function/saveFunction.vue')
+                        },
+                        {
+                            path: 'deleteFunction',
+                            name: 'DeleteFunction',
+                            component:()=>import('@/views/system/fileComparison/function/deleteFunction.vue')
+                        },
+                        {
+                            path: 'searchFunction',
+                            name: 'SearchFunction',
+                            component:()=>import('@/views/system/fileComparison/function/searchFunction.vue')
+                        },
+                        {
+                            path:'compareFunction',
+                            name: 'CompareFunction',
+                            component:()=>import('@/views/system/fileComparison/function/compareFunction.vue')
+                        }
+                    ]
                 }
             ]
         }
