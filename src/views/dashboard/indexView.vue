@@ -5,7 +5,7 @@
             大数据业务研判中心
          </div>
          <!-- 右侧用户 -->
-         <div class="right-user" >
+         <div class="right-user">
             <img src="../../assets/UserManagement/我的_me.png" alt="">
             <div class="username">
                <p>admin</p>
@@ -81,11 +81,13 @@ export default {
    font-size: 20px;
    /* overflow: hidden; */
 }
+
 .right-user .operate {
    width: 1.5vw;
    height: 1.5vw;
 }
-.right-user  img {
+
+.right-user img {
    width: 1.5vw;
    height: 1.5vw;
    margin-right: 0.6vw;
@@ -95,13 +97,13 @@ export default {
 
 .head .title {
    padding-top: 8px;
-
-
+   font-weight: bold;
+   font-style: italic;
 
 }
+
 button {
-   border-radius: 5% ;
+   border-radius: 5%;
 
 }
-
 </style>

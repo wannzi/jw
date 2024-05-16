@@ -69,10 +69,11 @@
          <div class="dialog-content" @click.stop>
             <form @submit.prevent="handleFileUpload">
                <div>
-                  <input type="file" />
+                  <input type="file" class="file-input" />
                   
                </div>
                <button type="submit">上传</button>
+               <button type="submit" @click="closePopup()">取消</button>
             </form>
          </div>
 

@@ -28,20 +28,20 @@
             <th>操作</th>
 
          </tr>
-         <tr v-for="(user, index) in users" :key="index">
-            <td><input type="checkbox" v-model="user.selected" /></td>
-            <td>{{ user.ruleName || '' }}</td>
-            <td>{{ user.ruleDesc || '' }}</td>
-            <td>{{ user.ruleType || '' }}</td>
-            <td>{{ user.creator || '' }}</td>
-            <td>{{ user.createTime || '' }}</td>
+         <tr v-for="(rule, index) in rules" :key="index">
+            <td><input type="checkbox" v-model="rule.selected" /></td>
+            <td>{{ rule.ruleName || '' }}</td>
+            <td>{{ rule.ruleDesc || '' }}</td>
+            <td>{{ rule.ruleType || '' }}</td>
+            <td>{{ rule.creator || '' }}</td>
+            <td>{{ rule.createTime || '' }}</td>
 
             <td class="rule_operate">
-               <button class="btn1 table_btn">编辑</button>
-               <button class="btn2 table_btn" @click="prepareRuleDel(user)">删除</button>
-               <button class="btn3 table_btn" v-if="user.isPublic === false"
-                  @click="changeRuleStatus(user)">设为公共规则</button>
-               <button v-else class="btn3 table_btn private_btn" @click="changeRuleStatus(user)">设为私有规则</button>
+               <button class="btn1 table_btn" @click="editRule(rule)">编辑</button>
+               <button class="btn2 table_btn" @click="prepareRuleDel(rule)">删除</button>
+               <button class="btn3 table_btn" v-if="rule.isPublic === false"
+                  @click="changeRuleStatus(rule)">设为公共规则</button>
+               <button v-else class="btn3 table_btn private_btn" @click="changeRuleStatus(rule)">设为私有规则</button>
             </td>
          </tr>
       </table>
@@ -68,8 +68,8 @@
 
             <h3>确认删除以下规则?</h3>
             <table>
-               <tr v-for="(user, index) in selectedUsers" :key="index">
-                  <th>{{ user.ruleName }}</th>
+               <tr v-for="(rule, index) in selectedRules" :key="index">
+                  <th>{{ rule.ruleName }}</th>
                </tr>
             </table>
             <button @click="deleteRule()">删除</button>
@@ -77,17 +77,41 @@
          </div>
 
       </div>
+      <!-- 编辑规则弹窗 -->
+      <div v-if="ruleEditVisible" class="dialog-backdrop" @click.self="closePopup()">
+         <div class="dialog-content" @click.stop>
+            <form >
+               <h2>编辑规则</h2>
+
+               <div>
+                  <label for="edit-account">规则名称:</label>
+                  <input id="edit-account" type="text" v-model="editingRule.ruleName" readonly>
+               </div>
+               <div>
+                  <label for="edit-name">规则描述:</label>
+                  <input id="edit-name" type="text" v-model="editingRule.ruleDesc">
+               </div>
+               
+
+               <button type="submit" @click="saveEdit()">保存</button>
+               <button @click="closePopup('popup4')">取消</button>
+            </form>
+            
+         </div>
+
+      </div>
+
    </div>
 </template>
 <script>
 
 
 export default {
-   name: 'UserManagement',
+   name: 'RuleManagement',
    data() {
       return {
          // 表格数据
-         users: [
+         rules: [
             { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
             { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
             { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
@@ -110,7 +134,10 @@ export default {
          allSelected: false,
          // 弹窗状态
          ruleDelVisible: false,
-         selectedUsers: [],
+         ruleEditVisible: false,
+         //当前编辑的规则
+         editingRule: null,
+         selectedRules: [],
       };
    },
    created() {
@@ -126,45 +153,46 @@ export default {
       // 处理全选逻辑
       toggleAll() {
          if (this.allSelected) { // 检查是否已全选
-            this.users.forEach(user => user.selected = true); // 全选
+            this.rules.forEach(rule => rule.selected = true); // 全选
          } else {
-            this.users.forEach(user => user.selected = false); // 全部取消选中
+            this.rules.forEach(rule => rule.selected = false); // 全部取消选中
          }
 
       },
 
       // 处理删除规则逻辑
-      prepareRuleDel(user = null) {
+      prepareRuleDel(rule = null) {
 
-         if (user) {
+         if (rule) {
             // 单个用户删除
-            this.selectedUsers = [user];
+            this.selectedRules = [rule];
          } else {
             // 批量删除
-            this.selectedUsers = this.users.filter(u => u.selected);
+            this.selectedRules = this.rules.filter(u => u.selected);
          }
 
 
          this.ruleDelVisible = true;
       },
       deleteRule() {
-         this.selectedUsers.forEach(user => {
-            const index = this.users.indexOf(user);
+         this.selectedRules.forEach(rule => {
+            const index = this.rules.indexOf(rule);
             if (index !== -1) {
-               this.users.splice(index, 1);
+               this.rules.splice(index, 1);
             }
          });
          alert('删除成功');
          this.closePopup('popup2');
          // 清空选中的用户数组
-         this.selectedUsers = [];
+         this.selectedRules = [];
       },
       closePopup() {
          this.ruleDelVisible = false;
+         this.ruleEditVisible = false;
       },
       // 处理规则状态
-      changeRuleStatus(user) {
-         this.$set(user, 'isPublic', !user.isPublic);
+      changeRuleStatus(rule) {
+         this.$set(rule, 'isPublic', !rule.isPublic);
 
       },
       // 新建规则
@@ -172,7 +200,18 @@ export default {
          // 进入新建规则页面
          this.$router.push({name: 'AddRules'});
          
-      }
+      },
+      // 编辑规则
+      editRule(rule) {
+         this.editingRule = Object.assign({}, rule);
+         this.ruleEditVisible = true;
+      },
+      //保存编辑
+
+      saveEdit() {
+         this.ruleEditVisible = false;
+         alert('保存成功');
+         }
 
    },
 

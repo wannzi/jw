@@ -108,7 +108,7 @@
                <button type="submit">保存</button>
                <button>取消</button>
             </form>
-            <button @click="closePopup('popup1')">关闭</button>
+            
          </div>
       </div>
 
@@ -188,7 +188,7 @@
                <button type="submit">保存</button>
                <button @click="closePopup('popup4')">取消</button>
             </form>
-            <button @click="closePopup('popup4')">关闭</button>
+           
          </div>
       </div>
 

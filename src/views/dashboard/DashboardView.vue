@@ -229,6 +229,7 @@ export default {
    justify-content: center;
    align-items: center;
    z-index: 11;
+   
 }
 
 .dialog-content {
@@ -237,6 +238,41 @@ export default {
    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
    position: relative;
    z-index: 11;
+   width: 20vw;
+   border-radius: 5%;
+
+}
+
+.dialog-content div {
+   display: flex;
+   justify-content: space-around;
+   align-items: baseline;
+}
+
+.dialog-content div .name {
+   width: 3vw;
+}
+
+.dialog-content form input,
+form select {
+   width: 70%;
+   padding: 10px;
+   margin-top: 5px;
+   margin-bottom: 15px;
+   box-sizing: border-box;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+}
+
+.dialog-content table {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   margin-bottom: 2vh;
+}
+
+.dialog-content  .file-input{
+   height: 40vh;
 }
 </style>
 
@@ -267,7 +303,7 @@ export default {
 
 .page button img {
    padding: 0.02vw;
-   
+
 }
 
 .activePage {
