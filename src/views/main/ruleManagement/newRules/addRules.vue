@@ -1,12 +1,10 @@
 <template>
     <div class="addRules">
         <div class="addRules_left">
-
-
             <div v-for="(item) in dataSheets" :key="item">
                 <div class="dataSheet" @click="toggleExpand(item)">
                     <img src="../../../../assets/UserManagement/下(白)_down.png" alt="">
-                    <img src="../../../../assets/UserManagement/文件夹-关_folder-close.png" alt="">
+                    <img src="../../../../assets/UserManagement/文件夹_folder.png" alt="">
                     <span>{{ item.name }}</span>
                 </div>
                 <div class="field" v-for="(field) in item.fields" :key="field" draggable="true">
@@ -17,11 +15,6 @@
 
                 </div>
             </div>
-
-
-
-
-
         </div>
         <div class="addRules_center">
             <div class="addRules_top">
