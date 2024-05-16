@@ -6,12 +6,12 @@
          </div>
          <!-- 右侧用户 -->
          <div class="right-user" >
-            <img src="" alt="">
+            <img src="../../assets/UserManagement/我的_me.png" alt="">
             <div class="username">
-               <p>用户名</p>
+               <p>admin</p>
             </div>
             <div class="operate">
-
+               <img src="../../assets/UserManagement/下_down.png" alt="">
             </div>
          </div>
 
@@ -52,6 +52,7 @@ export default {
 
 }
 
+
 .head {
    position: fixed;
    background-image: url('../../assets/UserManagement/head.png');
@@ -60,7 +61,7 @@ export default {
    background-repeat: no-repeat;
    height: 60px;
    width: 100%;
-   color: #32fff6;
+   color: #32FFF6;
    z-index: 10;
 
    padding-top: 8px;
@@ -78,7 +79,20 @@ export default {
    display: flex;
    align-items: center;
    font-size: 20px;
+   /* overflow: hidden; */
 }
+.right-user .operate {
+   width: 1.5vw;
+   height: 1.5vw;
+}
+.right-user  img {
+   width: 1.5vw;
+   height: 1.5vw;
+   margin-right: 0.6vw;
+}
+
+
+
 .head .title {
    padding-top: 8px;
 
@@ -87,6 +101,7 @@ export default {
 }
 button {
    border-radius: 5% ;
+
 }
 
 </style>

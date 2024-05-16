@@ -5,13 +5,13 @@
 
             <div v-for="(item) in dataSheets" :key="item">
                 <div class="dataSheet" @click="toggleExpand(item)">
-                    <span></span>
-                    <span></span>
+                    <img src="../../../../assets/UserManagement/下(白)_down.png" alt="">
+                    <img src="../../../../assets/UserManagement/文件夹-关_folder-close.png" alt="">
                     <span>{{ item.name }}</span>
                 </div>
                 <div class="field" v-for="(field) in item.fields" :key="field" draggable="true">
-                    <div v-if="item.expand">
-                        <span></span>
+                    <div v-if="item.expand" class="field_item">
+                        <img src="../../../../assets/UserManagement/编辑文件_file.png" alt="">
                         <span>{{ field }}</span>
                     </div>
 
@@ -65,7 +65,7 @@
                                 <button>删除</button>
                             </td>
                         </tr>
-                           
+
                     </table>
                 </div>
             </div>
@@ -312,7 +312,7 @@ export default {
 <style>
 .addRules_left {
     color: #e1e4e8;
-    font-size: 1.2vw;
+    font-size: 1.1vw;
 }
 </style>
 <style>
@@ -383,29 +383,59 @@ export default {
 </style>
 <!-- 中间表格 -->
 <style>
-    .center_table_box {
-       
-        margin-left: 3vw;
-        padding-top: 7vh;
-    }
-    .center_table {
-        width: 67vw;
-        border-collapse: collapse;
-        color: aliceblue;
-        font-size: 1vw;
-    }
-    .center_table th {
-        border: 2px solid #c7bdbd;
-        
-        height: 5vh;
-        padding-left: 1.5vw;
-        padding-right: 1.5vw;
-      
-    }
-    .center_table td {
-        border: 2px solid #c7bdbd;
-        height: 5vh;
-        padding-left: 1.5vw;
-        padding-right: 1.5vw;
-    }
+.center_table_box {
+
+    margin-left: 3vw;
+    padding-top: 7vh;
+}
+
+.center_table {
+    width: 67vw;
+    border-collapse: collapse;
+    color: aliceblue;
+    font-size: 1vw;
+}
+
+.center_table th {
+    border: 2px solid #c7bdbd;
+
+    height: 5vh;
+    padding-left: 1.5vw;
+    padding-right: 1.5vw;
+
+}
+
+.center_table td {
+    border: 2px solid #c7bdbd;
+    height: 5vh;
+    padding-left: 1.5vw;
+    padding-right: 1.5vw;
+}
+</style>
+
+<style>
+.dataSheet  {
+    display: flex;
+    margin-left: 3vw;
+    align-items: center;
+}
+.field_item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.3vw;
+    margin-bottom: 0.3vw;
+}
+
+.dataSheet img {
+    width: 1vw;
+    height: 1vw;
+    margin-right: 0.4vw;
+}
+.field img {
+    width: 1vw;
+    height: 1vw;
+    margin-right: 0.4vw;
+}
+
 </style>
