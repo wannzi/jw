@@ -13,7 +13,7 @@
                <span>公共库</span>
             </div>
             <div v-if="publicListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item" >
+               <div class="item_list" v-for="item in publicList" :key="item"  draggable="true">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
                   <span>{{ item.name }}</span>
@@ -28,10 +28,10 @@
                <span>私有库</span>
             </div>
             <div v-if="privateListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item">
+               <div class="item_list" v-for="item in publicList" :key="item" draggable="true">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
-                  <span>{{ item }}</span>
+                  <span>{{ item.name }}</span>
                </div>
 
             </div>
@@ -43,10 +43,10 @@
                <span>结果库</span>
             </div>
             <div v-if="resultsListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item">
+               <div class="item_list" v-for="item in publicList" :key="item" draggable="true">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
-                  <span>{{ item }}</span>
+                  <span>{{ item.name }}</span>
                </div>
 
             </div>
@@ -83,7 +83,7 @@
             </span>
          </div>
 
-         <div class="right_title">
+         <div class="right_title" v-if="this.$route.name === 'FileComparison'">
             <div>导入:将本地excel文件导入到私有库</div>
             <div>导出:将一个或多个文件导出到本地</div>
             <div>保存:打开文件修改后保存</div>
@@ -94,7 +94,7 @@
         
 
 
-         <router-view></router-view>
+         <router-view class="child_view"></router-view>
 
          
 
@@ -330,5 +330,8 @@ export default {
    .navActive{
       color: aqua;
    }
-   
+   .child_view {
+      margin-top: 3vw;
+      margin-left: 4vw;
+   }
 </style>
