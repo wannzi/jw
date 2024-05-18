@@ -84,9 +84,24 @@
             </span>
          </div>
 
-         <div v-if="fileContent && this.$route.name === 'FileComparison'">
+         <div v-if="fileContent && this.$route.name === 'FileComparison'" class="fileContentContainer">
             <h3>文件预览：</h3>
-            <pre>{{ fileContent }}</pre>
+            <table>
+               <!-- 列标签 -->
+               <tr>
+                  <th></th> <!-- 空的单元格在左上角 -->
+                  <th v-for="colIndex in tableData[0].length" :key="'col' + colIndex">
+                     {{ String.fromCharCode(65 + colIndex - 1) }} <!-- 转换数字为字母 (A, B, C...) -->
+                  </th>
+               </tr>
+               <!-- 行数据 -->
+               <tr v-for="(row, rowIndex) in tableData" :key="'row' + rowIndex">
+                  <th>{{ rowIndex + 1 }}</th> <!-- 行号 -->
+                  <td v-for="(cell, cellIndex) in row" :key="cellIndex">
+                     {{ cell }}
+                  </td>
+               </tr>
+            </table>
          </div>
 
 
@@ -161,7 +176,10 @@ export default {
          resultsListIsShow: false,
          fileContent: '',
          uploadPopupIsShow: false,
-         selectedFiles: []  // 用于存储选中的文件信息
+         selectedFiles: [],  // 用于存储选中的文件信息
+         tableData: [], // 新增用于存储表格数据
+         extraRows: 3,  // 额外增加的行数
+         extraColumns: 3 // 额外增加的列数
       }
    },
    activated() {
@@ -231,26 +249,42 @@ export default {
          this.selectedFiles = [];
          this.closePopup();  // 可以选择在上传后关闭弹窗
       },
+      
       // 预览文件
       previewFile(file) {
-         // 确保传入的文件是一个文件类型
          this.$router.push({ name: 'FileComparison' });
          if (file.file && file.file instanceof File) {
             const reader = new FileReader();
             reader.onload = (e) => {
                const data = new Uint8Array(e.target.result);
                const workbook = XLSX.read(data, { type: 'array' });
-               const firstSheetName = workbook.SheetNames[0];
-               const worksheet = workbook.Sheets[firstSheetName];
-               const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-               // 将Excel数据转换为可显示的字符串格式
-               this.fileContent = json.map(row => row.join(' | ')).join('\n');
+               const sheetName = workbook.SheetNames[0];
+               const worksheet = workbook.Sheets[sheetName];
+               let rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: true });
+
+               // 获取原始数据的最大行列数
+               let maxRows = rawData.length;
+               let maxCols = rawData.reduce((max, row) => Math.max(max, row.length), 0);
+
+               // 添加额外的行和列
+               this.tableData = new Array(maxRows + this.extraRows).fill([]).map((row, rowIndex) => {
+                  return new Array(maxCols + this.extraColumns).fill('').map((cell, cellIndex) => {
+                     if (rowIndex < rawData.length && cellIndex < rawData[rowIndex].length) {
+                        return rawData[rowIndex][cellIndex] || '';  // 处理undefined或null
+                     }
+                     return '';
+                  });
+               });
+
+               this.fileContent = this.tableData.map(row => row.join(' | ')).join('\n');  // Optional: for text preview
             };
             reader.readAsArrayBuffer(file.file);
          } else {
             console.error('传递的不是有效的文件对象');
          }
       }
+
+
 
 
 
@@ -484,5 +518,31 @@ form select {
 
 .dialog-content .file-input {
    height: 40vh;
+}
+</style>
+<style>
+.fileContentContainer {
+   height: 100%;
+   /* 设置预览区域的高度为固定值或百分比 */
+   overflow: auto;
+   /* 当内容超出容器大小时，提供滚动条 */
+   background-color: #f0f0f0;
+}
+
+table {
+   width: 100%;
+   border-collapse: collapse;
+}
+
+th,
+td {
+   border: 1px solid #ccc;
+   padding: 8px;
+   text-align: left;
+}
+
+th {
+   background-color: #f0f0f0;
+   /* 浅灰色背景 */
 }
 </style>
