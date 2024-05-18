@@ -7,13 +7,14 @@
          </span>
 
          <div class="left_content">
-            <div class="left_content_item" @click="showPublicList">
+            <div class="left_content_item" @click="showList(1)">
                <img src="../../../assets/UserManagement/下(白)_down.png" alt="">
                <img src="../../../assets/UserManagement/文件夹_folder.png" alt="">
                <span>公共库</span>
             </div>
             <div v-if="publicListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item" draggable="true">
+               <div class="item_list" v-for="item in publicList" :key="item.name" draggable="true"
+                  @dblclick="previewFile(item.file)">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
                   <span>{{ item.name }}</span>
@@ -22,7 +23,7 @@
             </div>
          </div>
          <div class="left_content">
-            <div class="left_content_item" @click="showPrivateList">
+            <div class="left_content_item" @click="showList(2)">
                <img src="../../../assets/UserManagement/下(白)_down.png" alt="">
                <img src="../../../assets/UserManagement/文件夹_folder.png" alt="">
                <span>私有库</span>
@@ -37,7 +38,7 @@
             </div>
          </div>
          <div class="left_content">
-            <div class="left_content_item" @click="showResultsList">
+            <div class="left_content_item" @click="showList(3)">
                <img src="../../../assets/UserManagement/下(白)_down.png" alt="">
                <img src="../../../assets/UserManagement/文件夹_folder.png" alt="">
                <span>结果库</span>
@@ -83,7 +84,15 @@
             </span>
          </div>
 
-         <div class="right_title" v-if="this.$route.name === 'FileComparison'">
+         <div v-if="fileContent && this.$route.name === 'FileComparison'">
+            <h3>文件预览：</h3>
+            <pre>{{ fileContent }}</pre>
+         </div>
+
+
+
+
+         <div class="right_title" v-if="this.$route.name === 'FileComparison' && !fileContent">
             <div>导入:将本地excel文件导入到私有库</div>
             <div>导出:将一个或多个文件导出到本地</div>
             <div>保存:打开文件修改后保存</div>
@@ -93,18 +102,28 @@
          </div>
          <!-- 弹窗 -->
          <div v-if="uploadPopupIsShow" class="dialog-backdrop" @click.self="closePopup()">
-            <div class="dialog-content" @click.stop >
-                  <input type="file" name="" id="">
+            <div class="dialog-content" @click.stop>
+               <input type="file" multiple @change="handleFileUpload">
+               <ul>
+                  <li v-for="file in selectedFiles" :key="file.name">
+                     文件名: {{ file.name }}，大小: {{ (file.size / 1024).toFixed(2) }} KB
+                  </li>
+               </ul>
+               <div>
 
                   <div>
                      <button type="button" @click="closePopup()">取消</button>
-                  <button type="button" @click="closePopup()">确定</button>
+                     <button type="button" @click="uploadFiles()">导入</button>
                   </div>
-                 
+               </div>
+
+
             </div>
          </div>
 
-         <router-view class="child_view"></router-view>
+         <router-view class="child_view">
+
+         </router-view>
 
 
 
@@ -114,7 +133,7 @@
    </div>
 </template>
 <script>
-
+import * as XLSX from 'xlsx';
 
 
 export default {
@@ -123,15 +142,18 @@ export default {
          publicList: [
             {
                name: '文件一',
-               path: ''
+               path: '',
+               file: ''
             },
             {
                name: '文件二',
-               path: '/public/file2'
+               path: '',
+               file: ''
             },
             {
                name: '文件三',
-               path: '/public/file2'
+               path: '',
+               file: ''
             }
          ],
          publicListIsShow: false,
@@ -139,6 +161,7 @@ export default {
          resultsListIsShow: false,
          fileContent: '',
          uploadPopupIsShow: false,
+         selectedFiles: []  // 用于存储选中的文件信息
       }
    },
    activated() {
@@ -150,15 +173,17 @@ export default {
    mounted() {
    },
    methods: {
-      showPublicList() {
-         this.publicListIsShow = !this.publicListIsShow;
+      // 展开文件树
+      showList(nav) {
+         if (nav == 1) {
+            this.publicListIsShow = !this.publicListIsShow;
+         } else if (nav == 2) {
+            this.privateListIsShow = !this.privateListIsShow;
+         } else if (nav == 3) {
+            this.resultsListIsShow = !this.resultsListIsShow;
+         }
       },
-      showPrivateList() {
-         this.privateListIsShow = !this.privateListIsShow;
-      },
-      showResultsList() {
-         this.resultsListIsShow = !this.resultsListIsShow;
-      },
+
       // 展示导出页面
       showNav(nav) {
          if (nav == 2) {
@@ -173,12 +198,61 @@ export default {
             this.$router.push({ name: 'CompareFunction' });
          }
       },
-      closePopup(){
+      closePopup() {
          this.uploadPopupIsShow = false;
+         this.selectedFiles = [];  // 清空旧的文件列表
       },
-      showUpLoadPopup(){
+      // 展示上传页面
+      showUpLoadPopup() {
          this.uploadPopupIsShow = true;
+      },
+      // 获取文件
+      handleFileUpload(event) {
+         this.selectedFiles = [];  // 清空旧的文件列表
+         const files = event.target.files;
+         for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            this.selectedFiles.push({
+               name: file.name,  // 获取文件名
+               size: file.size,  // 获取文件大小（可选）
+               file: file       // 保存文件对象
+            });
+
+         }
+      },
+      // 上传文件
+      uploadFiles() {
+         // 这里假设上传成功，将文件信息添加到publicList中
+         this.publicList.push(...this.selectedFiles.map(file => ({
+            name: file.name,
+            path: '',
+            file: file
+         })));
+         this.selectedFiles = [];
+         this.closePopup();  // 可以选择在上传后关闭弹窗
+      },
+      // 预览文件
+      previewFile(file) {
+         // 确保传入的文件是一个文件类型
+         this.$router.push({ name: 'FileComparison' });
+         if (file.file && file.file instanceof File) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+               const data = new Uint8Array(e.target.result);
+               const workbook = XLSX.read(data, { type: 'array' });
+               const firstSheetName = workbook.SheetNames[0];
+               const worksheet = workbook.Sheets[firstSheetName];
+               const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+               // 将Excel数据转换为可显示的字符串格式
+               this.fileContent = json.map(row => row.join(' | ')).join('\n');
+            };
+            reader.readAsArrayBuffer(file.file);
+         } else {
+            console.error('传递的不是有效的文件对象');
+         }
       }
+
+
 
 
    }

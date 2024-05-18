@@ -49,6 +49,7 @@ export default {
    background-position: center;
    background-repeat: no-repeat;
    z-index: 0;
+   overflow: hidden;
 
 }
 
