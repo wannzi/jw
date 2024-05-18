@@ -7,7 +7,7 @@
 
        <div class="ctrl_btn">
 
-           <button class="ge_btn1">导出</button>
+           <button class="ge_btn1">删除</button>
            <button class="ge_btn2">清空</button>
        </div>
    </div>

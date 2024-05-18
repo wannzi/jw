@@ -13,7 +13,7 @@
                <span>公共库</span>
             </div>
             <div v-if="publicListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item"  draggable="true">
+               <div class="item_list" v-for="item in publicList" :key="item" draggable="true">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
                   <span>{{ item.name }}</span>
@@ -56,28 +56,28 @@
       <div class="fileComparison_right">
 
          <div class="right_head">
-            <span class="icon_head">
+            <span class="icon_head" @click="showUpLoadPopup">
                <img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="">
                <span>导入</span>
             </span>
 
-            <span class="icon_head" @click="showNav(2)" :class="{ navActive:this.$route.name === 'ExportFunction'}">
+            <span class="icon_head" @click="showNav(2)" :class="{ navActive: this.$route.name === 'ExportFunction' }">
                <img src="../../../assets/UserManagement/传入(白)_afferent.png" style="transform: scaleX(-1);">
                <span>导出</span>
             </span>
-            <span class="icon_head" @click="showNav(3)" :class="{ navActive:this.$route.name === 'SaveFunction'}">
+            <span class="icon_head" @click="showNav(3)" :class="{ navActive: this.$route.name === 'SaveFunction' }">
                <img src="../../../assets/UserManagement/保存_save.png">
                <span>保存</span>
             </span>
-            <span class="icon_head" @click="showNav(4)" :class="{ navActive:this.$route.name === 'DeleteFunction'}">
+            <span class="icon_head" @click="showNav(4)" :class="{ navActive: this.$route.name === 'DeleteFunction' }">
                <img src="../../../assets/UserManagement/删除_delete.png">
                <span>删除</span>
             </span>
-            <span class="icon_head" @click="showNav(5)" :class="{ navActive:this.$route.name === 'SearchFunction'}">
+            <span class="icon_head" @click="showNav(5)" :class="{ navActive: this.$route.name === 'SearchFunction' }">
                <img src="../../../assets/UserManagement/查找_find.png">
                <span>检索</span>
             </span>
-            <span class="icon_head" @click="showNav(6)" :class="{ navActive:this.$route.name === 'CompareFunction'}">
+            <span class="icon_head" @click="showNav(6)" :class="{ navActive: this.$route.name === 'CompareFunction' }">
                <img src="../../../assets/UserManagement/对比_contrast.png">
                <span>比对</span>
             </span>
@@ -91,16 +91,26 @@
             <div>检索:在一个或多个文件中检索内容</div>
             <div>对比:将一个或多个文件进行内容比对</div>
          </div>
-        
+         <!-- 弹窗 -->
+         <div v-if="uploadPopupIsShow" class="dialog-backdrop" @click.self="closePopup()">
+            <div class="dialog-content" @click.stop >
+                  <input type="file" name="" id="">
 
+                  <div>
+                     <button type="button" @click="closePopup()">取消</button>
+                  <button type="button" @click="closePopup()">确定</button>
+                  </div>
+                 
+            </div>
+         </div>
 
          <router-view class="child_view"></router-view>
 
-         
+
 
       </div>
 
-      
+
    </div>
 </template>
 <script>
@@ -128,6 +138,7 @@ export default {
          privateListIsShow: false,
          resultsListIsShow: false,
          fileContent: '',
+         uploadPopupIsShow: false,
       }
    },
    activated() {
@@ -150,18 +161,24 @@ export default {
       },
       // 展示导出页面
       showNav(nav) {
-         if(nav==2){
-         this.$router.push({name:'ExportFunction'});
-         }if(nav==3){
-         this.$router.push({name:'SaveFunction'});
-         }if(nav==4){
-         this.$router.push({name:'DeleteFunction'});
-         }if(nav==5){
-         this.$router.push({name:'SearchFunction'});
-         }else if(nav==6){
-         this.$router.push({name:'CompareFunction'});
+         if (nav == 2) {
+            this.$router.push({ name: 'ExportFunction' });
+         } if (nav == 3) {
+            this.$router.push({ name: 'SaveFunction' });
+         } if (nav == 4) {
+            this.$router.push({ name: 'DeleteFunction' });
+         } if (nav == 5) {
+            this.$router.push({ name: 'SearchFunction' });
+         } else if (nav == 6) {
+            this.$router.push({ name: 'CompareFunction' });
          }
       },
+      closePopup(){
+         this.uploadPopupIsShow = false;
+      },
+      showUpLoadPopup(){
+         this.uploadPopupIsShow = true;
+      }
 
 
    }
@@ -327,11 +344,71 @@ export default {
 }
 </style>
 <style>
-   .navActive{
-      color: aqua;
-   }
-   .child_view {
-      margin-top: 3vw;
-      margin-left: 4vw;
-   }
+.navActive {
+   color: aqua;
+}
+
+.child_view {
+   margin-top: 3vw;
+   margin-left: 4vw;
+}
+</style>
+
+<style>
+.dialog-backdrop {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 9;
+
+}
+
+.dialog-content {
+   background: white;
+   padding: 20px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   position: relative;
+   z-index: 11;
+   width: 20vw;
+   border-radius: 5px;
+
+}
+
+.dialog-content div {
+   display: flex;
+   justify-content: space-around;
+   align-items: baseline;
+}
+
+.dialog-content div .name {
+   width: 3vw;
+}
+
+.dialog-content form input,
+form select {
+   width: 70%;
+   padding: 10px;
+   margin-top: 5px;
+   margin-bottom: 15px;
+   box-sizing: border-box;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+}
+
+.dialog-content table {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   margin-bottom: 2vh;
+}
+
+.dialog-content .file-input {
+   height: 40vh;
+}
 </style>

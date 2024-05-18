@@ -239,7 +239,7 @@ export default {
    position: relative;
    z-index: 11;
    width: 20vw;
-   border-radius: 5%;
+   border-radius: 5px;
 
 }
 
