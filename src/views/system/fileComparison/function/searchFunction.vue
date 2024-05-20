@@ -13,10 +13,22 @@
 
         </div>
 
+        <div class="intoFile" @dragover.prevent="handleDragOver" @drop.prevent="handleFileDrop">
 
-        <div class="intoFile">
-            <div class="intoFile_title_1">+</div>
-            <div class="intoFile_title_2">请将检索文件从目录拖拽到此</div>
+            <div v-if="!files.length">
+                <div class="intoFile_title_1">+</div>
+                <div class="intoFile_title_2">请将检索文件从目录拖拽到此</div>
+            </div>
+
+
+            <!-- 文件列表展示 -->
+            <ul class="file-list" v-if="files.length">
+                <li v-for="(file, index) in files" :key="index" class="file-item">
+                    {{ file.name }}
+                    <span class="delete-btn" @click="removeFile(index)">×</span>
+                </li>
+            </ul>
+
         </div>
     </div>
 </template>
@@ -24,6 +36,7 @@
 export default {
     data() {
         return {
+            files: []
         }
     },
     activated() {
@@ -35,6 +48,27 @@ export default {
     mounted() {
     },
     methods: {
+        handleDragOver(event) {
+            event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
+        },
+
+
+        handleFileDrop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData('application/json');
+            const item = JSON.parse(data);
+            this.files.push(item); // 假设处理的是文件列表
+            
+        },
+        deleteFiles() {
+            // 实现文件的导出逻辑
+        },
+        clearFiles() {
+            this.files = [];
+        },
+        removeFile(index) {
+            this.files.splice(index, 1); // 移除指定索引的文件
+        }
     }
 
 
@@ -49,13 +83,14 @@ export default {
     width: 40vw;
     height: 6vh;
     border: 2px solid #32fff6;
-    border-radius: 15px; /* 添加圆角 */
+    border-radius: 15px;
+    /* 添加圆角 */
     padding-left: 1vw;
     overflow: hidden;
-    margin:  0 auto;
+    margin: 0 auto;
     margin-top: 5vw;
     margin-bottom: 5vw;
-    
+
 
 }
 

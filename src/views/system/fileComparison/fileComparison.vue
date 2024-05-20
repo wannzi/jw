@@ -14,7 +14,7 @@
             </div>
             <div v-if="publicListIsShow">
                <div class="item_list" v-for="item in publicList" :key="item.name" draggable="true"
-                  @dblclick="previewFile(item.file)">
+                  @dblclick="previewFile(item.file)" @dragstart="handleDragStart($event, item)">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
                   <span>{{ item.name }}</span>
@@ -29,7 +29,8 @@
                <span>私有库</span>
             </div>
             <div v-if="privateListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item" draggable="true">
+               <div class="item_list" v-for="item in privateList" :key="item" draggable="true"
+                  @dblclick="previewFile(item.file)" @dragstart="handleDragStart($event, item)">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
                   <span>{{ item.name }}</span>
@@ -66,7 +67,7 @@
                <img src="../../../assets/UserManagement/传入(白)_afferent.png" style="transform: scaleX(-1);">
                <span>导出</span>
             </span>
-            <span class="icon_head" @click="showNav(3)" :class="{ navActive: this.$route.name === 'SaveFunction' }">
+            <span class="icon_head " :class="{icon_head_active: !fileContent }">
                <img src="../../../assets/UserManagement/保存_save.png">
                <span>保存</span>
             </span>
@@ -85,7 +86,6 @@
          </div>
 
          <div v-if="fileContent && this.$route.name === 'FileComparison'" class="fileContentContainer">
-            <h3>文件预览：</h3>
             <table>
                <!-- 列标签 -->
                <tr>
@@ -171,6 +171,40 @@ export default {
                file: ''
             }
          ],
+         privateList: [
+            {
+               name: '文件一',
+               path: '',
+               file: ''
+            },
+            {
+               name: '文件二',
+               path: '',
+               file: ''
+            },
+            {
+               name: '文件三',
+               path: '',
+               file: ''
+            }
+         ],
+         resultsList: [
+         {
+               name: '文件一',
+               path: '',
+               file: ''
+            },
+            {
+               name: '文件二',
+               path: '',
+               file: ''
+            },
+            {
+               name: '文件三',
+               path: '',
+               file: ''
+            }
+         ],
          publicListIsShow: false,
          privateListIsShow: false,
          resultsListIsShow: false,
@@ -206,8 +240,6 @@ export default {
       showNav(nav) {
          if (nav == 2) {
             this.$router.push({ name: 'ExportFunction' });
-         } if (nav == 3) {
-            this.$router.push({ name: 'SaveFunction' });
          } if (nav == 4) {
             this.$router.push({ name: 'DeleteFunction' });
          } if (nav == 5) {
@@ -241,7 +273,7 @@ export default {
       // 上传文件
       uploadFiles() {
          // 这里假设上传成功，将文件信息添加到publicList中
-         this.publicList.push(...this.selectedFiles.map(file => ({
+         this.privateList.push(...this.selectedFiles.map(file => ({
             name: file.name,
             path: '',
             file: file
@@ -249,7 +281,7 @@ export default {
          this.selectedFiles = [];
          this.closePopup();  // 可以选择在上传后关闭弹窗
       },
-      
+
       // 预览文件
       previewFile(file) {
          this.$router.push({ name: 'FileComparison' });
@@ -282,7 +314,14 @@ export default {
          } else {
             console.error('传递的不是有效的文件对象');
          }
+      },
+      // 拖拽文件到需要部分
+      handleDragStart(event, item) {
+         // 转化成json字符串，以便在drop事件中获取数据
+         const itemData = JSON.stringify(item);
+         event.dataTransfer.setData('application/json', itemData);
       }
+
 
 
 
@@ -447,6 +486,15 @@ export default {
    border-right: 4px solid #7691af;
 }
 
+.icon_head_active{
+   content: "";
+   background-color: rgba(48, 42, 42, 0.849);
+   /* 半透明黑色背景 */
+   color: #7691af;
+   z-index: 9;
+   pointer-events: none;
+}
+
 .icon_head:last-child {
    border-right: none;
 }
@@ -520,9 +568,9 @@ form select {
    height: 40vh;
 }
 </style>
-<style>
+<style scoped>
 .fileContentContainer {
-   height: 100%;
+   height: 90%;
    /* 设置预览区域的高度为固定值或百分比 */
    overflow: auto;
    /* 当内容超出容器大小时，提供滚动条 */

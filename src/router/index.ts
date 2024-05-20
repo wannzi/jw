@@ -65,11 +65,6 @@ export default new Router({
                             component: ExportFunction,
                         },
                         {
-                            path:'saveFunction',
-                            name: 'SaveFunction',
-                            component:()=>import('@/views/system/fileComparison/function/saveFunction.vue')
-                        },
-                        {
                             path: 'deleteFunction',
                             name: 'DeleteFunction',
                             component:()=>import('@/views/system/fileComparison/function/deleteFunction.vue')
