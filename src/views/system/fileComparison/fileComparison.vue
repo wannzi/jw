@@ -14,7 +14,7 @@
             </div>
             <div v-if="publicListIsShow">
                <div class="item_list" v-for="item in publicList" :key="item.name" draggable="true"
-                  @dblclick="previewFile(item.file)" @dragstart="handleDragStart($event, item)">
+                   @dragstart="handleDragStart($event, item)">
 
                   <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
                   <span>{{ item.name }}</span>

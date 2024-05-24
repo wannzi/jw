@@ -2,7 +2,7 @@
    <div class="app">
       <div class="U_head">
          <div class="left">
-            <button class="btn1" @click="intoAddRule()">新建规则</button>
+            <button class="btn1" @click="addRule()">新建规则</button>
             <button class="btn2" @click="prepareRuleDel()">删除规则</button>
 
          </div>
@@ -47,14 +47,14 @@
       </table>
       <!-- 添加分页按钮 -->
       <div class="page">
-         <button >
+         <button>
             <img src="../../../assets/UserManagement/左_left.png" style="width: 100%; height: 100%; display: block;">
          </button>
          <button v-for="page in pages" :key="page" :class="{ activePage: page === currentPage }"
             @click="changePage(page)">
             {{ page }}
          </button>
-         <button >
+         <button>
             <img src="../../../assets/UserManagement/右_right.png" style="width: 100%; height: 100%; display: block;">
          </button>
 
@@ -80,7 +80,7 @@
       <!-- 编辑规则弹窗 -->
       <div v-if="ruleEditVisible" class="dialog-backdrop" @click.self="closePopup()">
          <div class="dialog-content" @click.stop>
-            <form >
+            <form>
                <h2>编辑规则</h2>
 
                <div>
@@ -91,12 +91,35 @@
                   <label for="edit-name">规则描述:</label>
                   <input id="edit-name" type="text" v-model="editingRule.ruleDesc">
                </div>
-               
+
 
                <button type="submit" @click="saveEdit()">保存</button>
                <button @click="closePopup('popup4')">取消</button>
             </form>
-            
+
+         </div>
+
+      </div>
+      <!-- 新建规则弹窗 -->
+      <div v-if="ruleAddVisible" class="dialog-backdrop" @click.self="closePopup()">
+         <div class="dialog-content" @click.stop>
+            <form>
+               <h2>新建规则</h2>
+
+               <div>
+                  <label for="edit-account">规则名称:</label>
+                  <input id="edit-account" type="text"  readonly>
+               </div>
+               <div>
+                  <label for="edit-name">规则描述:</label>
+                  <input id="edit-name" type="text" >
+               </div>
+
+
+               <button type="submit" @click="intoAddRule()">新建</button>
+               <button @click="closePopup('popup4')">取消</button>
+            </form>
+
          </div>
 
       </div>
@@ -135,6 +158,7 @@ export default {
          // 弹窗状态
          ruleDelVisible: false,
          ruleEditVisible: false,
+         ruleAddVisible: false,
          //当前编辑的规则
          editingRule: null,
          selectedRules: [],
@@ -189,17 +213,22 @@ export default {
       closePopup() {
          this.ruleDelVisible = false;
          this.ruleEditVisible = false;
+         this.ruleAddVisible = false;
       },
       // 处理规则状态
       changeRuleStatus(rule) {
          this.$set(rule, 'isPublic', !rule.isPublic);
 
       },
-      // 新建规则
-      intoAddRule() {
+      // 新建规则弹窗
+      addRule() {
          // 进入新建规则页面
-         this.$router.push({name: 'AddRules'});
-         
+         // this.$router.push({ name: 'AddRules' });
+         this.ruleAddVisible = true;
+
+      },
+      intoAddRule() {
+         this.$router.push({ name: 'AddRules' });
       },
       // 编辑规则
       editRule(rule) {
@@ -211,7 +240,7 @@ export default {
       saveEdit() {
          this.ruleEditVisible = false;
          alert('保存成功');
-         }
+      }
 
    },
 
@@ -291,8 +320,6 @@ export default {
 .private_btn {
    background-color: #67c23a;
 }
-
-
 </style>
 
 <style scoped>
