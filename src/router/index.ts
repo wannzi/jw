@@ -17,8 +17,17 @@ const router = new Router({
                 { path: 'fileManagement' , name: 'FileManagement', component: () => import('@/views/main/FileManagement.vue') },
                 { path: 'ruleManagement' , name: 'RuleManagement', component: () => import('@/views/main/ruleManagement/RuleManagement.vue') }
             ]
+        },
+        {
+        path:'/DrawSystem',
+        name:'DrawSystem',
+        component:() => import('@/views/DrawSystem/SelectDraw.vue'),
+        children:[
+                {
+                    path: 'PeopleResult',name:'PeopleResult',component:()=> import('@/views/DrawSystem/PeopleResult.vue')},
+            ]
         }
-        
+
     ]
 });
 
