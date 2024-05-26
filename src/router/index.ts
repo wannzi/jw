@@ -58,7 +58,7 @@ export default new Router({
                     path: 'fileComparison',
                     name: 'FileComparison',
                     component: FileComparison,
-                    children:[
+                    children: [
                         {
                             path: 'exportFunction',
                             name: 'ExportFunction',
@@ -67,20 +67,32 @@ export default new Router({
                         {
                             path: 'deleteFunction',
                             name: 'DeleteFunction',
-                            component:()=>import('@/views/system/fileComparison/function/deleteFunction.vue')
+                            component: () => import('@/views/system/fileComparison/function/deleteFunction.vue')
                         },
                         {
                             path: 'searchFunction',
                             name: 'SearchFunction',
-                            component:()=>import('@/views/system/fileComparison/function/searchFunction.vue')
+                            component: () => import('@/views/system/fileComparison/function/searchFunction.vue')
                         },
                         {
-                            path:'compareFunction',
+                            path: 'compareFunction',
                             name: 'CompareFunction',
-                            component:()=>import('@/views/system/fileComparison/function/compareFunction.vue')
+                            component: () => import('@/views/system/fileComparison/function/compareFunction.vue')
                         }
                     ]
                 }
+            ]
+        },
+        {
+            path: '/DrawSystem',
+            name: 'DrawSystem',
+            component: () => import('@/views/DrawSystem/SelectDraw.vue'),
+            children: [
+                {
+                    path: 'PeopleResult',
+                    name: 'PeopleResult',
+                    component: () => import('@/views/DrawSystem/PeopleResult.vue')
+                },
             ]
         }
     ]
