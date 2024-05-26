@@ -9,7 +9,11 @@
 
          <div class="right">
             <input type="text" placeholder="请输入关键词搜索">
-            <button></button>
+
+            <button>
+               <img src="../../../assets/UserManagement/搜索_search.png">
+            </button>
+
          </div>
       </div>
 
@@ -48,12 +52,16 @@
       </table>
       <!-- 添加分页按钮 -->
       <div class="page">
-         <button> 上 </button>
+         <button >
+            <img src="../../../assets/UserManagement/左_left.png" style="width: 100%; height: 100%; display: block;">
+         </button>
          <button v-for="page in pages" :key="page" :class="{ activePage: page === currentPage }"
             @click="changePage(page)">
             {{ page }}
          </button>
-         <button> 下 </button>
+         <button >
+            <img src="../../../assets/UserManagement/右_right.png" style="width: 100%; height: 100%; display: block;">
+         </button>
 
       </div>
 
@@ -100,7 +108,7 @@
                <button type="submit">保存</button>
                <button>取消</button>
             </form>
-            <button @click="closePopup('popup1')">关闭</button>
+            
          </div>
       </div>
 
@@ -180,7 +188,7 @@
                <button type="submit">保存</button>
                <button @click="closePopup('popup4')">取消</button>
             </form>
-            <button @click="closePopup('popup4')">关闭</button>
+           
          </div>
       </div>
 
@@ -231,6 +239,7 @@ export default {
          editingUser: null, // 当前正在编辑的用户
          userToDelete: null, // 即将删除的用户
          selectedUsers: [], // 批量删除的用户
+         
 
       };
    },
@@ -281,7 +290,7 @@ export default {
             // 批量删除
             this.selectedUsers = this.users.filter(u => u.selected);
          }
-         
+
          this.showPopUp('popup2');
       },
       deleteUser() {
@@ -374,6 +383,7 @@ export default {
 .table_btn {
    width: 3vw;
    height: 28px;
+   font-size: 0.8vw;
    margin-left: 20px;
    padding-left: 10px;
    padding-right: 10px;
@@ -387,36 +397,7 @@ export default {
    padding-right: 10px;
 }
 
-.U_head .right input {
-   height: 3vh;
-   width: 23vh;
-   background-color: transparent;
-   border: 1px solid #f9e5ff;
-   color: #dddbdb;
-   padding-left: 10px;
-}
 
-.U_head .right input:focus {
-   outline: none;
-   /* border-color: #f9e5ff; */
-}
-
-.U_head .right input::placeholder {
-   color: #bebebe;
-}
-
-.U_head .right {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-}
-
-.U_head .right button {
-   border: none;
-   width: 31px;
-   height: 31px;
-   background-image: url();
-}
 </style>
 
 <style scoped>
@@ -473,7 +454,3 @@ input:checked+.slider:before {
    transform: translateX(16px);
 }
 </style>
-
-
-
-

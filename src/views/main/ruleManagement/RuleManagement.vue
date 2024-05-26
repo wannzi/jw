@@ -2,14 +2,16 @@
    <div class="app">
       <div class="U_head">
          <div class="left">
-            <button class="btn1">新建规则</button>
+            <button class="btn1" @click="addRule()">新建规则</button>
             <button class="btn2" @click="prepareRuleDel()">删除规则</button>
-            
+
          </div>
 
          <div class="right">
             <input type="text" placeholder="请输入关键词搜索">
-            <button></button>
+            <button>
+               <img src="../../../assets/UserManagement/搜索_search.png">
+            </button>
          </div>
       </div>
 
@@ -22,77 +24,129 @@
             <th>规则类型</th>
             <th>创建者</th>
             <th>创建时间</th>
-            
+
             <th>操作</th>
 
          </tr>
-         <tr v-for="(user, index) in users" :key="index">
-            <td><input type="checkbox" v-model="user.selected" /></td>
-            <td>{{ user.ruleName || '' }}</td>
-            <td>{{ user.ruleDesc || '' }}</td>
-            <td>{{ user.ruleType || '' }}</td>
-            <td>{{ user.creator || '' }}</td>
-            <td>{{ user.createTime || '' }}</td>
-           
+         <tr v-for="(rule, index) in rules" :key="index">
+            <td><input type="checkbox" v-model="rule.selected" /></td>
+            <td>{{ rule.ruleName || '' }}</td>
+            <td>{{ rule.ruleDesc || '' }}</td>
+            <td>{{ rule.ruleType || '' }}</td>
+            <td>{{ rule.creator || '' }}</td>
+            <td>{{ rule.createTime || '' }}</td>
+
             <td class="rule_operate">
-               <button class="btn1 table_btn">编辑</button>
-               <button class="btn2 table_btn" @click="prepareRuleDel(user)">删除</button>
-               <button class="btn3 table_btn" v-if="user.isPublic === false" @click="changeRuleStatus(user)">设为公共规则</button>
-               <button v-else class="btn3 table_btn private_btn" @click="changeRuleStatus(user)">设为私有规则</button>
+               <button class="btn1 table_btn" @click="editRule(rule)">编辑</button>
+               <button class="btn2 table_btn" @click="prepareRuleDel(rule)">删除</button>
+               <button class="btn3 table_btn" v-if="rule.isPublic === false"
+                  @click="changeRuleStatus(rule)">设为公共规则</button>
+               <button v-else class="btn3 table_btn private_btn" @click="changeRuleStatus(rule)">设为私有规则</button>
             </td>
          </tr>
       </table>
       <!-- 添加分页按钮 -->
       <div class="page">
-         <button> 上 </button>
+         <button>
+            <img src="../../../assets/UserManagement/左_left.png" style="width: 100%; height: 100%; display: block;">
+         </button>
          <button v-for="page in pages" :key="page" :class="{ activePage: page === currentPage }"
             @click="changePage(page)">
             {{ page }}
          </button>
-         <button> 下 </button>
-         <!-- 根据 totalPages 动态生成更多按钮 -->
+         <button>
+            <img src="../../../assets/UserManagement/右_right.png" style="width: 100%; height: 100%; display: block;">
+         </button>
+
       </div>
 
 
       <!-- 弹窗 -->
       <!-- 删除规则弹窗 -->
       <div v-if="ruleDelVisible" class="dialog-backdrop" @click.self="closePopup()">
-         <div class="dialog-content" @click.stop >
-            
+         <div class="dialog-content" @click.stop>
+
             <h3>确认删除以下规则?</h3>
             <table>
-                <tr v-for="(user, index) in selectedUsers" :key="index">
-                    <th>{{ user.ruleName }}</th>
+               <tr v-for="(rule, index) in selectedRules" :key="index">
+                  <th>{{ rule.ruleName }}</th>
                </tr>
             </table>
             <button @click="deleteRule()">删除</button>
             <button @click="closePopup()">关闭</button>
          </div>
-         
+
       </div>
+      <!-- 编辑规则弹窗 -->
+      <div v-if="ruleEditVisible" class="dialog-backdrop" @click.self="closePopup()">
+         <div class="dialog-content" @click.stop>
+            <form>
+               <h2>编辑规则</h2>
+
+               <div>
+                  <label for="edit-account">规则名称:</label>
+                  <input id="edit-account" type="text" v-model="editingRule.ruleName" readonly>
+               </div>
+               <div>
+                  <label for="edit-name">规则描述:</label>
+                  <input id="edit-name" type="text" v-model="editingRule.ruleDesc">
+               </div>
+
+
+               <button type="submit" @click="saveEdit()">保存</button>
+               <button @click="closePopup('popup4')">取消</button>
+            </form>
+
+         </div>
+
+      </div>
+      <!-- 新建规则弹窗 -->
+      <div v-if="ruleAddVisible" class="dialog-backdrop" @click.self="closePopup()">
+         <div class="dialog-content" @click.stop>
+            <form>
+               <h2>新建规则</h2>
+
+               <div>
+                  <label for="edit-account">规则名称:</label>
+                  <input id="edit-account" type="text"  readonly>
+               </div>
+               <div>
+                  <label for="edit-name">规则描述:</label>
+                  <input id="edit-name" type="text" >
+               </div>
+
+
+               <button type="submit" @click="intoAddRule()">新建</button>
+               <button @click="closePopup('popup4')">取消</button>
+            </form>
+
+         </div>
+
+      </div>
+
    </div>
 </template>
 <script>
 
 
 export default {
-   name: 'UserManagement',
+   name: 'RuleManagement',
    data() {
       return {
          // 表格数据
-         users: [
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
-               { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1' ,isPublic: true, selected: false },
+         rules: [
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
+            { ruleName: '规则1', ruleDesc: '规则描述1', ruleType: '规则类型1', creator: '创建者1', createTime: '创建时间1', isPublic: true, selected: false },
 
-             
+
 
          ],
          //当前页码
@@ -103,11 +157,15 @@ export default {
          allSelected: false,
          // 弹窗状态
          ruleDelVisible: false,
-         selectedUsers: [],
+         ruleEditVisible: false,
+         ruleAddVisible: false,
+         //当前编辑的规则
+         editingRule: null,
+         selectedRules: [],
       };
    },
    created() {
-         
+
    },
    methods: {
       // 更改页码
@@ -116,56 +174,79 @@ export default {
             this.currentPage = newPage;
          }
       },
-       // 处理全选逻辑
-       toggleAll() {
+      // 处理全选逻辑
+      toggleAll() {
          if (this.allSelected) { // 检查是否已全选
-            this.users.forEach(user => user.selected = true); // 全选
+            this.rules.forEach(rule => rule.selected = true); // 全选
          } else {
-            this.users.forEach(user => user.selected = false); // 全部取消选中
+            this.rules.forEach(rule => rule.selected = false); // 全部取消选中
          }
-        
+
       },
 
       // 处理删除规则逻辑
-      prepareRuleDel(user = null){
+      prepareRuleDel(rule = null) {
 
-         if (user) {
+         if (rule) {
             // 单个用户删除
-            this.selectedUsers = [user];
+            this.selectedRules = [rule];
          } else {
             // 批量删除
-            this.selectedUsers = this.users.filter(u => u.selected);
+            this.selectedRules = this.rules.filter(u => u.selected);
          }
 
 
          this.ruleDelVisible = true;
       },
       deleteRule() {
-         this.selectedUsers.forEach(user => {
-            const index = this.users.indexOf(user);
+         this.selectedRules.forEach(rule => {
+            const index = this.rules.indexOf(rule);
             if (index !== -1) {
-               this.users.splice(index, 1);
+               this.rules.splice(index, 1);
             }
          });
          alert('删除成功');
          this.closePopup('popup2');
          // 清空选中的用户数组
-         this.selectedUsers = [];
-      }, 
+         this.selectedRules = [];
+      },
       closePopup() {
          this.ruleDelVisible = false;
+         this.ruleEditVisible = false;
+         this.ruleAddVisible = false;
       },
-       // 处理规则状态
-       changeRuleStatus(user) {
-         this.$set(user, 'isPublic', !user.isPublic);
-         
+      // 处理规则状态
+      changeRuleStatus(rule) {
+         this.$set(rule, 'isPublic', !rule.isPublic);
+
+      },
+      // 新建规则弹窗
+      addRule() {
+         // 进入新建规则页面
+         // this.$router.push({ name: 'AddRules' });
+         this.ruleAddVisible = true;
+
+      },
+      intoAddRule() {
+         this.$router.push({ name: 'AddRules' });
+      },
+      // 编辑规则
+      editRule(rule) {
+         this.editingRule = Object.assign({}, rule);
+         this.ruleEditVisible = true;
+      },
+      //保存编辑
+
+      saveEdit() {
+         this.ruleEditVisible = false;
+         alert('保存成功');
       }
-     
+
    },
 
    // 计算属性
    computed: {
-      
+
       // 更新页码
       pages() {
          let pages = [];
@@ -175,8 +256,8 @@ export default {
          }
          return pages;
       },
-      
-      
+
+
    },
 }
 </script>
@@ -225,6 +306,7 @@ export default {
    margin-left: 20px;
    padding-left: 10px;
    padding-right: 10px;
+   font-size: 0.7vw;
 }
 
 .table_btn:last-child {
@@ -234,47 +316,15 @@ export default {
    padding-left: 10px;
    padding-right: 10px;
 }
-.private_btn{
+
+.private_btn {
    background-color: #67c23a;
-}
-
-.U_head .right input {
-   height: 3vh;
-   width: 23vh;
-   background-color: transparent;
-   border: 1px solid #f9e5ff;
-   color: #dddbdb;
-   padding-left: 10px;
-}
-
-.U_head .right input:focus {
-   outline: none;
-   /* border-color: #f9e5ff; */
-}
-
-.U_head .right input::placeholder {
-   color: #bebebe;
-}
-
-.U_head .right {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-}
-
-.U_head .right button {
-   border: none;
-   width: 31px;
-   height: 31px;
-   background-image: url();
 }
 </style>
 
 <style scoped>
-
-
-table .rule_operate{
-   width: 12vw;
+table .rule_operate {
+   width: 16vw;
 }
 
 
@@ -324,4 +374,3 @@ input:checked+.slider:before {
    transform: translateX(16px);
 }
 </style>
-

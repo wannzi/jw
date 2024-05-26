@@ -8,7 +8,9 @@
  
           <div class="right">
              <input type="text" placeholder="请输入关键词搜索">
-             <button></button>
+             <button>
+               <img src="../../assets/UserManagement/搜索_search.png">
+            </button>
           </div>
        </div>
  
@@ -62,14 +64,18 @@
        </table>
        <!-- 添加分页按钮 -->
        <div class="page">
-          <button> 上 </button>
-          <button v-for="page in pages" :key="page" :class="{ activePage: page === currentPage }"
-             @click="changePage(page)">
-             {{ page }}
-          </button>
-          <button> 下 </button>
-          <!-- 根据 totalPages 动态生成更多按钮 -->
-       </div>
+         <button style="display: block; border: none; padding: 0; overflow: hidden;">
+            <img src="../../assets/UserManagement/左_left.png" style="width: 100%; height: 100%; display: block;">
+         </button>
+         <button v-for="page in pages" :key="page" :class="{ activePage: page === currentPage }"
+            @click="changePage(page)">
+            {{ page }}
+         </button>
+         <button style="display: block; border: none; padding: 0; overflow: hidden;">
+            <img src="../../assets/UserManagement/右_right.png" style="width: 100%; height: 100%; display: block;">
+         </button>
+
+      </div>
     </div>
  </template>
  <script>
@@ -142,36 +148,7 @@
  
 
  
- .U_head .right input {
-    height: 3vh;
-    width: 23vh;
-    background-color: transparent;
-    border: 1px solid #f9e5ff;
-    color: #dddbdb;
-    padding-left: 10px;
- }
- 
- .U_head .right input:focus {
-    outline: none;
-    /* border-color: #f9e5ff; */
- }
- 
- .U_head .right input::placeholder {
-    color: #bebebe;
- }
- 
- .U_head .right {
-    display: flex;
-    align-items: center;
-    justify-content: center;
- }
- 
- .U_head .right button {
-    border: none;
-    width: 31px;
-    height: 31px;
-    background-image: url();
- }
+
  </style>
  
  <style scoped>
