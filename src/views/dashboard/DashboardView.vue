@@ -25,7 +25,7 @@
 export default {
    data() {
       return {
-
+       
 
       }
    },
@@ -58,6 +58,16 @@ export default {
 }
 </script>
 <style>
+
+.U_head {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-right: 100px;
+   margin-left: 69px;
+   margin-top: 35px;
+
+}
 .left-nav {
    width: 10vw;
    height: 100%;
@@ -134,20 +144,8 @@ export default {
 </style>
 <!-- 搜索框样式 -->
 <style>
-.U_head .right input {
-   height: 3vh;
-   width: 23vh;
-   background-color: transparent;
-   border: 1px solid #f9e5ff;
-   border-right: none;
-   color: #dddbdb;
-   padding-left: 10px;
-}
 
-.U_head .right input:focus {
-   outline: none;
-   /* border-color: #f9e5ff; */
-}
+
 
 .U_head .right input::placeholder {
    color: #bebebe;
@@ -157,28 +155,13 @@ export default {
    display: flex;
    align-items: center;
    justify-content: center;
-   height: 3vh;
+   /* height: 2vh; */
    /* width: 23vh; */
 }
 
-.U_head .right button {
-   border: none;
-   width: 3.5vh;
-   height: 3.5vh;
-   display: block;
-   border: none;
-   padding: 0.6vh;
-   overflow: hidden;
-   background-color: #409eff;
-   /* border-radius: none; */
 
-}
 
-.U_head .right button img {
-   width: 100%;
-   height: 100%;
-   display: block;
-}
+
 </style>
 
 <style>
@@ -190,90 +173,28 @@ export default {
 <style>
 .main_table {
    margin-left: 69px;
-   /* height: 30vh; */
-   width: 80vw;
-   background-color: #ffffff;
+   height: 70vh;
+   /* width: 80vw; */
+   /* background-color: #ffffff; */
    margin-top: 30px;
-   border-collapse: collapse;
+   /* border-collapse: collapse; */
    /* 移除单元格之间的间距 */
 }
+.el-table {
+  min-height: 200px;
+  max-height: 800px;
+}
 
-.main_table th {
-   border: 1px solid #c7bdbd;
-   padding: none;
-   color: #4095e5;
-   width: 8vw;
-   height: 4.5vh;
+/* 定义一个 CSS 类来改变标题颜色 */
+.custom-header-color {
+    color: #3994e5; 
 }
 
 
 
 
 
-.main_table td {
-   width: 60px;
-   height: 5.3vh;
-   border: 1px solid #c7bdbd;
-}
-</style>
-<!-- 弹窗 -->
-<style>
-.dialog-backdrop {
-   position: fixed;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   background-color: rgba(0, 0, 0, 0.5);
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   z-index: 9;
-   
-}
 
-.dialog-content {
-   background: white;
-   padding: 20px;
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   position: relative;
-   z-index: 11;
-   width: 20vw;
-   border-radius: 5px;
-
-}
-
-.dialog-content div {
-   display: flex;
-   justify-content: space-around;
-   align-items: baseline;
-}
-
-.dialog-content div .name {
-   width: 3vw;
-}
-
-.dialog-content form input,
-form select {
-   width: 70%;
-   padding: 10px;
-   margin-top: 5px;
-   margin-bottom: 15px;
-   box-sizing: border-box;
-   border: 1px solid #ccc;
-   border-radius: 4px;
-}
-
-.dialog-content table {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   margin-bottom: 2vh;
-}
-
-.dialog-content  .file-input{
-   height: 40vh;
-}
 </style>
 
 <style>
@@ -284,31 +205,9 @@ form select {
    position: absolute;
    right: 8vw;
    height: 30px;
-   /* width: 300px; */
+   
 
 }
 
-.page button {
-   border: none;
-   margin-left: 10px;
-   height: 30px;
-   width: 28px;
-   display: block;
-   border: none;
-   padding: 0;
-   overflow: hidden;
 
-
-}
-
-.page button img {
-   padding: 0.02vw;
-
-}
-
-.activePage {
-   background-color: #409EFF;
-   /* 选中页码的背景颜色 */
-   color: white;
-}
 </style>
