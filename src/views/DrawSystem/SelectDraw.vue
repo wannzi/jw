@@ -11,20 +11,78 @@
             <span >精准画图系统</span>
         </div>
 
-        <div  class="SelectDraw" >
-            <div style="display: flex; flex-direction: row; margin-top: 1vh;">
-                <select style="background-color: transparent; font-weight: bold; width: 6vw; color: white; border-radius: 5px 0 0 5px; border-color: rgb(50, 255, 246); text-align: center; height: 100%; display: flex; justify-content: center; align-items: center">
-                    <option value="">个人</option>
-                </select>
-                <input placeholder="请输入人员姓名或身份证号" style="width: 400px;height: 40px; border-color: rgb(50, 255, 246); background-color: transparent; color: white">
-                <div style="background-color: #32fff6;width: 7vw;font-size: 18px; text-align: center; height: 100%; border-radius: 0 5px 5px 0; display: flex; justify-content: center; align-items: center"><i class="el-icon-search" style="margin-right: 6px"/>搜索</div>
-            </div>
-            <div style="display: flex; flex-direction: row; margin-top: 15vh;">
-                <select style="background-color: transparent; font-weight: bold; width: 6vw; color: white; border-radius: 5px 0 0 5px; border-color: rgb(50, 255, 246); text-align: center; height: 100%; display: flex; justify-content: center; align-items: center">
-                    <option value="">单位</option>
-                </select>
-                <input placeholder="请输入单位名称或统一社会信用代码" style="width: 400px;height: 40px; border-color: rgb(50, 255, 246); background-color: transparent; color: white">
-                <div style="background-color: #32fff6;width: 7vw;font-size: 18px; text-align: center; height: 100%; border-radius: 0 5px 5px 0; display: flex; justify-content: center; align-items: center"><i class="el-icon-search" style="margin-right: 6px"/>搜索</div>
+<!--        <div  class="SelectDraw" >-->
+<!--            <div style="display: flex; flex-direction: row; margin-top: 1vh;">-->
+<!--                <select style="background-color: transparent; font-weight: bold; width: 6vw; color: white; border-radius: 5px 0 0 5px; border-color: rgb(50, 255, 246); text-align: center; height: 100%; display: flex; justify-content: center; align-items: center">-->
+<!--                    <option value="">个人</option>-->
+<!--                </select>-->
+<!--                <input placeholder="请输入人员姓名或身份证号" style="width: 400px;height: 40px; border-color: rgb(50, 255, 246); background-color: transparent; color: white">-->
+<!--                <div style="background-color: #32fff6;width: 7vw;font-size: 18px; text-align: center; height: 100%; border-radius: 0 5px 5px 0; display: flex; justify-content: center; align-items: center"><i class="el-icon-search" style="margin-right: 6px"/>搜索</div>-->
+<!--            </div>-->
+<!--            <div style="display: flex; flex-direction: row; margin-top: 15vh;">-->
+<!--                <select style="background-color: transparent; font-weight: bold; width: 6vw; color: white; border-radius: 5px 0 0 5px; border-color: rgb(50, 255, 246); text-align: center; height: 100%; display: flex; justify-content: center; align-items: center">-->
+<!--                    <option value="">单位</option>-->
+<!--                </select>-->
+<!--                <input placeholder="请输入单位名称或统一社会信用代码" style="width: 400px;height: 40px; border-color: rgb(50, 255, 246); background-color: transparent; color: white">-->
+<!--                <div style="background-color: #32fff6;width: 7vw;font-size: 18px; text-align: center; height: 100%; border-radius: 0 5px 5px 0; display: flex; justify-content: center; align-items: center"><i class="el-icon-search" style="margin-right: 6px"/>搜索</div>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div id="app">
+            <div class="SelectDraw">
+                <div
+                    style="
+          display: flex;
+          flex-direction: row;
+          margin-top: 1vh;
+        "
+                >
+                    <select
+                        v-model="selectedType"
+                        style="
+            background-color: transparent;
+            font-weight: bold;
+            width: 6vw;
+            color: white;
+            border-radius: 5px 0 0 5px;
+            border-color: rgb(50, 255, 246);
+            text-align: center;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+                    >
+                        <option value="individual">个人</option>
+                        <option value="organization">单位</option>
+                    </select>
+                    <input
+                        v-model="searchQuery"
+                        :placeholder="placeholderText"
+                        style="
+            width: 400px;
+            height: 40px;
+            border-color: rgb(50, 255, 246);
+            background-color: transparent;
+            color: white;
+          "
+                    />
+                    <div
+                        style="
+            background-color: #32fff6;
+            width: 7vw;
+            font-size: 18px;
+            text-align: center;
+            height: 100%;
+            border-radius: 0 5px 5px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+                    >
+                        <i class="el-icon-search" style="margin-right: 6px" />
+                        搜索
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -32,7 +90,7 @@
 <script>
 
 // import router from "@/router";
-import Vue from "vue";
+// import Vue from "vue";
 // import {Component} from "vue-class-component";
 //
 // @Component({
@@ -42,8 +100,26 @@ import Vue from "vue";
 //         }
 //     }
 // })
-export default class SelectDraw extends Vue {
-}
+export default {
+    data() {
+        return {
+            selectedType: 'individual',
+            searchQuery: '',
+        };
+    },
+    computed: {
+        placeholderText() {
+            if (this.selectedType === 'individual') {
+                return '请输入人员姓名或身份证号';
+            } else if (this.selectedType === 'organization') {
+                return '请输入单位名称或统一社会信用代码';
+            }
+
+            // 默认返回空字符串
+            return '';
+        },
+    },
+};
 
 </script>
 <style>
