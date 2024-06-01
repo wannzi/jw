@@ -5,10 +5,10 @@
       <!-- 左侧导航 -->
       <div class="left-nav">
          <div class="nav-title">
-            <button @click="navChange(1)" :class="{ btnChange: $route.name === 'UserManagement' }">用户管理</button>
-            <button @click="navChange(2)" :class="{ btnChange: $route.name === 'PermissionManagement' }">权限管理</button>
-            <button @click="navChange(3)" :class="{ btnChange: $route.name === 'FileManagement' }">库文件管理</button>
-            <button @click="navChange(4)" :class="{ btnChange: $route.name === 'RuleManagement' }">规则管理</button>
+            <el-button @click="navChange(1)" type="primary">用户管理</el-button>
+            <el-button @click="navChange(2)" type="primary">权限管理</el-button>
+            <el-button @click="navChange(3)" type="primary">库文件管理</el-button>
+            <el-button @click="navChange(4)" type="primary">规则管理</el-button>
          </div>
       </div>
 
@@ -25,7 +25,7 @@
 export default {
    data() {
       return {
-       
+
 
       }
    },
@@ -58,7 +58,6 @@ export default {
 }
 </script>
 <style>
-
 .U_head {
    display: flex;
    justify-content: space-between;
@@ -68,6 +67,7 @@ export default {
    margin-top: 35px;
 
 }
+
 .left-nav {
    width: 10vw;
    height: 100%;
@@ -83,6 +83,9 @@ export default {
    position: relative;
    padding-top: 12vh;
    z-index: 4;
+   display: flex;
+   flex-direction: column;
+   align-items: baseline;
 
 }
 
@@ -144,9 +147,6 @@ export default {
 </style>
 <!-- 搜索框样式 -->
 <style>
-
-
-
 .U_head .right input::placeholder {
    color: #bebebe;
 }
@@ -158,10 +158,6 @@ export default {
    /* height: 2vh; */
    /* width: 23vh; */
 }
-
-
-
-
 </style>
 
 <style>
@@ -180,21 +176,16 @@ export default {
    /* border-collapse: collapse; */
    /* 移除单元格之间的间距 */
 }
+
 .el-table {
-  min-height: 200px;
-  max-height: 800px;
+   min-height: 200px;
+   max-height: 800px;
 }
 
 /* 定义一个 CSS 类来改变标题颜色 */
 .custom-header-color {
-    color: #3994e5; 
+   color: #3994e5;
 }
-
-
-
-
-
-
 </style>
 
 <style>
@@ -205,9 +196,7 @@ export default {
    position: absolute;
    right: 8vw;
    height: 30px;
-   
+
 
 }
-
-
 </style>

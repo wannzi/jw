@@ -68,7 +68,7 @@
       </el-dialog>
 
       <!-- 删除弹窗 -->
-      <el-dialog :visible.sync="delRuleVisible" title="删除用户" :modal-append-to-body="false" width="30%">
+      <el-dialog :visible.sync="delRuleVisible" title="删除规则" :modal-append-to-body="false" width="30%">
          <!-- 根据删除类型显示不同的提示信息 -->
          <el-alert :title="selectedRules.length > 1 ? '确定删除选中的用户吗？' : '确定删除该用户吗？'" type="warning" center
             :closable="false">
@@ -179,7 +179,7 @@ export default {
                this.delRuleVisible = true;
             } else {
                this.$message({
-                  message: "请选择要删除的用户",
+                  message: "请选择要删除的规则",
                   type: "warning"
                });
             }
