@@ -8,7 +8,12 @@
 
 
          <!-- 文件树 -->
-         <el-tree :data="fileData"  node-key="label" :render-content="renderContent" :allow-drop="() => false"></el-tree>
+         <el-tree :data="fileData" node-key="label" :highlight-current="false" :render-content="renderContent" 
+            :allow-drop="() => false" 
+            draggable="true">
+
+         </el-tree>
+
 
 
       </div>
@@ -16,7 +21,7 @@
       <div class="fileComparison_right">
 
          <el-row class="right_head">
-            <span class="icon_head" @click="showUpLoadPopup">
+            <span class="icon_head" @click="showUpLoadView">
                <img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="">
                <span>导入</span>
             </span>
@@ -66,6 +71,15 @@
             <div>对比:将一个或多个文件进行内容比对</div>
          </div>
          <!-- 弹窗 -->
+
+         <el-dialog title="上传文件" :visible.sync="uploadFilesVisible" width="30%">
+            <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+               <i class="el-icon-upload"></i>
+               <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+               <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+
+         </el-dialog>
          <div v-if="uploadPopupIsShow" class="dialog-backdrop" @click.self="closePopup()">
             <div class="dialog-content" @click.stop>
                <input type="file" multiple @change="handleFileUpload">
@@ -108,6 +122,7 @@ export default {
             {
                label: '公共库',
                draggable: false,
+               iconClass: 'el-icon-folder', // 对应 CSS class
                children: [
                   { label: '文件一', draggable: true },
                   { label: '文件二', draggable: true }
@@ -130,67 +145,18 @@ export default {
                ]
             }
          ],
-         // publicList: [
-         //    {
-         //       name: '文件一',
-         //       path: '',
-         //       file: ''
-         //    },
-         //    {
-         //       name: '文件二',
-         //       path: '',
-         //       file: ''
-         //    },
-         //    {
-         //       name: '文件三',
-         //       path: '',
-         //       file: ''
-         //    }
-         // ],
-         // privateList: [
-         //    {
-         //       name: '文件一',
-         //       path: '',
-         //       file: ''
-         //    },
-         //    {
-         //       name: '文件二',
-         //       path: '',
-         //       file: ''
-         //    },
-         //    {
-         //       name: '文件三',
-         //       path: '',
-         //       file: ''
-         //    }
-         // ],
-         // resultsList: [
-         //    {
-         //       name: '文件一',
-         //       path: '',
-         //       file: ''
-         //    },
-         //    {
-         //       name: '文件二',
-         //       path: '',
-         //       file: ''
-         //    },
-         //    {
-         //       name: '文件三',
-         //       path: '',
-         //       file: ''
-         //    }
-         // ],
+
          publicListIsShow: false,
          privateListIsShow: false,
          resultsListIsShow: false,
          fileContent: '',
-         uploadPopupIsShow: false,
+
+         uploadFilesVisible: false,
          selectedFiles: [],  // 用于存储选中的文件信息
          tableData: [], // 新增用于存储表格数据
          extraRows: 3,  // 额外增加的行数
-         extraColumns: 3 ,// 额外增加的列数
-         
+         extraColumns: 3,// 额外增加的列数
+
       }
    },
    activated() {
@@ -202,18 +168,10 @@ export default {
    mounted() {
    },
    methods: {
-      // 展开文件树
 
 
-      showList(nav) {
-         if (nav == 1) {
-            this.publicListIsShow = !this.publicListIsShow;
-         } else if (nav == 2) {
-            this.privateListIsShow = !this.privateListIsShow;
-         } else if (nav == 3) {
-            this.resultsListIsShow = !this.resultsListIsShow;
-         }
-      },
+
+
 
       // 展示导出页面
       showNav(nav) {
@@ -232,8 +190,8 @@ export default {
          this.selectedFiles = [];  // 清空旧的文件列表
       },
       // 展示上传页面
-      showUpLoadPopup() {
-         this.uploadPopupIsShow = true;
+      showUpLoadView() {
+         this.uploadFilesVisible = true;
       },
       // 获取文件
       handleFileUpload(event) {
@@ -261,40 +219,7 @@ export default {
          this.selectedFiles = [];
          this.closePopup();  // 可以选择在上传后关闭弹窗
       },
-
-      // 预览文件
-      previewFile(file) {
-         this.$router.push({ name: 'FileComparison' });
-         if (file.file && file.file instanceof File) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-               const data = new Uint8Array(e.target.result);
-               const workbook = XLSX.read(data, { type: 'array' });
-               const sheetName = workbook.SheetNames[0];
-               const worksheet = workbook.Sheets[sheetName];
-               let rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: true });
-
-               // 获取原始数据的最大行列数
-               let maxRows = rawData.length;
-               let maxCols = rawData.reduce((max, row) => Math.max(max, row.length), 0);
-
-               // 添加额外的行和列
-               this.tableData = new Array(maxRows + this.extraRows).fill([]).map((row, rowIndex) => {
-                  return new Array(maxCols + this.extraColumns).fill('').map((cell, cellIndex) => {
-                     if (rowIndex < rawData.length && cellIndex < rawData[rowIndex].length) {
-                        return rawData[rowIndex][cellIndex] || '';  // 处理undefined或null
-                     }
-                     return '';
-                  });
-               });
-
-               this.fileContent = this.tableData.map(row => row.join(' | ')).join('\n');  // Optional: for text preview
-            };
-            reader.readAsArrayBuffer(file.file);
-         } else {
-            console.error('传递的不是有效的文件对象');
-         }
-      },
+      //拖动文件
       // 拖拽文件到需要部分
       handleDragStart(event, item) {
          // 转化成json字符串，以便在drop事件中获取数据
@@ -319,7 +244,19 @@ export default {
          } else {
             event.preventDefault(); // 阻止不可拖放的节点触发拖放
          }
+      },
+
+
+      //渲染图标
+      renderContent(h, { node, data }) {
+         return (
+            <div style="display: flex; align-items: center;">
+               <el-icon class={node.level === 1 ? 'el-icon-folder-opened' : 'el-icon-document'} style="margin-right: 10px;"></el-icon>
+               <span>{node.label}</span>
+            </div>
+         );
       }
+
 
 
 
@@ -333,6 +270,13 @@ export default {
 
 }
 </script>
+
+
+
+
+
+
+
 <style>
 .fileComparison {
    padding-top: 9vh;
@@ -392,17 +336,32 @@ export default {
 }
 </style>
 
+<!-- 树组件样式 -->
 <style scoped>
-.el-tree  {
+.el-tree>>>.el-tree-node__content:hover {
+   background-color: #2969a9;
+}
+
+
+.el-tree>>>.el-tree-node {
+   padding-top: 15px;
+}
+
+.el-tree>>>.el-tree-node:focus>.el-tree-node__content {
+   background-color: transparent;
+}
+
+.el-tree {
    color: #f7f9ff;
    background-color: transparent;
    font-size: 1.1vw;
    padding-left: 20%;
    padding-right: 15%;
 }
-
-
 </style>
+
+
+
 <style>
 .left_head {
    font-size: 1.4vw;
@@ -521,64 +480,7 @@ export default {
 }
 </style>
 
-<style>
-.dialog-backdrop {
-   position: fixed;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   background-color: rgba(0, 0, 0, 0.5);
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   z-index: 9;
 
-}
-
-.dialog-content {
-   background: white;
-   padding: 20px;
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   position: relative;
-   z-index: 11;
-   width: 20vw;
-   border-radius: 5px;
-
-}
-
-.dialog-content div {
-   display: flex;
-   justify-content: space-around;
-   align-items: baseline;
-}
-
-.dialog-content div .name {
-   width: 3vw;
-}
-
-.dialog-content form input,
-form select {
-   width: 70%;
-   padding: 10px;
-   margin-top: 5px;
-   margin-bottom: 15px;
-   box-sizing: border-box;
-   border: 1px solid #ccc;
-   border-radius: 4px;
-}
-
-.dialog-content table {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   margin-bottom: 2vh;
-}
-
-.dialog-content .file-input {
-   height: 40vh;
-}
-</style>
 <style scoped>
 .fileContentContainer {
    height: 90%;
