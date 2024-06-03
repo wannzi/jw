@@ -41,7 +41,9 @@
 
       </div>
 
-      <button class="ge_btn1">下一步</button>
+      <el-button type="primary" @click="handleCompare">下一步</el-button>
+      
+      
    </div>
 </template>
 <script>
@@ -97,6 +99,9 @@ export default {
             this.filesCompare.splice(index, 1);
          }
       },
+      handleCompare(){
+         this.$router.push({name:'ConpareFunction2' })
+      }
    }
 
 
@@ -136,6 +141,6 @@ export default {
 .intoFile {
    height: 30vh;
    margin-top: 2vw;
-
+   margin-bottom: 2vw;
 }
 </style>

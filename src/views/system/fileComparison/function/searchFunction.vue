@@ -24,6 +24,8 @@
             <!-- 文件列表展示 -->
             <el-tooltip :key="tag" v-for="tag in files" :content="tag.father">
                 <el-tag closable :disable-transitions="false" type="success"  @close="handleClose(tag)">
+                    <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
                     {{ tag.label }}
 
                 </el-tag>

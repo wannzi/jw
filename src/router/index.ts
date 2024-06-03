@@ -78,6 +78,12 @@ export default new Router({
                             path: 'compareFunction',
                             name: 'CompareFunction',
                             component: () => import('@/views/system/fileComparison/function/compareFunction.vue')
+
+                        },
+                        {
+                            path: 'conpareFunction2',
+                            name: 'ConpareFunction2',
+                            component: () => import('@/views/system/fileComparison/function/compareView/compareFunction2.vue')
                         }
                     ]
                 }
