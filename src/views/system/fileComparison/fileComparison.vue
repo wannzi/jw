@@ -8,6 +8,7 @@
 
 
          <!-- 文件树 -->
+         
          <el-tree :data="fileData" node-key="label" :highlight-current="false" :render-content="renderContent"
             :allow-drop="() => false" draggable @node-drag-start="handleDragStart">
 
@@ -19,31 +20,43 @@
 
       <div class="fileComparison_right">
 
-         <el-tabs @tab-click="handleClick" class="right_head">
-            <el-tab-pane label="导入" name="upload">
-               <span slot="label"><img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="">导入</span>
+         <el-tabs @tab-click="handleClick" class="right_head" >
+            <el-tab-pane label="导入" name="upload" >
+               <span slot="label"><img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="" v-if="uploadImg">
+                  <img src="../../../assets/UserManagement/传入(绿)_afferent.png" v-else>
+                  导入</span>
 
             </el-tab-pane>
             <el-tab-pane label="导出" name="export">
-               <span slot="label"> <img src="../../../assets/UserManagement/传入(白)_afferent.png"
-                     style="transform: scaleX(-1);">导出</span>
+               <span slot="label"> <img src="../../../assets/UserManagement/传入(白)_afferent.png" v-if="exportImg"
+                     style="transform: scaleX(-1);">
+                     <img src="../../../assets/UserManagement/传入(绿)_afferent.png" style="transform: scaleX(-1);" v-else>
+                     导出</span>
             </el-tab-pane>
-            <el-tab-pane label="保存" name="save" disabled="true">保存
-               <span slot="label"><img src="../../../assets/UserManagement/保存_save.png" alt=""> 保存</span>
+            <el-tab-pane label="保存" name="save" :disabled="true">保存
+               <span slot="label"><img src="../../../assets/UserManagement/保存_save.png" alt="" v-if="false">
+                  <img src="../../../assets/UserManagement/保存(灰)_save.png" v-else>
+                  保存</span>
 
             </el-tab-pane>
             <el-tab-pane label="删除" name="delete">
-               <span slot="label"><img src="../../../assets/UserManagement/删除_delete.png" alt=""> 删除</span>
+               <span slot="label"><img src="../../../assets/UserManagement/删除_delete.png" alt="" v-if="deleteImg">
+                  <img src="../../../assets/UserManagement/删除(绿)_delete.png" v-else>
+                  删除</span>
             </el-tab-pane>
             <el-tab-pane label="检索" name="search">
-               <span slot="label"><img src="../../../assets/UserManagement/查找_find.png" alt=""> 检索</span>
+               <span slot="label"><img src="../../../assets/UserManagement/查找_find.png" alt="" v-if="searchImg">
+                     <img src="../../../assets/UserManagement/查找(绿)_find.png" v-else>
+                  检索</span>
             </el-tab-pane>
             <el-tab-pane label="比对" name="compare">
-               <span slot="label" class="last_icon"><img src="../../../assets/UserManagement/对比_contrast.png" alt=""> 比对</span>
+               <span slot="label" class="last_icon"><img src="../../../assets/UserManagement/对比_contrast.png" v-if="compareImg">
+                  <img src="../../../assets/UserManagement/对比(绿)_contrast.png" v-else>
+                  比对</span>
             </el-tab-pane>
          </el-tabs>
 
-         
+
 
          <div v-if="fileContent && this.$route.name === 'FileComparison'" class="fileContentContainer">
             <el-table :data="tableData">
@@ -132,10 +145,13 @@ export default {
 
          uploadFilesVisible: false,
          selectedFiles: [],  // 用于存储选中的文件信息
-         tableData: [], // 新增用于存储表格数据
-         extraRows: 3,  // 额外增加的行数
-         extraColumns: 3,// 额外增加的列数
-
+         //标签状态
+         
+         uploadImg: true,
+         exportImg: true,
+         deleteImg: true,
+         searchImg: true,
+         compareImg: true,
       }
    },
    activated() {
@@ -147,21 +163,47 @@ export default {
    mounted() {
    },
    methods: {
-
+      //蠢但是好用
       handleClick(tab) {
          if (tab.name === 'upload') {
             this.showUpLoadView();
+            this.uploadImg = false;
+            this.exportImg = true;
+            this.deleteImg = true;
+            this.searchImg = true;
+            this.compareImg = true;
          } else if (tab.name === 'export') {
             this.$router.push({ name: 'ExportFunction' });
+            this.exportImg = false;
+            this.uploadImg = true;
+            this.deleteImg = true;
+            this.searchImg = true;
+            this.compareImg = true;
          } else if (tab.name === 'delete') {
             this.$router.push({ name: 'DeleteFunction' });
+            this.deleteImg = false;
+            this.uploadImg = true;
+            this.exportImg = true;
+            this.searchImg = true;
+            this.compareImg = true;
          } else if (tab.name === 'search') {
             this.$router.push({ name: 'SearchFunction' });
+            this.searchImg = false;
+            this.uploadImg = true;
+            this.exportImg = true;
+            this.deleteImg = true;
+            this.compareImg = true;
          } else if (tab.name === 'compare') {
             this.$router.push({ name: 'CompareFunction' });
+            this.compareImg = false;
+            this.uploadImg = true;
+            this.exportImg = true;
+            this.deleteImg = true;
+            this.searchImg = true;
          }
       },
-
+      
+     
 
 
 
@@ -208,14 +250,27 @@ export default {
 
       //渲染图标
       renderContent(h, { node }) {
+      // 决定使用哪个图标
+      const iconName = node.level === 1 ? 'el-icon-folder-opened' : 'el-icon-document';
 
-         return (
-
-            <div style="display: flex; align-items: center;">
-               <el-icon class={node.level === 1 ? 'el-icon-folder-opened' : 'el-icon-document'} style="margin-right: 10px;"></el-icon>
-               <span>{node.label}</span>
-            </div>
-         );
+      // 渲染内容时，对二级节点添加tooltip
+      if (node.level === 2) {
+        return (
+          <div style="display: flex; align-items: center;">
+            <el-icon class={iconName} style="margin-right: 10px;"></el-icon>
+            <el-tooltip class="item" content={node.label} placement="top-start" effect="dark">
+              <span>{node.label}</span>
+            </el-tooltip>
+          </div>
+        );
+      } else {
+        return (
+          <div style="display: flex; align-items: center;">
+            <el-icon class={iconName} style="margin-right: 10px;"></el-icon>
+            <span>{node.label}</span>
+          </div>
+        );
+      }
       }
 
 
@@ -349,8 +404,9 @@ export default {
    padding-right: 33px;
 
 }
-.el-tabs >>> .last_icon {
-    border-right: none !important;
+
+.el-tabs>>>.last_icon {
+   border-right: none !important;
 }
 
 
@@ -358,12 +414,14 @@ export default {
 .el-tabs>>>.el-tabs__item {
    line-height: 0;
    height: 0px;
-   color: white; 
+   color: white;
 
 }
+
 .el-tabs>>>.el-tabs__item.is-disabled {
    color: #7691af;
 }
+
 .el-tabs>>>.el-tabs__item.is-active {
    color: #7af0f3;
 }
@@ -402,6 +460,7 @@ export default {
    margin-top: 0.7vw;
    margin-bottom: 0.7vw;
 }
+
 .right_title {
    display: flex;
    flex-direction: column;
@@ -432,8 +491,6 @@ export default {
    height: 1.2vw;
    margin-right: 0.5vw;
 }
-
-
 </style>
 <style>
 .navActive {

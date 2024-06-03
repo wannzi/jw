@@ -15,6 +15,8 @@
             <el-tooltip :key="tag" v-for="tag in files" :content="tag.father">
                 <el-tag  closable :disable-transitions="false" type="success"
                      @close="handleClose(tag)">
+                     <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
                      {{ tag.label }}
 
                 </el-tag>
@@ -97,8 +99,28 @@ export default {
     /* 添加元素时候左侧排列 */
     float: left;
     margin-top: 10px;
-    margin-right: 10px;     
+    margin-right: 20px;     
 
+}
+::v-deep .el-tag.el-tag--success {
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+    color: #67c23a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90px;
+    flex-direction: column;
+}
+
+::v-deep .el-tag.el-tag--success {
+    position: relative;
+}
+::v-deep .el-tag.el-tag--success .el-tag__close {
+    position: absolute;
+    transform: translate(45%, -45%);
+    background-color: #67c23a;
+    color: #FFF;
 }
 </style>
 <style>
