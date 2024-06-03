@@ -22,12 +22,12 @@
 
 
             <!-- 文件列表展示 -->
-            <ul class="file-list" v-if="files.length">
-                <li v-for="(file, index) in files" :key="index" class="file-item">
-                    {{ file.name }}
-                    <span class="delete-btn" @click="removeFile(index)">×</span>
-                </li>
-            </ul>
+            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father">
+                <el-tag closable :disable-transitions="false" type="success"  @close="handleClose(tag)">
+                    {{ tag.label }}
+
+                </el-tag>
+            </el-tooltip>
 
         </div>
     </div>
@@ -48,24 +48,34 @@ export default {
     mounted() {
     },
     methods: {
-        handleDragOver(event) {
-            event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
+        handleDragOver() {
+
         },
-
-
+        //处理拖拽并获取文件tag
         handleFileDrop(event) {
-            event.preventDefault();
             const data = event.dataTransfer.getData('application/json');
-            const item = JSON.parse(data);
-            this.files.push(item); // 假设处理的是文件列表
-            
+
+            if (data) {
+                const file = JSON.parse(data);
+                console.log(file);
+                this.files.push(file);
+
+                console.log('Dropped files:', this.files);
+            }
         },
+
+        handleClose(tag) {
+            const index = this.files.indexOf(tag);
+            if (index !== -1) {
+
+                this.files.splice(index, 1);
+            }
+        },
+       
         deleteFiles() {
             // 实现文件的导出逻辑
         },
-        clearFiles() {
-            this.files = [];
-        },
+
         removeFile(index) {
             this.files.splice(index, 1); // 移除指定索引的文件
         }
@@ -74,6 +84,17 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.el-tag {
+    font-size: 18px;
+    /* 添加元素时候左侧排列 */
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;     
+
+}
+</style>
 
 <style>
 .search_input {

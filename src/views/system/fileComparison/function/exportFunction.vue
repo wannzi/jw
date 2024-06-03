@@ -8,19 +8,27 @@
             </div>
 
 
+
             <!-- 文件列表展示 -->
-            <ul class="file-list" v-if="files.length">
-                <li v-for="(file, index) in files" :key="index" class="file-item">
-                    {{ file.name }}
-                    <span class="delete-btn" @click="removeFile(index)">×</span>
-                </li>
-            </ul>
+
+           
+            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father">
+                <el-tag  closable :disable-transitions="false" type="success"
+                     @close="handleClose(tag)">
+                     {{ tag.label }}
+
+                </el-tag>
+            </el-tooltip>
+
+
+
+
 
         </div>
 
         <div class="ctrl_btn">
-            <button class="ge_btn1" @click="exportFiles">导出</button>
-            <button class="ge_btn2" @click="clearFiles">清空</button>
+            <el-button type="primary" @click="exportFiles">导出</el-button>
+            <el-button type="danger" @click="clearFiles">清空</el-button>
         </div>
     </div>
 </template>
@@ -28,7 +36,10 @@
 export default {
     data() {
         return {
-            files: [],//存放拖拽的文件
+            files: [
+                
+            ],//存放拖拽的文件
+           
         }
     },
     activated() {
@@ -40,33 +51,56 @@ export default {
     mounted() {
     },
     methods: {
-        handleDragOver(event) {
-            event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
+        handleDragOver() {
+
+        },
+        //处理拖拽并获取文件tag
+        handleFileDrop(event) {
+            const data = event.dataTransfer.getData('application/json');
+
+            if (data) {
+                const file = JSON.parse(data);
+                console.log(file);
+                this.files.push(file);
+               
+                console.log('Dropped files:', this.files);
+            }
         },
 
-
-        handleFileDrop(event) {
-            event.preventDefault();
-            const data = event.dataTransfer.getData('application/json');
-            const item = JSON.parse(data);
-            this.files.push(item); // 假设处理的是文件列表
-            console.log(this.files); // 查看更新后的文件数组
+        handleClose(tag) {
+            const index = this.files.indexOf(tag);
+            if (index !== -1) {
+                
+                this.files.splice(index, 1);
+            }
+        },
+        clearFiles() {
+            this.files = [];
+           
         },
         exportFiles() {
             // 实现文件的导出逻辑
         },
-        clearFiles() {
-            this.files = [];
-        },
         removeFile(index) {
-            this.files.splice(index, 1); // 移除指定索引的文件
+            this.files.splice(index, 1);
+            
         }
-
     }
+
 
 
 }
 </script>
+<style scoped>
+.el-tag {
+    font-size: 18px;
+    /* 添加元素时候左侧排列 */
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;     
+
+}
+</style>
 <style>
 .intoFile {
     width: 73vw;
@@ -81,37 +115,6 @@ export default {
 
 }
 
-.file-list {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    padding: 8px;
-    margin: 0;
-    
-}
-
-.file-item {
-    background-color: #f0f8ff;
-    margin: 4px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    position: relative;
-}
-
-.delete-btn {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    cursor: pointer;
-    background-color: #ff6666;
-    /* 红色背景 */
-    color: white;
-    font-weight: bold;
-    border-radius: 50%;
-    /* 右上角圆角 */
-    padding: 2px 6px;
-}
 
 .intoFile_title_1 {
     position: absolute;
@@ -137,33 +140,7 @@ export default {
 <style>
 .ctrl_btn {
     position: absolute;
-    right: 1.8vw;
-}
-
-
-.ctrl_btn button {
-    font-size: 1vw;
-    font-weight: bold;
-
-}
-
-.ge_btn1 {
-    background-color: #409eff;
-    color: #ffffff;
-    border: none;
-    width: 94px;
-    height: 37px;
-    margin-right: 18px;
-    margin-top: 2vw;
-}
-
-.ge_btn2 {
-    background-color: #f56c6c;
-    color: #ffffff;
-    border: none;
-    width: 94px;
-    height: 37px;
-    margin-right: 18px;
-    margin-top: 2vw;
+    margin-top: 2vh;
+    right: 3vw;
 }
 </style>

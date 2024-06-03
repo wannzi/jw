@@ -10,12 +10,12 @@
 
 
          <!-- 文件列表展示 -->
-         <ul class="file-list" v-if="filesMain.length">
-            <li v-for="(file, index) in filesMain" :key="index" class="file-item">
-               {{ file.name }}
-               <span class="delete-btn" @click="removeFileMain(index)">×</span>
-            </li>
-         </ul>
+         <el-tooltip :key="tag" v-for="tag in filesMain" :content="tag.father">
+            <el-tag closable :disable-transitions="false" type="success" @close="handleCloseMain(tag)">
+               {{ tag.label }}
+
+            </el-tag>
+         </el-tooltip>
 
       </div>
       <div class="intoFile" @dragover.prevent="handleDragOver" @drop.prevent="handleFileDropCompare">
@@ -28,12 +28,12 @@
 
 
          <!-- 文件列表展示 -->
-         <ul class="file-list" v-if="filesCompare.length">
-            <li v-for="(file, index) in filesCompare" :key="index" class="file-item">
-               {{ file.name }}
-               <span class="delete-btn" @click="removeFileCompare(index)">×</span>
-            </li>
-         </ul>
+         <el-tooltip :key="tag" v-for="tag in filesCompare" :content="tag.father">
+            <el-tag closable :disable-transitions="false" type="success" @close="handleCloseCompare(tag)">
+               {{ tag.label }}
+
+            </el-tag>
+         </el-tooltip>
 
       </div>
 
@@ -57,8 +57,8 @@ export default {
    mounted() {
    },
    methods: {
-      handleDragOver(event) {
-         event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
+      handleDragOver() {
+
       },
 
 
@@ -69,9 +69,14 @@ export default {
          this.filesMain.push(item); // 假设处理的是文件列表
 
       },
-      removeFileMain(index) {
-         this.filesMain.splice(index, 1); // 移除指定索引的文件
+      handleCloseMain(tag) {
+         const index = this.filesMain.indexOf(tag);
+         if (index !== -1) {
+
+            this.filesMain.splice(index, 1);
+         }
       },
+
       handleFileDropCompare(event) {
          event.preventDefault();
          const data = event.dataTransfer.getData('application/json');
@@ -79,14 +84,30 @@ export default {
          this.filesCompare.push(item); // 假设处理的是文件列表
 
       },
-      removeFileCompare(index) {
-         this.filesCompare.splice(index, 1); // 移除指定索引的文件
+
+
+      handleCloseCompare(tag) {
+         const index = this.filesCompare.indexOf(tag);
+         if (index !== -1) {
+
+            this.filesCompare.splice(index, 1);
+         }
       },
    }
 
 
 }
 </script>
+<style scoped>
+.el-tag {
+   font-size: 18px;
+   /* 添加元素时候左侧排列 */
+   float: left;
+   margin-top: 10px;
+   margin-right: 10px;
+
+}
+</style>
 <style scoped>
 .intoFile {
    height: 30vh;

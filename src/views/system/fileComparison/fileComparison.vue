@@ -8,9 +8,8 @@
 
 
          <!-- 文件树 -->
-         <el-tree :data="fileData" node-key="label" :highlight-current="false" :render-content="renderContent" 
-            :allow-drop="() => false" 
-            draggable="true">
+         <el-tree :data="fileData" node-key="label" :highlight-current="false" :render-content="renderContent"
+            :allow-drop="() => false" draggable @node-drag-start="handleDragStart">
 
          </el-tree>
 
@@ -20,33 +19,31 @@
 
       <div class="fileComparison_right">
 
-         <el-row class="right_head">
-            <span class="icon_head" @click="showUpLoadView">
-               <img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="">
-               <span>导入</span>
-            </span>
+         <el-tabs @tab-click="handleClick" class="right_head">
+            <el-tab-pane label="导入" name="upload">
+               <span slot="label"><img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="">导入</span>
 
-            <span class="icon_head" @click="showNav(2)" :class="{ navActive: this.$route.name === 'ExportFunction' }">
-               <img src="../../../assets/UserManagement/传入(白)_afferent.png" style="transform: scaleX(-1);">
-               <span>导出</span>
-            </span>
-            <span class="icon_head " :class="{ icon_head_active: !fileContent }">
-               <img src="../../../assets/UserManagement/保存_save.png">
-               <span>保存</span>
-            </span>
-            <span class="icon_head" @click="showNav(4)" :class="{ navActive: this.$route.name === 'DeleteFunction' }">
-               <img src="../../../assets/UserManagement/删除_delete.png">
-               <span>删除</span>
-            </span>
-            <span class="icon_head" @click="showNav(5)" :class="{ navActive: this.$route.name === 'SearchFunction' }">
-               <img src="../../../assets/UserManagement/查找_find.png">
-               <span>检索</span>
-            </span>
-            <span class="icon_head" @click="showNav(6)" :class="{ navActive: this.$route.name === 'CompareFunction' }">
-               <img src="../../../assets/UserManagement/对比_contrast.png">
-               <span>比对</span>
-            </span>
-         </el-row>
+            </el-tab-pane>
+            <el-tab-pane label="导出" name="export">
+               <span slot="label"> <img src="../../../assets/UserManagement/传入(白)_afferent.png"
+                     style="transform: scaleX(-1);">导出</span>
+            </el-tab-pane>
+            <el-tab-pane label="保存" name="save" disabled="true">保存
+               <span slot="label"><img src="../../../assets/UserManagement/保存_save.png" alt=""> 保存</span>
+
+            </el-tab-pane>
+            <el-tab-pane label="删除" name="delete">
+               <span slot="label"><img src="../../../assets/UserManagement/删除_delete.png" alt=""> 删除</span>
+            </el-tab-pane>
+            <el-tab-pane label="检索" name="search">
+               <span slot="label"><img src="../../../assets/UserManagement/查找_find.png" alt=""> 检索</span>
+            </el-tab-pane>
+            <el-tab-pane label="比对" name="compare">
+               <span slot="label" class="last_icon"><img src="../../../assets/UserManagement/对比_contrast.png" alt=""> 比对</span>
+            </el-tab-pane>
+         </el-tabs>
+
+         
 
          <div v-if="fileContent && this.$route.name === 'FileComparison'" class="fileContentContainer">
             <el-table :data="tableData">
@@ -80,25 +77,7 @@
             </el-upload>
 
          </el-dialog>
-         <div v-if="uploadPopupIsShow" class="dialog-backdrop" @click.self="closePopup()">
-            <div class="dialog-content" @click.stop>
-               <input type="file" multiple @change="handleFileUpload">
-               <ul>
-                  <li v-for="file in selectedFiles" :key="file.name">
-                     文件名: {{ file.name }}，大小: {{ (file.size / 1024).toFixed(2) }} KB
-                  </li>
-               </ul>
-               <div>
 
-                  <div>
-                     <button type="button" @click="closePopup()">取消</button>
-                     <button type="button" @click="uploadFiles()">导入</button>
-                  </div>
-               </div>
-
-
-            </div>
-         </div>
 
          <router-view class="child_view">
 
@@ -112,7 +91,7 @@
    </div>
 </template>
 <script>
-import * as XLSX from 'xlsx';
+
 
 
 export default {
@@ -122,26 +101,26 @@ export default {
             {
                label: '公共库',
                draggable: false,
-               iconClass: 'el-icon-folder', // 对应 CSS class
+
                children: [
-                  { label: '文件一', draggable: true },
-                  { label: '文件二', draggable: true }
+                  { label: '文件一', draggable: true, father: '公共库' },
+                  { label: '文件二', draggable: true, father: '公共库' }
                ]
             },
             {
                label: '私有库',
                draggable: false,
                children: [
-                  { label: '文件一', draggable: true },
-                  { label: '文件二', draggable: true }
+                  { label: '文件一', draggable: true, father: '私有库' },
+                  { label: '文件二', draggable: true, father: '私有库' }
                ]
             },
             {
                label: '结果库',
                draggable: false,
                children: [
-                  { label: '文件一', draggable: true },
-                  { label: '文件二', draggable: true }
+                  { label: '文件一', draggable: true, father: '结果库' },
+                  { label: '文件二', draggable: true, father: '结果库' }
                ]
             }
          ],
@@ -169,47 +148,33 @@ export default {
    },
    methods: {
 
-
-
-
-
-      // 展示导出页面
-      showNav(nav) {
-         if (nav == 2) {
+      handleClick(tab) {
+         if (tab.name === 'upload') {
+            this.showUpLoadView();
+         } else if (tab.name === 'export') {
             this.$router.push({ name: 'ExportFunction' });
-         } if (nav == 4) {
+         } else if (tab.name === 'delete') {
             this.$router.push({ name: 'DeleteFunction' });
-         } if (nav == 5) {
+         } else if (tab.name === 'search') {
             this.$router.push({ name: 'SearchFunction' });
-         } else if (nav == 6) {
+         } else if (tab.name === 'compare') {
             this.$router.push({ name: 'CompareFunction' });
          }
       },
-      closePopup() {
-         this.uploadPopupIsShow = false;
-         this.selectedFiles = [];  // 清空旧的文件列表
-      },
+
+
+
+
+
+
       // 展示上传页面
       showUpLoadView() {
          this.uploadFilesVisible = true;
       },
-      // 获取文件
-      handleFileUpload(event) {
-         this.selectedFiles = [];  // 清空旧的文件列表
-         const files = event.target.files;
-         for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            this.selectedFiles.push({
-               name: file.name,  // 获取文件名
-               size: file.size,  // 获取文件大小（可选）
-               file: file       // 保存文件对象
-            });
 
-         }
-      },
       // 上传文件
       uploadFiles() {
-         // 这里假设上传成功，将文件信息添加到publicList中
+         // 这里假设上传成功
          this.fileData[1].children.push(...this.selectedFiles.map(file => ({
             label: file.name,
             path: '',
@@ -220,36 +185,32 @@ export default {
          this.closePopup();  // 可以选择在上传后关闭弹窗
       },
       //拖动文件
-      // 拖拽文件到需要部分
-      handleDragStart(event, item) {
-         // 转化成json字符串，以便在drop事件中获取数据
-         const itemData = JSON.stringify(item);
-         event.dataTransfer.setData('application/json', itemData);
-      },
-      renderContent(h, { node, data }) {
-         return h('div', {
-            attrs: {
-               draggable: data.draggable // 设置 draggable 属性
-            },
-            on: {
-               dragstart: (event) => this.handleDragStart(event, data),
-               dragover: (event) => event.preventDefault()  // 可选：添加其他拖拽相关事件
-            }
-         }, node.label);
-      },
-      handleDragDragStart(event, data) {
-         if (data.draggable) {  // 只处理可拖动的节点
-            const itemData = JSON.stringify(data);
-            event.dataTransfer.setData('application/json', itemData);
+      handleDragStart(node, event) {
+         if (node.childNodes.length === 0) {  // 只允许叶子节点被拖拽
+            event.dataTransfer.setData('application/json', JSON.stringify(node.data));
+            event.dataTransfer.effectAllowed = 'move';
          } else {
-            event.preventDefault(); // 阻止不可拖放的节点触发拖放
+            event.preventDefault();  // 阻止非叶子节点的拖拽
+         }
+      },
+      handleFileDrop(event) {
+         const data = event.dataTransfer.getData('application/json');
+         if (data) {
+            const file = JSON.parse(data);
+
+            this.files.push(file);
+            this.dynamicTags.push(file.label);  // 确保这里使用的属性与设置的一致
+            console.log('Dropped files:', this.files);
          }
       },
 
 
+
       //渲染图标
-      renderContent(h, { node, data }) {
+      renderContent(h, { node }) {
+
          return (
+
             <div style="display: flex; align-items: center;">
                <el-icon class={node.level === 1 ? 'el-icon-folder-opened' : 'el-icon-document'} style="margin-right: 10px;"></el-icon>
                <span>{node.label}</span>
@@ -358,6 +319,59 @@ export default {
    padding-left: 20%;
    padding-right: 15%;
 }
+
+.el-tabs {
+   font-size: 20px;
+   height: 20px;
+
+
+}
+
+/*去下划线 */
+::v-deep .el-tabs__nav-wrap::after {
+   position: static !important;
+}
+
+
+
+
+
+.el-tabs>>>.el-tabs__content {
+   display: none !important;
+   pointer-events: none !important;
+}
+
+.el-tabs>>>span {
+   display: flex;
+   align-items: center;
+   font-size: large;
+   border-right: 3px solid white;
+   padding-right: 33px;
+
+}
+.el-tabs >>> .last_icon {
+    border-right: none !important;
+}
+
+
+
+.el-tabs>>>.el-tabs__item {
+   line-height: 0;
+   height: 0px;
+   color: white; 
+
+}
+.el-tabs>>>.el-tabs__item.is-disabled {
+   color: #7691af;
+}
+.el-tabs>>>.el-tabs__item.is-active {
+   color: #7af0f3;
+}
+
+/* 隐藏选中标签下方的指示条 */
+.el-tabs>>>.el-tabs__active-bar {
+   height: 0;
+}
 </style>
 
 
@@ -380,36 +394,14 @@ export default {
    height: 2vw;
    margin-right: 0.7vw;
 }
-
-.left_content {
-   color: aliceblue;
-}
-
-.left_content_item {
-   display: flex;
-
-   align-items: center;
-   margin-left: 2.5vw;
-   margin-top: 0.7vw;
-
-
-}
-
-.left_content img {
-   width: 1vw;
-   height: 1vw;
-   margin-right: 0.5vw;
-}
-
-.item_list {
-   margin-top: 0.5vw;
-   margin-bottom: 0.5vw;
-   display: flex;
-   align-items: center;
-   margin-left: 4.9vw;
-}
 </style>
 <style>
+.right_title div {
+   font-size: 1.4vw;
+   color: #8498ae;
+   margin-top: 0.7vw;
+   margin-bottom: 0.7vw;
+}
 .right_title {
    display: flex;
    flex-direction: column;
@@ -421,13 +413,6 @@ export default {
 
 
 
-}
-
-.right_title div {
-   font-size: 1.4vw;
-   color: #8498ae;
-   margin-top: 0.7vw;
-   margin-bottom: 0.7vw;
 }
 
 .right_head {
@@ -448,26 +433,7 @@ export default {
    margin-right: 0.5vw;
 }
 
-.icon_head {
-   display: flex;
-   align-items: center;
-   padding-left: 1vw;
-   padding-right: 1vw;
-   border-right: 4px solid #7691af;
-}
 
-.icon_head_active {
-   content: "";
-   background-color: rgba(48, 42, 42, 0.849);
-   /* 半透明黑色背景 */
-   color: #7691af;
-   z-index: 9;
-   pointer-events: none;
-}
-
-.icon_head:last-child {
-   border-right: none;
-}
 </style>
 <style>
 .navActive {
@@ -477,33 +443,5 @@ export default {
 .child_view {
    margin-top: 3vw;
    margin-left: 4vw;
-}
-</style>
-
-
-<style scoped>
-.fileContentContainer {
-   height: 90%;
-   /* 设置预览区域的高度为固定值或百分比 */
-   overflow: auto;
-   /* 当内容超出容器大小时，提供滚动条 */
-   background-color: #f0f0f0;
-}
-
-table {
-   width: 100%;
-   border-collapse: collapse;
-}
-
-th,
-td {
-   border: 1px solid #ccc;
-   padding: 8px;
-   text-align: left;
-}
-
-th {
-   background-color: #f0f0f0;
-   /* 浅灰色背景 */
 }
 </style>
