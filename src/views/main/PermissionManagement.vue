@@ -2,19 +2,16 @@
    <div class="app">
       <div class="U_head">
          <div class="left">
-
-
-         </div>
-
-         <div class="right">
-            <el-input v-model="input" placeholder="请输入关键词搜索"></el-input>
-            <el-button type="primary" icon="el-icon-search"></el-button>
+           <div class="right">
+             <el-input v-model="input" placeholder="请输入关键词搜索" size="medium"></el-input>
+             <el-button type="primary" icon="el-icon-search" size="medium"></el-button>
+           </div>
          </div>
       </div>
 
       <!-- 表格 -->
 
-      <el-table :data="users" border style="width: 90%; height: 100%;" class="main_table" fit >
+      <el-table :header-cell-style="()=>'background:#409EFF20'" :data="users" border style="width: 90%; height: 100%;" class="main_table" fit stripe>
          <el-table-column label="序号" label-class-name="custom-header-color" align="center">
             <template slot-scope="scope">{{ scope.row.id }}</template>
          </el-table-column>

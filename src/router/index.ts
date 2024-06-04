@@ -87,13 +87,18 @@ export default new Router({
             path: '/DrawSystem',
             name: 'DrawSystem',
             component: () => import('@/views/DrawSystem/SelectDraw.vue'),
-            children: [
-                {
-                    path: 'PeopleResult',
-                    name: 'PeopleResult',
-                    component: () => import('@/views/DrawSystem/PeopleResult.vue')
-                },
-            ]
-        }
+            // children: [
+            //     {
+            //         path: 'PeopleResult',
+            //         name: 'PeopleResult',
+            //         component: () => import('@/views/DrawSystem/PeopleResult.vue')
+            //     },
+            // ]
+        },
+		{
+		    path: '/PeopleResult',
+		    name: 'PeopleResult',
+		    component: () => import('@/views/DrawSystem/PeopleResult.vue'),
+		}
     ]
 });
