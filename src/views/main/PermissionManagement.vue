@@ -11,7 +11,7 @@
 
       <!-- 表格 -->
 
-      <el-table :header-cell-style="()=>'background:#409EFF20'" :data="users" border style="width: 90%; height: 100%;" class="main_table" fit stripe>
+      <el-table :header-cell-style="()=>'background:#409EFF20'" :data="users" border style="width: 90%; height: 100%;" class="main_table" fit >
          <el-table-column label="序号" label-class-name="custom-header-color" align="center">
             <template slot-scope="scope">{{ scope.row.id }}</template>
          </el-table-column>
@@ -103,6 +103,7 @@ export default {
    }
 }
 </script>
+
 
 
 

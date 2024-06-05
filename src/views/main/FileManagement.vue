@@ -149,3 +149,9 @@ export default {
    }
 }
 </script>
+
+<style scoped> 
+::v-deep .el-table--medium .el-table__cell {
+   padding: 8px 0;
+}
+</style>

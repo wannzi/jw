@@ -14,8 +14,8 @@
       </div>
 
       <!-- 表格 -->
-      <el-table :header-cell-style="()=>'background:#409EFF20'" ref="multipleTable" size="medium" :data="tableData" stripe style="width: 90%"
-         class="main_table" @selection-change="handleSelectionChange">
+      <el-table :header-cell-style="() => 'background:#409EFF20'" ref="multipleTable" size="medium" :data="tableData" :row-style="commonRowStyle"
+         stripe style="width: 90%" class="main_table" @selection-change="handleSelectionChange">
          <el-table-column type="selection" align="center" width="100" reserve-selection
             label-class-name="custom-header-color">
          </el-table-column>
@@ -61,7 +61,7 @@
             <el-form-item label="职务" prop="office">
                <el-input v-model="addUserForm.office" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="电话"    prop="phone">
+            <el-form-item label="电话" prop="phone">
                <el-input v-model="addUserForm.phone" autocomplete="off"></el-input>
             </el-form-item>
 
@@ -101,12 +101,12 @@
             :closable="false">
          </el-alert>
 
-        <el-table :data="selectedUsers" style="width: 100%" border fit size="mini">
-          <el-table-column prop="account" label="账号" align="center"></el-table-column>
-          <el-table-column prop="name" label="姓名" align="center"></el-table-column>
-          <el-table-column prop="department" label="部门" align="center"></el-table-column>
-          <el-table-column prop="office" label="职务" align="center"></el-table-column>
-        </el-table>
+         <el-table :data="selectedUsers" style="width: 100%" border fit size="mini">
+            <el-table-column prop="account" label="账号" align="center"></el-table-column>
+            <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+            <el-table-column prop="department" label="部门" align="center"></el-table-column>
+            <el-table-column prop="office" label="职务" align="center"></el-table-column>
+         </el-table>
          <div slot="footer" class="dialog-footer">
             <el-button @click="resetPasswordVisibel = false">取 消</el-button>
             <el-button type="primary" @click="resetPassword()">确 定</el-button>
@@ -117,7 +117,7 @@
 
       <el-dialog :visible.sync="editUserVisible" title="编辑用户" :modal-append-to-body="false" width="30%">
          <el-form :model="editingUser" ref="editUserForm" label-width="50px">
-            <el-form-item label="账号" >
+            <el-form-item label="账号">
                <el-input v-model="editingUser.account" autocomplete="off" disabled></el-input>
             </el-form-item>
             <el-form-item label="姓名">
@@ -190,8 +190,8 @@ export default {
    created() {
    },
    mounted() {
-
    },
+ 
    methods: {
       // 弹窗开关
       showAddUser() {
@@ -261,7 +261,7 @@ export default {
          });
          this.resetPasswordVisibel = false;
          this.selectedUsers = [];
-      }, 
+      },
 
 
       showEditUser(user) {
@@ -269,7 +269,7 @@ export default {
          this.editUserVisible = true;
 
       },
-      editUser(){
+      editUser() {
          //处理编辑逻辑
 
          this.$message({
@@ -290,10 +290,19 @@ export default {
 }
 </script>
 
+<style scoped> 
+::v-deep .el-table--medium .el-table__cell {
+   padding: 8px 0;
+}
+</style>
+
 <style>
-  .el-button{
-    //font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
-  }
+
+
+
+.el-button {
+   /* font-size: 14px; */
+   font-weight: bold;
+   letter-spacing: 1px;
+}
 </style>
