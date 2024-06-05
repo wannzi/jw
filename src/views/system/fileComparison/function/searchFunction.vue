@@ -170,12 +170,7 @@ export default {
 
 
 <style>
-.intoFile {
-    width: 73vw;
-    height: 40vh;
-    border: 3px dashed #6f86a0;
-    position: relative;
-}
+
 
 .intoFile_title_1 {
     position: absolute;

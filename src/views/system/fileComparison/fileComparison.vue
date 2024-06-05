@@ -6,7 +6,6 @@
             <div>文件目录</div>
          </span>
 
-
          <!-- 文件树 -->
          
          <el-tree :data="fileData" node-key="label" :highlight-current="false" :render-content="renderContent"
@@ -69,16 +68,13 @@
             </el-table>
          </div>
 
-
-
-
          <div class="right_title" v-if="this.$route.name === 'FileComparison' && !fileContent">
-            <div>导入:将本地excel文件导入到私有库</div>
-            <div>导出:将一个或多个文件导出到本地</div>
-            <div>保存:打开文件修改后保存</div>
-            <div>删除:将私有库或结果库文件删除</div>
-            <div>检索:在一个或多个文件中检索内容</div>
-            <div>对比:将一个或多个文件进行内容比对</div>
+            <div>导入: 将本地excel文件导入到私有库</div>
+            <div>导出: 将一个或多个文件导出到本地</div>
+            <div>保存: 打开文件修改后保存</div>
+            <div>删除: 将私有库或结果库文件删除</div>
+            <div>检索: 在一个或多个文件中检索内容</div>
+            <div>对比: 将一个或多个文件进行内容比对</div>
          </div>
          <!-- 弹窗 -->
 
@@ -95,16 +91,10 @@
          <router-view class="child_view">
 
          </router-view>
-
-
-
       </div>
-
-
-   </div>
+	</div>
 </template>
 <script>
-
 
 
 export default {
@@ -289,7 +279,7 @@ export default {
 <style>
 .fileComparison {
    padding-top: 9vh;
-   padding-left: 2vw;
+   padding-left: 1vw;
    display: flex;
    flex-direction: row;
    height: 89vh;
@@ -299,8 +289,6 @@ export default {
    position: relative;
    width: 14vw;
    height: 100%;
-
-
 }
 
 .fileComparison_left::before {
@@ -312,19 +300,18 @@ export default {
    /* 遮罩层宽度与左侧导航相同 */
    height: 100%;
    /* 遮罩层高度与左侧导航相同 */
-   background-color: rgba(166, 157, 157, 0.1);
+   background-color: rgba(64, 149, 229, 0.2);
    /* 半透明黑色背景 */
    z-index: 1;
    /* 确保遮罩层在左侧导航内容之上 */
    pointer-events: none;
-
 }
 
 .fileComparison_right {
    position: relative;
-   width: 80vw;
+   width: 83vw;
    height: 100%;
-   margin-left: 1.7vw;
+   margin-left: 1vw;
 }
 
 .fileComparison_right::before {
@@ -336,7 +323,7 @@ export default {
    /* 遮罩层宽度与左侧导航相同 */
    height: 100%;
    /* 遮罩层高度与左侧导航相同 */
-   background-color: rgba(166, 157, 157, 0.1);
+   background-color: rgba(64, 149, 229, 0.2);
    /* 半透明黑色背景 */
    z-index: 1;
    /* 确保遮罩层在左侧导航内容之上 */
@@ -363,9 +350,9 @@ export default {
 .el-tree {
    color: #f7f9ff;
    background-color: transparent;
-   font-size: 1.1vw;
-   padding-left: 20%;
-   padding-right: 15%;
+   font-size: 0.9vw;
+   padding-left: 5%;
+   padding-right: 5%;
 }
 
 .el-tabs {
@@ -429,15 +416,16 @@ export default {
 
 <style>
 .left_head {
-   font-size: 1.4vw;
-   color: #75f9fd;
-   font-weight: bold;
-   font-style: italic;
+   font-size: 1.6vw;
+   color: #32FFF6;
+  font-family: youshe;
+   //font-weight: bold;
+   //font-style: italic;
    display: flex;
    align-items: center;
    justify-content: center;
    margin-top: 1vw;
-   margin-bottom: 2vw;
+   margin-bottom: 1vw;
 }
 
 .left_head img {
@@ -459,6 +447,8 @@ export default {
    flex-direction: column;
    align-items: flex-start;
    position: absolute;
+   line-height: 40px;
+   opacity: 0.7;
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
@@ -473,7 +463,7 @@ export default {
    /* height: 4vh; */
    padding: 0.7vw;
    font-size: 1vw;
-   background-color: #1f518b94;
+   background-color: rgba(64, 149, 229, 0.2);
    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
    cursor: pointer;
    /* 设置鼠标悬停时的光标为手指指针 */
@@ -491,7 +481,7 @@ export default {
 }
 
 .child_view {
-   margin-top: 3vw;
-   margin-left: 4vw;
+   margin-top: 2vw;
+   margin-left: 2vw;
 }
 </style>

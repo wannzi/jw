@@ -1,12 +1,10 @@
 <template>
     <div>
         <div class="intoFile" @dragover.prevent="handleDragOver" @drop.prevent="handleFileDrop">
-
             <div v-if="!files.length">
                 <div class="intoFile_title_1">+</div>
                 <div class="intoFile_title_2">请将导出文件从目录拖拽到此</div>
             </div>
-
 
 
             <!-- 文件列表展示 -->
@@ -125,8 +123,8 @@ export default {
 </style>
 <style>
 .intoFile {
-    width: 73vw;
-    height: 40vh;
+    width: 79vw;
+    height: 36vh;
     border: 3px dashed #6f86a0;
     position: relative;
     padding: 20px;
@@ -134,7 +132,6 @@ export default {
     overflow: hidden;
     /* 超过高度时显示滚动条 */
     overflow-y: auto;
-
 }
 
 

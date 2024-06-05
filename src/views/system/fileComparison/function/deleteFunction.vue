@@ -114,18 +114,7 @@ export default {
 }
 </style>
 <style>
-.intoFile {
-    width: 73vw;
-    height: 40vh;
-    border: 3px dashed #6f86a0;
-    position: relative;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow: hidden;
-    /* 超过高度时显示滚动条 */
-    overflow-y: auto;
 
-}
 
 .file-list {
     list-style: none;
@@ -181,17 +170,7 @@ export default {
 </style>
 
 <style>
-.ctrl_btn {
-    position: absolute;
-    right: 1.8vw;
-}
 
-
-.ctrl_btn button {
-    font-size: 1vw;
-    font-weight: bold;
-
-}
 
 .ge_btn1 {
     background-color: #409eff;
