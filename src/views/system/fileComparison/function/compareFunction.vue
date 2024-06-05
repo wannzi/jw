@@ -10,11 +10,12 @@
 
 
          <!-- 文件列表展示 -->
-         <el-tooltip :key="tag" v-for="tag in filesMain" :content="tag.father">
+         <el-tooltip :key="tag" v-for="tag in filesMain" :content="tag.father +'/'+ tag.label">
             <el-tag closable :disable-transitions="false" type="success" @close="handleCloseMain(tag)">
-               <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+               <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                  style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
 
-               {{ tag.label }}
+               {{ formatLabel(tag.label) }}
 
             </el-tag>
          </el-tooltip>
@@ -30,11 +31,12 @@
 
 
          <!-- 文件列表展示 -->
-         <el-tooltip :key="tag" v-for="tag in filesCompare" :content="tag.father">
+         <el-tooltip :key="tag" v-for="tag in filesCompare" :content="tag.father +'/'+ tag.label">
             <el-tag closable :disable-transitions="false" type="success" @close="handleCloseCompare(tag)">
-               <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+               <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                  style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
 
-               {{ tag.label }}
+               {{ formatLabel(tag.label) }}
 
             </el-tag>
          </el-tooltip>
@@ -42,8 +44,8 @@
       </div>
 
       <el-button type="primary" @click="handleCompare">下一步</el-button>
-      
-      
+
+
    </div>
 </template>
 <script>
@@ -63,6 +65,12 @@ export default {
    mounted() {
    },
    methods: {
+      formatLabel(label) {
+         if (label.length > 10) {
+            return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
+         }
+         return label; // 如果不超过10个字符，直接返回原文本
+      },
       handleDragOver() {
 
       },
@@ -99,8 +107,8 @@ export default {
             this.filesCompare.splice(index, 1);
          }
       },
-      handleCompare(){
-         this.$router.push({name:'ConpareFunction2' })
+      handleCompare() {
+         this.$router.push({ name: 'ConpareFunction2' })
       }
    }
 
@@ -109,32 +117,34 @@ export default {
 </script>
 <style scoped>
 .el-tag {
-   font-size: 18px;
+   font-size: 14px;
    /* 添加元素时候左侧排列 */
    float: left;
    margin-top: 10px;
    margin-right: 20px;
 
 }
+
 ::v-deep .el-tag.el-tag--success {
-    background-color: #f0f9eb;
-    border-color: #e1f3d8;
-    color: #67c23a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 90px;
-    flex-direction: column;
+   background-color: #f0f9eb;
+   border-color: #e1f3d8;
+   color: #67c23a;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 90px;
+   flex-direction: column;
 }
 
 ::v-deep .el-tag.el-tag--success {
-    position: relative;
+   position: relative;
 }
+
 ::v-deep .el-tag.el-tag--success .el-tag__close {
-    position: absolute;
-    transform: translate(45%, -45%);
-    background-color: #67c23a;
-    color: #FFF;
+   position: absolute;
+   transform: translate(45%, -45%);
+   background-color: #67c23a;
+   color: #FFF;
 }
 </style>
 <style scoped>

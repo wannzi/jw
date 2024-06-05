@@ -84,7 +84,7 @@ export default {
    width: 9vw;
    height: 6vh;
    margin-bottom: 39px;
-   //font-family: youshe;
+   /* font-family: youshe; */
    color: #32FFF6;
    font-size: 18px;
    letter-spacing: 2px;
@@ -174,8 +174,8 @@ export default {
 }
 
 .el-table {
-   //min-height: 200px;
-   //max-height: 800px;
+   /* min-height: 200px;
+   max-height: 800px; */
 }
 
 /* 定义一个 CSS 类来改变标题颜色 */

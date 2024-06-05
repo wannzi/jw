@@ -15,8 +15,8 @@
 
       <!-- 表格 -->
 
-      <el-table :header-cell-style="()=>'background:#409EFF20'" ref="multipleTable" :data="files" border stripe size="medium" fit style="width: 90%"
-         class="main_table" @selection-change="handleSelectionChange">
+      <el-table :header-cell-style="() => 'background:#409EFF20'" ref="multipleTable" :data="files" border stripe
+         size="medium" fit style="width: 90%" class="main_table" @selection-change="handleSelectionChange">
          <el-table-column type="selection" align="center" width="100" reserve-selection
             label-class-name="custom-header-c olor">
          </el-table-column>
@@ -59,7 +59,8 @@
 
 
       <!-- 删除文件弹窗 -->
-      <el-dialog :visible.sync="deleteVisible" title="删除文件" :modal-append-to-body="false" :before-close="handleClose" width="40%">
+      <el-dialog :visible.sync="deleteVisible" title="删除文件" :modal-append-to-body="false" :before-close="handleClose"
+         width="40%">
          <el-alert :title="selectedUsers.length > 1 ? '确定删除选中的用户吗？' : '确定删除该用户吗？'" type="warning" center
             :closable="false">
          </el-alert>
@@ -69,12 +70,12 @@
             <el-table-column prop="uploadUser" label="上传者" align="center"></el-table-column>
             <el-table-column prop="uploadTime" label="上传时间" align="center"></el-table-column>
          </el-table>
-            <div style="margin-top: 20px;">
-               <el-button  @click="deleteVisible = false">取消</el-button>
-               <el-button type="primary" @click="deleteFile">确定</el-button>
-            </div>
+         <div style="margin-top: 20px;">
+            <el-button @click="deleteVisible = false">取消</el-button>
+            <el-button type="primary" @click="deleteFile">确定</el-button>
+         </div>
       </el-dialog>
-   
+
    </div>
 </template>
 <script>
@@ -105,7 +106,7 @@ export default {
          uploadVisible: false, // 上传文件弹窗
          deleteVisible: false, // 删除文件弹窗
          selectedUsers: [], // 批量删除的用户
-         input: '', 
+         input: '',
 
       };
    },
@@ -115,7 +116,7 @@ export default {
       showUploadFile() {
          this.uploadVisible = true;
       },
-      showDeleteFile( file = null) {
+      showDeleteFile(file = null) {
          if (file) {
             // 单个用户删除
             this.selectedUsers = [file];
@@ -134,11 +135,28 @@ export default {
       },
 
 
-
-
-
       handleSelectionChange(selected) {
          this.selectedUsers = selected; // 更新 selectedUsers 数组
+      },
+      //获取表格数据
+      getTableData() {
+
+      },
+      //删除操作接口
+      deleteFile() {
+
+      },
+      //上传文件接口
+      uploadFile() {
+
+      },
+      //修改页面内是否可见接口
+      changeIsRead() {
+
+      },
+      //搜索接口
+      searchApi() {
+
       },
 
 
@@ -150,7 +168,7 @@ export default {
 }
 </script>
 
-<style scoped> 
+<style scoped>
 ::v-deep .el-table--medium .el-table__cell {
    padding: 8px 0;
 }

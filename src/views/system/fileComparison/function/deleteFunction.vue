@@ -9,11 +9,12 @@
 
 
             <!-- 文件列表展示 -->
-            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father">
-                <el-tag closable :disable-transitions="false" type="success"  @close="handleClose(tag)">
-                    <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
+                <el-tag closable :disable-transitions="false" type="success" @close="handleClose(tag)">
+                    <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                        style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
 
-                    {{ tag.label }}
+                    {{  formatLabel(tag.label) }}
 
                 </el-tag>
             </el-tooltip>
@@ -24,7 +25,7 @@
             <el-button type="primary">删除</el-button>
 
             <el-button type="danger" @click="clearFiles">清空</el-button>
-            
+
         </div>
     </div>
 </template>
@@ -44,6 +45,12 @@ export default {
     mounted() {
     },
     methods: {
+        formatLabel(label) {
+            if (label.length > 10) {
+                return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
+            }
+            return label; // 如果不超过10个字符，直接返回原文本
+        },
         handleDragOver() {
 
         },
@@ -74,7 +81,7 @@ export default {
         deleteFiles() {
             // 实现文件的导出逻辑
         },
-        
+
         removeFile(index) {
             this.files.splice(index, 1); // 移除指定索引的文件
         }
@@ -85,13 +92,14 @@ export default {
 </script>
 <style scoped>
 .el-tag {
-    font-size: 18px;
+    font-size: 14px;
     /* 添加元素时候左侧排列 */
     float: left;
     margin-top: 10px;
-    margin-right: 20px;     
+    margin-right: 20px;
 
 }
+
 ::v-deep .el-tag.el-tag--success {
     background-color: #f0f9eb;
     border-color: #e1f3d8;
@@ -106,6 +114,7 @@ export default {
 ::v-deep .el-tag.el-tag--success {
     position: relative;
 }
+
 ::v-deep .el-tag.el-tag--success .el-tag__close {
     position: absolute;
     transform: translate(45%, -45%);
@@ -114,8 +123,6 @@ export default {
 }
 </style>
 <style>
-
-
 .file-list {
     list-style: none;
     display: flex;
@@ -170,8 +177,6 @@ export default {
 </style>
 
 <style>
-
-
 .ge_btn1 {
     background-color: #409eff;
     color: #ffffff;

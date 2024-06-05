@@ -2,16 +2,17 @@
    <div class="app">
       <div class="U_head">
          <div class="left">
-           <div class="right">
-             <el-input v-model="input" placeholder="请输入关键词搜索" size="medium"></el-input>
-             <el-button type="primary" icon="el-icon-search" size="medium"></el-button>
-           </div>
+            <div class="right">
+               <el-input v-model="input" placeholder="请输入关键词搜索" size="medium"></el-input>
+               <el-button type="primary" icon="el-icon-search" size="medium"></el-button>
+            </div>
          </div>
       </div>
 
       <!-- 表格 -->
 
-      <el-table :header-cell-style="()=>'background:#409EFF20'" :data="users" border style="width: 90%; height: 100%;" class="main_table" fit >
+      <el-table :header-cell-style="() => 'background:#409EFF20'" :data="users" border style="width: 90%; height: 100%;"
+         class="main_table" fit>
          <el-table-column label="序号" label-class-name="custom-header-color" align="center">
             <template slot-scope="scope">{{ scope.row.id }}</template>
          </el-table-column>
@@ -30,24 +31,25 @@
          <el-table-column label="管理员权限" label-class-name="custom-header-color" align="center">
             <template slot-scope="scope">
                <el-switch v-model="scope.row.administratorPrivileges" active-color="#13ce66"
-                  ></el-switch>
+                  @change="changePrivileges(scope.row.id, scope.row.administratorPrivileges)"></el-switch>
             </template>
          </el-table-column>
          <el-table-column label="精准画像系统" label-class-name="custom-header-color" align="center">
             <template slot-scope="scope">
                <el-switch v-model="scope.row.portraitSystem" active-color="#13ce66"
-                 ></el-switch>
+                  @change="changePrivileges(scope.row.id, scope.row.portraitSystem)"></el-switch>
             </template>
          </el-table-column>
          <el-table-column label="文件对比系统" label-class-name="custom-header-color" align="center">
             <template slot-scope="scope">
                <el-switch v-model="scope.row.fileComparison" active-color="#13ce66"
-                  ></el-switch>
+                  @change="changePrivileges(scope.row.id, scope.row.fileComparison)"></el-switch>
             </template>
          </el-table-column>
          <el-table-column label="规则模型系统" label-class-name="custom-header-color" align="center">
             <template slot-scope="scope">
-               <el-switch v-model="scope.row.ruleModel" active-color="#13ce66" ></el-switch>
+               <el-switch v-model="scope.row.ruleModel" active-color="#13ce66"
+                  @change="changePrivileges(scope.row.id, scope.row.ruleModel)"></el-switch>
             </template>
          </el-table-column>
 
@@ -55,7 +57,7 @@
 
 
 
-      
+
       <!-- 添加分页按钮 -->
       <el-pagination background layout="prev, pager, next" :total="50" class="page">
       </el-pagination>
@@ -95,17 +97,19 @@ export default {
    created() {
    },
    methods: {
-      
+      //请求更改权限
+      changePrivileges(id, row) {
+         console.log(id, row);
+      },
+      //搜索接口
+      searchApi() {
+
+      },
+
    },
    computed: {
 
-    
+
    }
 }
 </script>
-
-
-
-
-
-

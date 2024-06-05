@@ -9,13 +9,13 @@
 
             <!-- 文件列表展示 -->
 
-           
-            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father">
-                <el-tag  closable :disable-transitions="false" type="success"
-                     @close="handleClose(tag)">
-                     <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
 
-                     {{ tag.label }}
+            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
+                <el-tag closable :disable-transitions="false" type="success" @close="handleClose(tag)">
+                    <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                        style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
+                    {{ formatLabel(tag.label) }}
 
                 </el-tag>
             </el-tooltip>
@@ -37,9 +37,9 @@ export default {
     data() {
         return {
             files: [
-                
+
             ],//存放拖拽的文件
-           
+
         }
     },
     activated() {
@@ -51,6 +51,12 @@ export default {
     mounted() {
     },
     methods: {
+        formatLabel(label) {
+            if (label.length > 10) {
+                return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
+            }
+            return label; // 如果不超过10个字符，直接返回原文本
+        },
         handleDragOver() {
 
         },
@@ -62,7 +68,7 @@ export default {
                 const file = JSON.parse(data);
                 console.log(file);
                 this.files.push(file);
-               
+
                 console.log('Dropped files:', this.files);
             }
         },
@@ -70,20 +76,20 @@ export default {
         handleClose(tag) {
             const index = this.files.indexOf(tag);
             if (index !== -1) {
-                
+
                 this.files.splice(index, 1);
             }
         },
         clearFiles() {
             this.files = [];
-           
+
         },
         exportFiles() {
             // 实现文件的导出逻辑
         },
         removeFile(index) {
             this.files.splice(index, 1);
-            
+
         }
     }
 
@@ -93,13 +99,14 @@ export default {
 </script>
 <style scoped>
 .el-tag {
-    font-size: 18px;
+    font-size: 14px;
     /* 添加元素时候左侧排列 */
     float: left;
     margin-top: 10px;
-    margin-right: 20px;     
+    margin-right: 20px;
 
 }
+
 ::v-deep .el-tag.el-tag--success {
     background-color: #f0f9eb;
     border-color: #e1f3d8;
@@ -114,6 +121,7 @@ export default {
 ::v-deep .el-tag.el-tag--success {
     position: relative;
 }
+
 ::v-deep .el-tag.el-tag--success .el-tag__close {
     position: absolute;
     transform: translate(45%, -45%);

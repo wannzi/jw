@@ -54,9 +54,16 @@ export default new Router({
                     name: 'AddRules',
                     component: AddRules
                 },
+              
+            ]
+        },
+        {
+            path: '/fileComparison',
+            name: 'FileComparison',
+            component: IndexView,
+            children:[
                 {
-                    path: 'fileComparison',
-                    name: 'FileComparison',
+                    path: '',
                     component: FileComparison,
                     children: [
                         {
@@ -78,7 +85,7 @@ export default new Router({
                             path: 'compareFunction',
                             name: 'CompareFunction',
                             component: () => import('@/views/system/fileComparison/function/compareFunction.vue')
-
+        
                         },
                         {
                             path: 'conpareFunction2',

@@ -14,8 +14,9 @@
       </div>
 
       <!-- 表格 -->
-      <el-table :header-cell-style="() => 'background:#409EFF20'" ref="multipleTable" size="medium" :data="tableData" :row-style="commonRowStyle"
-         stripe style="width: 90%" class="main_table" @selection-change="handleSelectionChange">
+      <el-table :header-cell-style="() => 'background:#409EFF20'" ref="multipleTable" size="medium" :data="tableData"
+         :row-style="commonRowStyle" stripe style="width: 90%" class="main_table"
+         @selection-change="handleSelectionChange">
          <el-table-column type="selection" align="center" width="100" reserve-selection
             label-class-name="custom-header-color">
          </el-table-column>
@@ -191,22 +192,13 @@ export default {
    },
    mounted() {
    },
- 
+
    methods: {
       // 弹窗开关
       showAddUser() {
          this.addUserVisible = true;
       },
-      addUser() {
 
-         //处理逻辑
-
-         this.$message({
-            message: "添加用户成功",
-            type: "success"
-         });
-         this.addUserVisible = false;
-      },
       showDelUser(user = null) {
          if (user) {
             // 单个用户删除
@@ -224,15 +216,7 @@ export default {
             }
          }
       },
-      deleteUser() {
-         //处理删除逻辑
-         this.$message({
-            message: "删除用户成功",
-            type: "success"
-         });
-         this.delUserVisible = false;
-         this.selectedUsers = [];
-      },
+
 
 
       showResetPassword(user = null) {
@@ -252,6 +236,42 @@ export default {
             }
          }
       },
+
+
+
+      showEditUser(user) {
+         this.editingUser = user;
+         this.editUserVisible = true;
+
+      },
+      handleSelectionChange(selected) {
+         this.selectedUsers = selected; // 更新 selectedUsers 数组
+      },
+
+
+      //后端获取表格数据
+      getTableData() {
+         //处理逻辑
+      },
+      addUser() {
+
+         //处理逻辑
+
+         this.$message({
+            message: "添加用户成功",
+            type: "success"
+         });
+         this.addUserVisible = false;
+      },
+      deleteUser() {
+         //处理删除逻辑
+         this.$message({
+            message: "删除用户成功",
+            type: "success"
+         });
+         this.delUserVisible = false;
+         this.selectedUsers = [];
+      },
       resetPassword() {
          //处理重置密码逻辑
 
@@ -262,13 +282,6 @@ export default {
          this.resetPasswordVisibel = false;
          this.selectedUsers = [];
       },
-
-
-      showEditUser(user) {
-         this.editingUser = user;
-         this.editUserVisible = true;
-
-      },
       editUser() {
          //处理编辑逻辑
 
@@ -278,28 +291,24 @@ export default {
          });
          this.editUserVisible = false;
       },
+      //搜索接口
+      searchApi() {
 
-
-
-      handleSelectionChange(selected) {
-         this.selectedUsers = selected; // 更新 selectedUsers 数组
       },
+
    },
 
 
 }
 </script>
 
-<style scoped> 
+<style scoped>
 ::v-deep .el-table--medium .el-table__cell {
    padding: 8px 0;
 }
 </style>
 
 <style>
-
-
-
 .el-button {
    /* font-size: 14px; */
    font-weight: bold;

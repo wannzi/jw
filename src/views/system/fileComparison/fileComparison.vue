@@ -7,7 +7,7 @@
          </span>
 
          <!-- 文件树 -->
-         
+
          <el-tree :data="fileData" node-key="label" :highlight-current="false" :render-content="renderContent"
             :allow-drop="() => false" draggable @node-drag-start="handleDragStart">
 
@@ -19,8 +19,8 @@
 
       <div class="fileComparison_right">
 
-         <el-tabs @tab-click="handleClick" class="right_head" >
-            <el-tab-pane label="导入" name="upload" >
+         <el-tabs @tab-click="handleClick" class="right_head">
+            <el-tab-pane label="导入" name="upload">
                <span slot="label"><img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="" v-if="uploadImg">
                   <img src="../../../assets/UserManagement/传入(绿)_afferent.png" v-else>
                   导入</span>
@@ -29,8 +29,8 @@
             <el-tab-pane label="导出" name="export">
                <span slot="label"> <img src="../../../assets/UserManagement/传入(白)_afferent.png" v-if="exportImg"
                      style="transform: scaleX(-1);">
-                     <img src="../../../assets/UserManagement/传入(绿)_afferent.png" style="transform: scaleX(-1);" v-else>
-                     导出</span>
+                  <img src="../../../assets/UserManagement/传入(绿)_afferent.png" style="transform: scaleX(-1);" v-else>
+                  导出</span>
             </el-tab-pane>
             <el-tab-pane label="保存" name="save" :disabled="true">保存
                <span slot="label"><img src="../../../assets/UserManagement/保存_save.png" alt="" v-if="false">
@@ -45,11 +45,12 @@
             </el-tab-pane>
             <el-tab-pane label="检索" name="search">
                <span slot="label"><img src="../../../assets/UserManagement/查找_find.png" alt="" v-if="searchImg">
-                     <img src="../../../assets/UserManagement/查找(绿)_find.png" v-else>
+                  <img src="../../../assets/UserManagement/查找(绿)_find.png" v-else>
                   检索</span>
             </el-tab-pane>
             <el-tab-pane label="比对" name="compare">
-               <span slot="label" class="last_icon"><img src="../../../assets/UserManagement/对比_contrast.png" v-if="compareImg">
+               <span slot="label" class="last_icon"><img src="../../../assets/UserManagement/对比_contrast.png"
+                     v-if="compareImg">
                   <img src="../../../assets/UserManagement/对比(绿)_contrast.png" v-else>
                   比对</span>
             </el-tab-pane>
@@ -68,7 +69,7 @@
             </el-table>
          </div>
 
-         <div class="right_title" v-if="this.$route.name === 'FileComparison' && !fileContent">
+         <div class="right_title" v-if="this.$route.path === '/fileComparison' && !fileContent">
             <div>导入: 将本地excel文件导入到私有库</div>
             <div>导出: 将一个或多个文件导出到本地</div>
             <div>保存: 打开文件修改后保存</div>
@@ -79,7 +80,8 @@
          <!-- 弹窗 -->
 
          <el-dialog title="上传文件" :visible.sync="uploadFilesVisible" width="30%">
-            <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+            <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple
+               :before-upload="beforeUpload">
                <i class="el-icon-upload"></i>
                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
@@ -92,7 +94,7 @@
 
          </router-view>
       </div>
-	</div>
+   </div>
 </template>
 <script>
 
@@ -136,7 +138,7 @@ export default {
          uploadFilesVisible: false,
          selectedFiles: [],  // 用于存储选中的文件信息
          //标签状态
-         
+
          uploadImg: true,
          exportImg: true,
          deleteImg: true,
@@ -192,8 +194,8 @@ export default {
             this.searchImg = true;
          }
       },
-      
-     
+
+
 
 
 
@@ -203,7 +205,30 @@ export default {
       showUpLoadView() {
          this.uploadFilesVisible = true;
       },
+      //测试上传
+      beforeUpload(file) {
+         const fileReader = new FileReader();
 
+         fileReader.onload = (e) => {
+            
+            this.fileData[1].children.push({
+               label: file.name,
+               content: e.target.result,
+               draggable: true,
+               father: '私有库'
+            });
+
+            
+            this.$message({
+               type: 'success',
+               message: '文件预处理成功!'
+            });
+         };
+
+         fileReader.readAsDataURL(file);  
+
+         return false;  
+      },
       // 上传文件
       uploadFiles() {
          // 这里假设上传成功
@@ -240,27 +265,27 @@ export default {
 
       //渲染图标
       renderContent(h, { node }) {
-      // 决定使用哪个图标
-      const iconName = node.level === 1 ? 'el-icon-folder-opened' : 'el-icon-document';
+         // 决定使用哪个图标
+         const iconName = node.level === 1 ? 'el-icon-folder-opened' : 'el-icon-document';
 
-      // 渲染内容时，对二级节点添加tooltip
-      if (node.level === 2) {
-        return (
-          <div style="display: flex; align-items: center;">
-            <el-icon class={iconName} style="margin-right: 10px;"></el-icon>
-            <el-tooltip class="item" content={node.label} placement="top-start" effect="dark">
-              <span>{node.label}</span>
-            </el-tooltip>
-          </div>
-        );
-      } else {
-        return (
-          <div style="display: flex; align-items: center;">
-            <el-icon class={iconName} style="margin-right: 10px;"></el-icon>
-            <span>{node.label}</span>
-          </div>
-        );
-      }
+         // 渲染内容时，对二级节点添加tooltip
+         if (node.level === 2) {
+            return (
+               <div style="display: flex; align-items: center;">
+                  <el-icon class={iconName} style="margin-right: 10px;"></el-icon>
+                  <el-tooltip class="item" content={node.label} placement="top-start" effect="dark">
+                     <span>{node.label}</span>
+                  </el-tooltip>
+               </div>
+            );
+         } else {
+            return (
+               <div style="display: flex; align-items: center;">
+                  <el-icon class={iconName} style="margin-right: 10px;"></el-icon>
+                  <span>{node.label}</span>
+               </div>
+            );
+         }
       }
 
 
@@ -356,7 +381,7 @@ export default {
 }
 
 .el-tabs {
-   font-size: 20px;
+   font-size: 19px;
    height: 20px;
 
 
@@ -418,9 +443,9 @@ export default {
 .left_head {
    font-size: 1.6vw;
    color: #32FFF6;
-  font-family: youshe;
-   //font-weight: bold;
-   //font-style: italic;
+   font-family: youshe;
+   /* //font-weight: bold;
+   //font-style: italic; */
    display: flex;
    align-items: center;
    justify-content: center;

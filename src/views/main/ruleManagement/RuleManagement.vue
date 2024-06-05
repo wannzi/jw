@@ -15,8 +15,8 @@
 
       <!-- 表格 -->
 
-      <el-table :header-cell-style="()=>'background:#409EFF20'" ref="multipleTable" :data="rules" stripe border size="medium" fit  style="width: 90%"
-         class="main_table" @selection-change="handleSelectionChange" >
+      <el-table :header-cell-style="() => 'background:#409EFF20'" ref="multipleTable" :data="rules" stripe border
+         size="medium" fit style="width: 90%" class="main_table" @selection-change="handleSelectionChange">
          <el-table-column type="selection" align="center" width="100" reserve-selection
             label-class-name="custom-header-color">
          </el-table-column>
@@ -127,7 +127,7 @@ export default {
             { ruleName: '规则8', ruleDesc: '规则描述8', ruleType: '规则类型8', creator: '创建者8', createTime: '创建时间8', isPublic: false, selected: false },
             { ruleName: '规则9', ruleDesc: '规则描述9', ruleType: '规则类型9', creator: '创建者9', createTime: '创建时间9', isPublic: true, selected: false },
             { ruleName: '规则10', ruleDesc: '规则描述10', ruleType: '规则类型10', creator: '创建者10', createTime: '创建时间10', isPublic: false, selected: false },
-            
+
 
          ],
          //当前页码
@@ -192,7 +192,7 @@ export default {
 
 
 
-      
+
       handleChangeType(row) {
          this.$message({
             message: '规则状态已更新',
@@ -202,6 +202,26 @@ export default {
       },
       handleSelectionChange(selected) {
          this.selectedRules = selected; // 更新 selectedUsers 数组
+      },
+      //获取表格数据接口
+      getTableData() {
+
+      },
+      //新建规则接口
+      addRuleApi() {
+
+      },
+      //删除规则接口
+      delRuleApi() {
+
+      },
+      //编辑规则接口
+      editRuleApi() {
+
+      },
+      //搜索接口
+      searchApi() {
+
       },
 
 
@@ -217,7 +237,7 @@ export default {
 }
 </script>
 
-<style scoped> 
+<style scoped>
 ::v-deep .el-table--medium .el-table__cell {
    padding: 8px 0;
 }

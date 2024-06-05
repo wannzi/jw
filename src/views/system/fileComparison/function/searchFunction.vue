@@ -22,11 +22,11 @@
 
 
             <!-- 文件列表展示 -->
-            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father">
+            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
                 <el-tag closable :disable-transitions="false" type="success"  @close="handleClose(tag)">
                     <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
 
-                    {{ tag.label }}
+                    {{ formatLabel(tag.label) }}
 
                 </el-tag>
             </el-tooltip>
@@ -50,6 +50,12 @@ export default {
     mounted() {
     },
     methods: {
+        formatLabel(label) {
+            if (label.length > 10) {
+                return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
+            }
+            return label; // 如果不超过10个字符，直接返回原文本
+        },
         handleDragOver() {
 
         },
@@ -89,7 +95,7 @@ export default {
 
 <style scoped>
 .el-tag {
-    font-size: 18px;
+    font-size: 14px;
     /* 添加元素时候左侧排列 */
     float: left;
     margin-top: 10px;
