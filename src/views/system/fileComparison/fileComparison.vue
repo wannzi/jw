@@ -58,16 +58,7 @@
 
 
 
-         <div v-if="fileContent && this.$route.name === 'FileComparison'" class="fileContentContainer">
-            <el-table :data="tableData">
-               <el-table-column type="index" label="行号"></el-table-column>
-               <el-table-column v-for="n in columnCount" :key="n" :label="String.fromCharCode(64 + n)">
-                  <template #default="scope">
-                     {{ scope.row['col' + n] }}
-                  </template>
-               </el-table-column>
-            </el-table>
-         </div>
+
 
          <div class="right_title" v-if="this.$route.path === '/fileComparison' && !fileContent">
             <div>导入: 将本地excel文件导入到私有库</div>
@@ -89,6 +80,21 @@
 
          </el-dialog>
 
+         <!-- 预览表格 -->
+         <el-table :data="files" :key="tableKey" style="width: 100%" stripe border  height="600px" width="100px"
+            v-if="fileContent && this.$route.path === '/fileComparison'">
+            <el-table-column v-for="(colItem, colIndex) in Object.keys(files[0])" :prop="colItem"  min-width="200px"
+               :key="colIndex">
+               <template slot-scope="scope">
+                  {{ scope.row[colItem] }}
+               </template>
+            </el-table-column>
+         </el-table>
+
+
+
+
+
 
          <router-view class="child_view">
 
@@ -97,6 +103,7 @@
    </div>
 </template>
 <script>
+import * as XLSX from 'xlsx';
 
 
 export default {
@@ -134,6 +141,7 @@ export default {
          privateListIsShow: false,
          resultsListIsShow: false,
          fileContent: '',
+         files: [],  // 用于存储文件内容
 
          uploadFilesVisible: false,
          selectedFiles: [],  // 用于存储选中的文件信息
@@ -144,6 +152,7 @@ export default {
          deleteImg: true,
          searchImg: true,
          compareImg: true,
+
       }
    },
    activated() {
@@ -156,6 +165,15 @@ export default {
    },
    methods: {
       //蠢但是好用
+      calculateColumnWidth(colIndex) {
+         // 根据内容长度动态计算表格列宽度
+         const maxWidth = 400; // 最大宽度
+         const cellContent = this.files.map(item => item[colIndex]);
+         const contentLengths = cellContent.map(item => String(item).length * 15); // 15px 占一个字符的宽度
+         const maxContentLength = Math.max(...contentLengths);
+         return maxContentLength < maxWidth ? maxContentLength + 'px' : maxWidth + 'px';
+      },
+
       handleClick(tab) {
          if (tab.name === 'upload') {
             this.showUpLoadView();
@@ -209,25 +227,25 @@ export default {
       beforeUpload(file) {
          const fileReader = new FileReader();
 
-         fileReader.onload = (e) => {
-            
+         fileReader.onload = () => {
+
             this.fileData[1].children.push({
                label: file.name,
-               content: e.target.result,
+               content: file,
                draggable: true,
                father: '私有库'
             });
 
-            
+
             this.$message({
                type: 'success',
                message: '文件预处理成功!'
             });
          };
 
-         fileReader.readAsDataURL(file);  
+         fileReader.readAsDataURL(file);
 
-         return false;  
+         return false;
       },
       // 上传文件
       uploadFiles() {
@@ -271,7 +289,7 @@ export default {
          // 渲染内容时，对二级节点添加tooltip
          if (node.level === 2) {
             return (
-               <div style="display: flex; align-items: center;">
+               <div style="display: flex; align-items: center;" onDblclick={() => this.handleDoubelclick(node)}>
                   <el-icon class={iconName} style="margin-right: 10px;"></el-icon>
                   <el-tooltip class="item" content={node.label} placement="top-start" effect="dark">
                      <span>{node.label}</span>
@@ -286,7 +304,61 @@ export default {
                </div>
             );
          }
+      },
+      //双击预览
+      handleDoubelclick(node) {
+         console.log('双击节点信息：', node);
+
+         if (!node.data || !node.data.content) {
+            this.$message.error('文件内容未找到！');
+            return;
+         }
+
+         if (node.label.endsWith('.xlsx') || node.label.endsWith('.xls')) {
+            this.$message.success('正在打开文件...');
+            this.$router.push({ path: '/fileComparison' })
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+               const data = e.target.result;
+               const workbook = XLSX.read(data, { type: 'binary' });
+               const firstSheetName = workbook.SheetNames[0];
+               const worksheet = workbook.Sheets[firstSheetName];
+               const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+               // 填充空白单元格
+               const rows = json.length;
+               const cols = Math.max(...json.map(row => row.length));
+               for (let i = 0; i < rows; i++) {
+                  for (let j = 0; j < cols; j++) {
+                     if (json[i][j] === undefined) {
+                        json[i][j] = ''; // 填充空白单元格
+                     }
+                  }
+               }
+
+               console.log('解析后的Excel数据:', json);
+
+               this.files = json.map((row) => {
+                  return row.reduce((acc, curr, idx) => {
+                     acc[`column${idx}`] = curr;
+                     return acc;
+                  }, {});
+               });
+               this.fileContent = true;
+            };
+            reader.onerror = (error) => {
+               console.error('文件读取出错:', error);
+            };
+            reader.readAsBinaryString(node.data.content);
+         } else {
+            this.$message.error('请选择一个Excel文件！');
+         }
       }
+
+
+
+
 
 
    }
@@ -298,7 +370,15 @@ export default {
 
 
 
+<style>
 
+.el-table__footer-wrapper, .el-table__header-wrapper{
+   display: none;
+}
+.el-table .cell{
+   line-height: none;
+}
+</style>
 
 
 <style>
@@ -314,6 +394,7 @@ export default {
    position: relative;
    width: 14vw;
    height: 100%;
+
 }
 
 .fileComparison_left::before {
@@ -378,6 +459,8 @@ export default {
    font-size: 0.9vw;
    padding-left: 5%;
    padding-right: 5%;
+   height: 38vw;
+   overflow-y: auto;
 }
 
 .el-tabs {
