@@ -9,6 +9,8 @@ import RuleManagement from '@/views/main/ruleManagement/RuleManagement.vue';
 import AddRules from '@/views/main/ruleManagement/newRules/addRules.vue';
 import FileComparison from '@/views/system/fileComparison/fileComparison.vue';
 import ExportFunction from '@/views/system/fileComparison/function/exportFunction.vue';
+import MainView from '@/views/MainView.vue';
+import LoginView from '@/views/LoginView.vue';
 
 Vue.use(Router);
 
@@ -17,7 +19,17 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/dashboard'
+            redirect: '/login'
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: LoginView,
+        },
+        {
+            path: '/main',
+            name: 'main',
+            component: MainView,
         },
         {
             path: '/dashboard',

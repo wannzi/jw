@@ -50,11 +50,7 @@
                <el-switch v-model="scope.row.ruleModel" active-color="#13ce66" ></el-switch>
             </template>
          </el-table-column>
-
       </el-table>
-
-
-
       
       <!-- 添加分页按钮 -->
       <el-pagination background layout="prev, pager, next" :total="50" class="page">
