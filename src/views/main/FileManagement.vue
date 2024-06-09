@@ -1,105 +1,83 @@
 <template>
    <div class="app">
       <div class="U_head">
-         <div class="left">
-            <button class="btn1" @click="uploadFile()">上传文件</button>
-            <button class="btn2" @click="prepareDeleteFile()">删除文件</button>
 
-         </div>
+         <el-row>
+            <el-button type="primary" @click="showUploadFile()">上传文件</el-button>
+            <el-button type="danger" @click="showDeleteFile()">删除文件</el-button>
+         </el-row>
 
          <div class="right">
-            <input type="text" placeholder="请输入关键词搜索">
-            <button>
-               <img src="../../assets/UserManagement/搜索_search.png">
-            </button>
+            <el-input v-model="input" placeholder="请输入关键词搜索"></el-input>
+            <el-button type="primary" icon="el-icon-search"></el-button>
          </div>
       </div>
 
       <!-- 表格 -->
-      <table class="main_table">
-         <tr>
-            <th><input type="checkbox" @change="toggleAll()" v-model="allSelected" />全选</th>
-            <th>文件名称</th>
-            <th>文件类型</th>
-            <th>上传者</th>
-            <th>上传时间</th>
-            <th>页面内可见</th>
 
-            <th>操作</th>
+      <el-table ref="multipleTable" :data="files" tooltip-effect="dark" border size="medium" fit style="width: 90%"
+         class="main_table" @selection-change="handleSelectionChange">
+         <el-table-column type="selection" align="center" width="100" reserve-selection
+            label-class-name="custom-header-c olor">
+         </el-table-column>
+         <el-table-column prop="fileName" label="文件名称" :height="20" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="fileType" label="文件类型" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="uploadUser" label="上传者" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="uploadTime" label="上传时间" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="isRead" label="页面内可见" align="center" label-class-name="custom-header-color"
+            v-slot="{ row }">
+            <el-switch v-model="row.status" active-color="#13ce66"></el-switch>
+         </el-table-column>
 
-         </tr>
-         <tr v-for="(user, index) in users" :key="index">
-            <td><input type="checkbox" v-model="user.selected" /></td>
-            <td>{{ user.fileName || '' }}</td>
-            <td>{{ user.fileType || '' }}</td>
-            <td>{{ user.uploadUser || '' }}</td>
-            <td>{{ user.uploadTime || '' }}</td>
-            <td>
-               <label class="switch">
-                  <input type="checkbox" v-model="user.isRead" @change="toggleStatus(user)">
-                  <span class="slider round"></span>
-               </label>
-            </td>
-            <td class="file_del">
+         <el-table-column label="操作" width="300" align="center" label-class-name="custom-header-color" v-slot="{ row }">
 
-               <button class="btn2 table_btn" @click="prepareDeleteFile(user)">删除</button>
+            <el-button type="danger" @click="showDeleteFile(row)">删除</el-button>
 
-            </td>
-         </tr>
-      </table>
+         </el-table-column>
+      </el-table>
+
+
+
+
       <!-- 添加分页按钮 -->
-      <div class="page">
-         <button >
-            <img src="../../assets/UserManagement/左_left.png" style="width: 100%; height: 100%; display: block;">
-         </button>
-         <button v-for="page in pages" :key="page" :class="{ activePage: page === currentPage }"
-            @click="changePage(page)">
-            {{ page }}
-         </button>
-         <button >
-            <img src="../../assets/UserManagement/右_right.png" style="width: 100%; height: 100%; display: block;">
-         </button>
-
-      </div>
+      <el-pagination background layout="prev, pager, next" :total="50" class="page">
+      </el-pagination>
 
 
-      <!-- 弹窗 -->
+
       <!-- 上传文件弹窗 -->
-      <div v-if="uploadVisible" class="dialog-backdrop" @click.self="closePopup()">
-         <div class="dialog-content" @click.stop>
-            <form @submit.prevent="handleFileUpload">
-               <div>
-                  <input type="file" class="file-input" />
-                  
-               </div>
-               <button type="submit">上传</button>
-               <button type="submit" @click="closePopup()">取消</button>
-            </form>
-         </div>
 
-      </div>
+      <el-dialog :visible.sync="uploadVisible" title="上传文件" :modal-append-to-body="false" >
+         <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+         </el-upload>
+      </el-dialog>
+
+
 
       <!-- 删除文件弹窗 -->
-
-      <div v-if="deleteVisible" class="dialog-backdrop" @click.self="closePopup()">
-         <div class="dialog-content" @click.stop>
-            <p>确定删除所选文件？</p>
-            <table>
-               <div v-for="user in selectedUsers" :key="user.id">
-                  <tr>
-                     <td>{{ user.fileName }}</td>
-                     <td>{{ user.fileType }}</td>
-                     <td>{{ user.uploadUser }}</td>
-                     <td>{{ user.uploadTime }}</td>
-                  </tr>
-
-               </div>
-
-            </table>
-            <button type="submit" @click="deleteFile()" >确定</button>
-            <button type="button" @click="closePopup">取消</button>  
-         </div>
-      </div>
+      <el-dialog :visible.sync="deleteVisible" title="删除文件" :modal-append-to-body="false" :before-close="handleClose">
+         <el-alert :title="selectedUsers.length > 1 ? '确定删除选中的用户吗？' : '确定删除该用户吗？'" type="warning" center
+            :closable="false">
+         </el-alert>
+         <el-table :data="selectedUsers" style="width: 100%" border fit>
+            <el-table-column prop="fileName" ></el-table-column>
+            <el-table-column prop="fileType"></el-table-column>
+            <el-table-column prop="uploadUser"></el-table-column>
+            <el-table-column prop="uploadTime"></el-table-column>
+         </el-table>
+            <div style="margin-top: 20px;">
+               <el-button  @click="deleteVisible = false">取消</el-button>
+               <el-button type="primary" @click="deleteFile">确定</el-button>
+            </div>
+      </el-dialog>
+   
    </div>
 </template>
 <script>
@@ -108,7 +86,7 @@ export default {
    data() {
       return {
          // 表格数据
-         users: [
+         files: [
             { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
             { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
             { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
@@ -125,175 +103,52 @@ export default {
          pageSize: 10,
          totalPages: 5,
          totalEntries: 0,
-         allSelected: false,
-         //弹窗控制
-         uploadVisible: false,
-         deleteVisible: false,
-         userToDelete: null, // 即将删除的用户
-         selectedUsers: [], // 批量删除的用户
 
+         //弹窗控制
+         uploadVisible: false, // 上传文件弹窗
+         deleteVisible: false, // 删除文件弹窗
+         selectedUsers: [], // 批量删除的用户
+         input: '', 
 
       };
    },
    created() {
    },
    methods: {
-      // 更改页码
-      changePage(newPage) {
-         if (newPage >= 1 && newPage <= this.totalPages) {
-            this.currentPage = newPage;
-         }
-      },
-      // 处理全选逻辑
-      toggleAll() {
-         if (this.allSelected) { // 检查是否已全选
-            this.users.forEach(user => user.selected = true); // 全选
-         } else {
-            this.users.forEach(user => user.selected = false); // 全部取消选中
-         }
-
-      },
-      // 弹窗部分内容
-      // 上传文件
-      uploadFile() {
+      showUploadFile() {
          this.uploadVisible = true;
       },
-      closePopup() {
-         this.uploadVisible = false;
-         this.deleteVisible = false;
-      },
-      // 删除文件
-      prepareDeleteFile(user = null) {
-
-         if (user) {
+      showDeleteFile( file = null) {
+         if (file) {
             // 单个用户删除
-            this.selectedUsers = [user];
+            this.selectedUsers = [file];
+            this.deleteVisible = true;
          } else {
             // 批量删除
-            this.selectedUsers = this.users.filter(u => u.selected);
-         }
-
-         this.deleteVisible = true;
-      },
-      deleteFile() {
-         this.selectedUsers.forEach(user => {
-            const index = this.users.indexOf(user);
-            if (index !== -1) {
-               this.users.splice(index, 1);
+            if (this.selectedUsers.length > 0) {
+               this.deleteVisible = true;
+            } else {
+               this.$message({
+                  message: "请选择要删除的用户",
+                  type: "warning"
+               });
             }
-         });
-         alert('删除成功');
-         this.closePopup('popup2');
-         // 清空选中的用户数组
-         this.selectedUsers = [];
-      }
+         }
+      },
+
+
+
+
+
+      handleSelectionChange(selected) {
+         this.selectedUsers = selected; // 更新 selectedUsers 数组
+      },
+
 
    },
    computed: {
 
-      // 更新页码
-      pages() {
-         let pages = [];
-         console.log(this.totalPages);
-         for (let i = 1; i <= this.totalPages; i++) {
-            pages.push(i);
-         }
-         return pages;
-      }
+
    }
 }
 </script>
-
-
-<style scoped>
-.U_head {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   margin-right: 100px;
-   margin-left: 69px;
-   margin-top: 35px;
-
-}
-
-
-.U_head .left button {
-   width: 94px;
-   height: 37px;
-   margin-right: 18px;
-   border: none;
-}
-
-.btn1 {
-   background-color: #409eff;
-   color: #ffffff;
-   border: none;
-}
-
-.btn2 {
-   background-color: #f56c6c;
-   color: #ffffff;
-   border: none;
-}
-
-
-
-.table_btn {
-   width: 50px;
-   height: 28px;
-   margin-left: 20px;
-   padding-left: 10px;
-   padding-right: 10px;
-}
-
-
-</style>
-
-<style>
-/* 滑块样式 */
-.switch {
-   position: relative;
-   display: inline-block;
-   width: 40px;
-   height: 20px;
-}
-
-.switch input {
-   opacity: 0;
-   width: 0;
-   height: 0;
-}
-
-.slider {
-   position: absolute;
-   cursor: pointer;
-   top: 0;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   background-color: #ccc;
-   transition: .4s;
-   border-radius: 34px;
-}
-
-.slider:before {
-   position: absolute;
-   content: "";
-   height: 14px;
-   width: 14px;
-   left: 4px;
-   bottom: 3px;
-   background-color: white;
-   transition: .4s;
-   border-radius: 50%;
-}
-
-input:checked+.slider {
-   background-color: #67c23a;
-}
-
-input:checked+.slider:before {
-   transform: translateX(16px);
-}
-</style>
-

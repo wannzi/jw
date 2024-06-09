@@ -167,7 +167,7 @@ button {
     background-color: transparent !important;
 }
 
-/deep/ .el-select {
+ .el-select {
     background: none;
     background-color: transparent !important;
 

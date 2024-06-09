@@ -1,14 +1,18 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router/index.ts'
-import 'element-ui/lib/theme-chalk/index.css';
-// import { Button, Select,Input } from 'element-ui';
 
+// import { Button, Select,Input } from 'element-ui';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI);
 
 // Vue.component(Button.name, Button);
 // Vue.component(Select.name, Select);
 // Vue.component(Input.name, Input);
 Vue.config.productionTip = false
+
+
 
 new Vue({
   el: '#app',

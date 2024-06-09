@@ -6,58 +6,16 @@
             <div>文件目录</div>
          </span>
 
-         <div class="left_content">
-            <div class="left_content_item" @click="showList(1)">
-               <img src="../../../assets/UserManagement/下(白)_down.png" alt="">
-               <img src="../../../assets/UserManagement/文件夹_folder.png" alt="">
-               <span>公共库</span>
-            </div>
-            <div v-if="publicListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item.name" draggable="true"
-                   @dragstart="handleDragStart($event, item)">
 
-                  <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
-                  <span>{{ item.name }}</span>
-               </div>
+         <!-- 文件树 -->
+         <el-tree :data="fileData"  node-key="label" :render-content="renderContent" :allow-drop="() => false"></el-tree>
 
-            </div>
-         </div>
-         <div class="left_content">
-            <div class="left_content_item" @click="showList(2)">
-               <img src="../../../assets/UserManagement/下(白)_down.png" alt="">
-               <img src="../../../assets/UserManagement/文件夹_folder.png" alt="">
-               <span>私有库</span>
-            </div>
-            <div v-if="privateListIsShow">
-               <div class="item_list" v-for="item in privateList" :key="item" draggable="true"
-                  @dblclick="previewFile(item.file)" @dragstart="handleDragStart($event, item)">
 
-                  <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
-                  <span>{{ item.name }}</span>
-               </div>
-
-            </div>
-         </div>
-         <div class="left_content">
-            <div class="left_content_item" @click="showList(3)">
-               <img src="../../../assets/UserManagement/下(白)_down.png" alt="">
-               <img src="../../../assets/UserManagement/文件夹_folder.png" alt="">
-               <span>结果库</span>
-            </div>
-            <div v-if="resultsListIsShow">
-               <div class="item_list" v-for="item in publicList" :key="item" draggable="true">
-
-                  <img src="../../../assets/UserManagement/编辑文件_file.png" alt="">
-                  <span>{{ item.name }}</span>
-               </div>
-
-            </div>
-         </div>
       </div>
 
       <div class="fileComparison_right">
 
-         <div class="right_head">
+         <el-row class="right_head">
             <span class="icon_head" @click="showUpLoadPopup">
                <img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="">
                <span>导入</span>
@@ -67,7 +25,7 @@
                <img src="../../../assets/UserManagement/传入(白)_afferent.png" style="transform: scaleX(-1);">
                <span>导出</span>
             </span>
-            <span class="icon_head " :class="{icon_head_active: !fileContent }">
+            <span class="icon_head " :class="{ icon_head_active: !fileContent }">
                <img src="../../../assets/UserManagement/保存_save.png">
                <span>保存</span>
             </span>
@@ -83,25 +41,17 @@
                <img src="../../../assets/UserManagement/对比_contrast.png">
                <span>比对</span>
             </span>
-         </div>
+         </el-row>
 
          <div v-if="fileContent && this.$route.name === 'FileComparison'" class="fileContentContainer">
-            <table>
-               <!-- 列标签 -->
-               <tr>
-                  <th></th> <!-- 空的单元格在左上角 -->
-                  <th v-for="colIndex in tableData[0].length" :key="'col' + colIndex">
-                     {{ String.fromCharCode(65 + colIndex - 1) }} <!-- 转换数字为字母 (A, B, C...) -->
-                  </th>
-               </tr>
-               <!-- 行数据 -->
-               <tr v-for="(row, rowIndex) in tableData" :key="'row' + rowIndex">
-                  <th>{{ rowIndex + 1 }}</th> <!-- 行号 -->
-                  <td v-for="(cell, cellIndex) in row" :key="cellIndex">
-                     {{ cell }}
-                  </td>
-               </tr>
-            </table>
+            <el-table :data="tableData">
+               <el-table-column type="index" label="行号"></el-table-column>
+               <el-table-column v-for="n in columnCount" :key="n" :label="String.fromCharCode(64 + n)">
+                  <template #default="scope">
+                     {{ scope.row['col' + n] }}
+                  </template>
+               </el-table-column>
+            </el-table>
          </div>
 
 
@@ -154,57 +104,83 @@ import * as XLSX from 'xlsx';
 export default {
    data() {
       return {
-         publicList: [
+         fileData: [
             {
-               name: '文件一',
-               path: '',
-               file: ''
+               label: '公共库',
+               draggable: false,
+               children: [
+                  { label: '文件一', draggable: true },
+                  { label: '文件二', draggable: true }
+               ]
             },
             {
-               name: '文件二',
-               path: '',
-               file: ''
+               label: '私有库',
+               draggable: false,
+               children: [
+                  { label: '文件一', draggable: true },
+                  { label: '文件二', draggable: true }
+               ]
             },
             {
-               name: '文件三',
-               path: '',
-               file: ''
+               label: '结果库',
+               draggable: false,
+               children: [
+                  { label: '文件一', draggable: true },
+                  { label: '文件二', draggable: true }
+               ]
             }
          ],
-         privateList: [
-            {
-               name: '文件一',
-               path: '',
-               file: ''
-            },
-            {
-               name: '文件二',
-               path: '',
-               file: ''
-            },
-            {
-               name: '文件三',
-               path: '',
-               file: ''
-            }
-         ],
-         resultsList: [
-         {
-               name: '文件一',
-               path: '',
-               file: ''
-            },
-            {
-               name: '文件二',
-               path: '',
-               file: ''
-            },
-            {
-               name: '文件三',
-               path: '',
-               file: ''
-            }
-         ],
+         // publicList: [
+         //    {
+         //       name: '文件一',
+         //       path: '',
+         //       file: ''
+         //    },
+         //    {
+         //       name: '文件二',
+         //       path: '',
+         //       file: ''
+         //    },
+         //    {
+         //       name: '文件三',
+         //       path: '',
+         //       file: ''
+         //    }
+         // ],
+         // privateList: [
+         //    {
+         //       name: '文件一',
+         //       path: '',
+         //       file: ''
+         //    },
+         //    {
+         //       name: '文件二',
+         //       path: '',
+         //       file: ''
+         //    },
+         //    {
+         //       name: '文件三',
+         //       path: '',
+         //       file: ''
+         //    }
+         // ],
+         // resultsList: [
+         //    {
+         //       name: '文件一',
+         //       path: '',
+         //       file: ''
+         //    },
+         //    {
+         //       name: '文件二',
+         //       path: '',
+         //       file: ''
+         //    },
+         //    {
+         //       name: '文件三',
+         //       path: '',
+         //       file: ''
+         //    }
+         // ],
          publicListIsShow: false,
          privateListIsShow: false,
          resultsListIsShow: false,
@@ -213,7 +189,8 @@ export default {
          selectedFiles: [],  // 用于存储选中的文件信息
          tableData: [], // 新增用于存储表格数据
          extraRows: 3,  // 额外增加的行数
-         extraColumns: 3 // 额外增加的列数
+         extraColumns: 3 ,// 额外增加的列数
+         
       }
    },
    activated() {
@@ -226,6 +203,8 @@ export default {
    },
    methods: {
       // 展开文件树
+
+
       showList(nav) {
          if (nav == 1) {
             this.publicListIsShow = !this.publicListIsShow;
@@ -273,10 +252,11 @@ export default {
       // 上传文件
       uploadFiles() {
          // 这里假设上传成功，将文件信息添加到publicList中
-         this.privateList.push(...this.selectedFiles.map(file => ({
-            name: file.name,
+         this.fileData[1].children.push(...this.selectedFiles.map(file => ({
+            label: file.name,
             path: '',
-            file: file
+            file: file,
+            draggable: true
          })));
          this.selectedFiles = [];
          this.closePopup();  // 可以选择在上传后关闭弹窗
@@ -320,7 +300,27 @@ export default {
          // 转化成json字符串，以便在drop事件中获取数据
          const itemData = JSON.stringify(item);
          event.dataTransfer.setData('application/json', itemData);
+      },
+      renderContent(h, { node, data }) {
+         return h('div', {
+            attrs: {
+               draggable: data.draggable // 设置 draggable 属性
+            },
+            on: {
+               dragstart: (event) => this.handleDragStart(event, data),
+               dragover: (event) => event.preventDefault()  // 可选：添加其他拖拽相关事件
+            }
+         }, node.label);
+      },
+      handleDragDragStart(event, data) {
+         if (data.draggable) {  // 只处理可拖动的节点
+            const itemData = JSON.stringify(data);
+            event.dataTransfer.setData('application/json', itemData);
+         } else {
+            event.preventDefault(); // 阻止不可拖放的节点触发拖放
+         }
       }
+
 
 
 
@@ -392,6 +392,17 @@ export default {
 }
 </style>
 
+<style scoped>
+.el-tree  {
+   color: #f7f9ff;
+   background-color: transparent;
+   font-size: 1.1vw;
+   padding-left: 20%;
+   padding-right: 15%;
+}
+
+
+</style>
 <style>
 .left_head {
    font-size: 1.4vw;
@@ -486,7 +497,7 @@ export default {
    border-right: 4px solid #7691af;
 }
 
-.icon_head_active{
+.icon_head_active {
    content: "";
    background-color: rgba(48, 42, 42, 0.849);
    /* 半透明黑色背景 */

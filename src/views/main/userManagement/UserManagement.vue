@@ -1,196 +1,151 @@
-<template>
+<template scope="props">
    <div class="app">
       <div class="U_head">
-         <div class="left">
-            <button class="btn1" @click="showPopUp('popup1')">添加用户</button>
-            <button class="btn2" @click="prepareDeleteUser()">删除用户</button>
-            <button class="btn3" @click="prepareResetPassword()">重置密码</button>
-         </div>
+         <el-row>
+            <el-button type="primary" @click="showAddUser()">添加用户</el-button>
+            <el-button type="danger" @click="showDelUser()">删除用户</el-button>
+            <el-button type="warning" @click="showResetPassword()">重置密码</el-button>
+         </el-row>
 
          <div class="right">
-            <input type="text" placeholder="请输入关键词搜索">
-
-            <button>
-               <img src="../../../assets/UserManagement/搜索_search.png">
-            </button>
-
+            <el-input v-model="input" placeholder="请输入关键词搜索"></el-input>
+            <el-button type="primary" icon="el-icon-search"></el-button>
          </div>
       </div>
 
       <!-- 表格 -->
-      <table class="main_table">
-         <tr>
-            <th><input type="checkbox" @change="toggleAll" v-model="allSelected" />全选</th>
-            <th>账号</th>
-            <th>姓名</th>
-            <th>部门</th>
-            <th>职务</th>
-            <th>电话</th>
-            <th>账号状态</th>
-            <th>操作</th>
+      <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" border size="medium" fit style="width: 90%"
+         class="main_table" @selection-change="handleSelectionChange">
+         <el-table-column type="selection" align="center" width="100" reserve-selection
+            label-class-name="custom-header-c olor">
+         </el-table-column>
+         <el-table-column prop="account" label="账号" :height="20" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="name" label="姓名" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="department" label="部门" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="office" label="职务" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="phone" label="电话" align="center"
+            label-class-name="custom-header-color"></el-table-column>
+         <el-table-column prop="status" label="账号状态" align="center" label-class-name="custom-header-color"
+            v-slot="{ row }">
+            <el-switch v-model="row.status" active-color="#13ce66"></el-switch>
+         </el-table-column>
+         <el-table-column label="操作" width="300" align="center" label-class-name="custom-header-color" v-slot="{ row }">
+            <el-button type="primary" @click="showEditUser(row)">编辑</el-button>
+            <el-button type="danger" @click="showDelUser(row)">删除</el-button>
+            <el-button type="warning" @click="showResetPassword(row)">重置密码</el-button>
+         </el-table-column>
+      </el-table>
 
-         </tr>
-         <tr v-for="(user, index) in users" :key="index">
-            <td><input type="checkbox" v-model="user.selected" /></td>
-            <td>{{ user.account || '' }}</td>
-            <td>{{ user.name || '' }}</td>
-            <td>{{ user.department || '' }}</td>
-            <td>{{ user.office || '' }}</td>
-            <td>{{ user.phone || '' }}</td>
-            <td>
-               <label class="switch">
-                  <input type="checkbox" v-model="user.status" @change="toggleStatus(user)">
-                  <span class="slider round"></span>
-               </label>
-            </td>
-            <td class="user_operate">
-               <button class="btn1 table_btn" @click="editUser(user)">编辑</button>
-               <button class="btn2 table_btn" @click="prepareDeleteUser(user)">删除</button>
-               <button class="btn3 table_btn" @click="prepareResetPassword(user)">重置密码</button>
-            </td>
-         </tr>
-      </table>
+
+
       <!-- 添加分页按钮 -->
-      <div class="page">
-         <button >
-            <img src="../../../assets/UserManagement/左_left.png" style="width: 100%; height: 100%; display: block;">
-         </button>
-         <button v-for="page in pages" :key="page" :class="{ activePage: page === currentPage }"
-            @click="changePage(page)">
-            {{ page }}
-         </button>
-         <button >
-            <img src="../../../assets/UserManagement/右_right.png" style="width: 100%; height: 100%; display: block;">
-         </button>
-
-      </div>
+      <el-pagination background layout="prev, pager, next" :total="50" class="page">
+      </el-pagination>
 
 
-
-
-
-      <!-- 弹窗 -->
       <!-- 添加用户弹窗 -->
-      <div v-if="popup1Visible" class="dialog-backdrop" @click.self="closePopup('popup1')">
-         <div class="dialog-content" @click.stop>
-            <form>
-               <h2>添加用户信息</h2>
+      <el-dialog :visible.sync="addUserVisible" title="添加用户" :modal-append-to-body="false" width="30%">
 
-               <div>
-                  <label for="name">账号:</label>
-                  <input id="name" type="text">
-               </div>
-               <div>
-                  <label for="name">姓名:</label>
-                  <input id="name" type="text">
-               </div>
-               <div>
-                  <label for="department">部门:</label>
-
-                  <select id="department">
-                     <option value="技术部">技术部</option>
-                     <option value="人事部">人事部</option>
-                     <option value="财务部">财务部</option>
-                     <option value="市场部">市场部</option>
-                     <option value="销售部">销售部</option>
-                  </select>
-               </div>
-               <div>
-                  <label for="department">职务:</label>
-                  <input id="department" type="text">
-               </div>
-               <div>
-                  <label for="phone">电话:</label>
-                  <input id="phone" type="text">
-               </div>
+         <el-form :form="addUserForm">
+            <el-form-item label="账号" prop="account">
+               <el-input v-model="addUserForm.account" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="姓名" prop="name">
+               <el-input v-model="addUserForm.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="部门" prop="department">
+               <el-input v-model="addUserForm.department" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="职务" prop="office">
+               <el-input v-model="addUserForm.office" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="电话"    prop="phone">
+               <el-input v-model="addUserForm.phone" autocomplete="off"></el-input>
+            </el-form-item>
 
 
-               <button type="submit">保存</button>
-               <button>取消</button>
-            </form>
-            
+         </el-form>
+         <div slot="footer" class="dialog-footer">
+            <el-button @click="addUserVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addUser()">确 定</el-button>
          </div>
-      </div>
+      </el-dialog>
 
 
-      <!-- 删除用户弹窗 -->
-      <div v-if="popup2Visible" class="dialog-backdrop" @click.self="closePopup('popup2')">
-         <div class="dialog-content" @click.stop v-if="selectedUsers.length">
-            <!-- 根据选择的用户数量显示不同的标题 -->
-            <h3 v-if="selectedUsers.length === 1">确定要删除这个用户吗？</h3>
-            <h3 v-else>确定要删除这些用户吗？</h3>
-            <table>
-               <div v-for="user in selectedUsers" :key="user.account">
-                  <th>
-                     <label for="account">{{ user.account }}</label>
-                     <label for="name">{{ user.name }}</label>
-                  </th>
-               </div>
-            </table>
-            <button @click="deleteUser()">删除</button>
-            <button @click="closePopup('popup2')">关闭</button>
+      <!-- 批量删除弹窗 -->
+      <el-dialog :visible.sync="delUserVisible" title="删除用户" :modal-append-to-body="false" width="30%">
+         <!-- 根据删除类型显示不同的提示信息 -->
+         <el-alert :title="selectedUsers.length > 1 ? '确定删除选中的用户吗？' : '确定删除该用户吗？'" type="warning" center
+            :closable="false">
+         </el-alert>
+
+         <el-table :data="selectedUsers" style="width: 100%" border fit>
+            <el-table-column prop="account"></el-table-column>
+            <el-table-column prop="name"></el-table-column>
+            <el-table-column prop="department"></el-table-column>
+            <el-table-column prop="office"></el-table-column>
+         </el-table>
+         <div slot="footer" class="dialog-footer">
+            <el-button @click="delUserVisible = false">取 消</el-button>
+            <el-button type="primary" @click="deleteUser()">确 定</el-button>
          </div>
-         <div class="dialog-content" @click.stop v-else>
-            <h3>请选择要删除的用户</h3>
-            <button @click="closePopup('popup2')">关闭</button>
-         </div>
-      </div>
+      </el-dialog>
+
+
 
       <!-- 重置密码弹窗 -->
-      <div v-if="popup3Visible" class="dialog-backdrop" @click.self="closePopup('popup3')">
-         <div class="dialog-content" @click.stop v-if="selectedUsers.length">
-            <!-- ... 重置密码弹窗中的内容 ... -->
-            <h3>确定重置这些用户的密码吗？</h3>
-            <table action="">
-               <div v-for="user in selectedUsers" :key="user.account">
-                  <th>
-                     <label for="account">{{ user.account }}</label>
-                     <label for="name">{{ user.name }}</label>
-                  </th>
+      <el-dialog :visible.sync="resetPasswordVisibel" title="重置密码" :modal-append-to-body="false" width="30%">
+         <el-alert :title="selectedUsers.length > 1 ? '确定重置选中的用户密码吗？' : '确定重置该用户密码吗？'" type="warning" center
+            :closable="false">
+         </el-alert>
 
-               </div>
-            </table>
-            <button @click="resetPassword()">重置</button>
-            <button @click="closePopup('popup3')">关闭</button>
+         <el-table :data="selectedUsers" style="width: 100%" border fit>
+            <el-table-column prop="account"></el-table-column>
+            <el-table-column prop="name"></el-table-column>
+         </el-table>
+         <div slot="footer" class="dialog-footer">
+            <el-button @click="resetPasswordVisibel = false">取 消</el-button>
+            <el-button type="primary" @click="resetPassword()">确 定</el-button>
          </div>
-         <div class="dialog-content" @click.stop v-else>
-            <h3>请选择要重置密码的用户</h3>
-            <button @click="closePopup('popup3')">关闭</button>
-         </div>
-      </div>
+
+      </el-dialog>
+
+
+
+
       <!-- 编辑用户弹窗 -->
-      <div v-if="popup4Visible" class="dialog-backdrop" @click.self="closePopup('popup4')">
-         <div class="dialog-content" @click.stop>
-            <form @submit.prevent="saveUser">
-               <h2>编辑用户信息</h2>
 
-               <div>
-                  <label for="edit-account">账号:</label>
-                  <input id="edit-account" type="text" v-model="editingUser.account" readonly>
-               </div>
-               <div>
-                  <label for="edit-name">姓名:</label>
-                  <input id="edit-name" type="text" v-model="editingUser.name">
-               </div>
-               <div>
-                  <label for="edit-department">部门:</label>
-                  <input id="edit-department" type="text" v-model="editingUser.department">
-               </div>
-               <div>
-                  <label for="edit-office">职务:</label>
-                  <input id="edit-office" type="text" v-model="editingUser.office">
-               </div>
-               <div>
-                  <label for="edit-phone">电话:</label>
-                  <input id="edit-phone" type="text" v-model="editingUser.phone">
-               </div>
-
-               <button type="submit">保存</button>
-               <button @click="closePopup('popup4')">取消</button>
-            </form>
-           
+      <el-dialog :visible.sync="editUserVisible" title="编辑用户" :modal-append-to-body="false" width="30%">
+         <el-form :model="editingUser" ref="editUserForm">
+            <el-form-item label="账号" >
+               <el-input v-model="editingUser.account" autocomplete="off" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="姓名">
+               <el-input v-model="editingUser.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="部门">
+               <el-input v-model="editingUser.department" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="职务">
+               <el-input v-model="editingUser.office" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="电话">
+               <el-input v-model="editingUser.phone" autocomplete="off"></el-input>
+            </el-form-item>
+         </el-form>
+         <div slot="footer" class="dialog-footer">
+            <el-button @click="editUserVisible = false">取 消</el-button>
+            <el-button type="primary" @click="editUser()">确 定</el-button>
          </div>
-      </div>
+
+      </el-dialog>
+
+
+
 
 
 
@@ -211,7 +166,7 @@ export default {
    data() {
       return {
          // 表格数据
-         users: [
+         tableData: [
             { account: 1, name: '张三', department: '技术部', office: '主任', phone: '13800000000', status: '启用', selected: false },
             { account: 2, name: '张三', department: '技术部', office: '主任', phone: '13800000000', status: '启用', selected: false },
             { account: 3, name: '张三', department: '技术部', office: '主任', phone: '13800000000', status: '启用', selected: false },
@@ -222,235 +177,141 @@ export default {
             { account: 8, name: '张三', department: '技术部', office: '主任', phone: '13800000000', status: '启用', selected: false },
             { account: 9, name: '张三', department: '技术部', office: '主任', phone: '13800000000', status: '启用', selected: false },
             { account: 10, name: '张三', department: '技术部', office: '主任', phone: '13800000000', status: '启用', selected: false },
-
-
          ],
          //当前页码
+         selectedUsers: [], // 用于存储选中的用户
          currentPage: 2,
          pageSize: 10,
          totalPages: 5,
          totalEntries: 0,
-         allSelected: false,
+         // allSelected: false,
          // 弹窗状态
-         popup1Visible: false,
-         popup2Visible: false,
-         popup3Visible: false,
-         popup4Visible: false,
-         editingUser: null, // 当前正在编辑的用户
-         userToDelete: null, // 即将删除的用户
-         selectedUsers: [], // 批量删除的用户
-         
+         addUserVisible: false,
+         delUserVisible: false,
+         resetPasswordVisibel: false,
+         editUserVisible: false,
+         editingUser: {}, // 编辑用户信息
+         addUserForm: {
+            // 表单数据初始化
+            account: '',
+            name: '',
+            department: '',
+            office: '',
+            phone: '',
+         },
+         input: '', // 搜索框内容
+
+
 
       };
    },
    created() {
    },
-   methods: {
-      // 点击更改页码
-      changePage(newPage) {
-         if (newPage >= 1 && newPage <= this.totalPages) {
-            this.currentPage = newPage;
-         }
-      },
-      // 处理全选逻辑
-      toggleAll() {
-         if (this.allSelected) { // 检查是否已全选
-            this.users.forEach(user => user.selected = true); // 全选
-         } else {
-            this.users.forEach(user => user.selected = false); // 全部取消选中
-         }
+   mounted() {
 
-      },
+   },
+   methods: {
       // 弹窗开关
-      showPopUp(popupId) {
-         this[popupId + 'Visible'] = true;
+      showAddUser() {
+         this.addUserVisible = true;
       },
-      closePopup(popupId) {
-         this[popupId + 'Visible'] = false;
+      addUser() {
+
+         //处理逻辑
+
+         this.$message({
+            message: "添加用户成功",
+            type: "success"
+         });
+         this.addUserVisible = false;
       },
-      // 编辑用户方法
-      editUser(user) {
-         this.editingUser = Object.assign({}, user); // 创建一个用户的深拷贝
-         this.popup4Visible = true; // 显示编辑窗口
-      },
-      // 保存编辑
-      saveUser() {
-         const index = this.users.findIndex(u => u.account === this.editingUser.account);
-         if (index !== -1) {
-            this.users.splice(index, 1, this.editingUser);
-            this.closePopup('popup4');
-         }
-      },
-      // 删除用户方法
-      prepareDeleteUser(user = null) {
+      showDelUser(user = null) {
          if (user) {
             // 单个用户删除
             this.selectedUsers = [user];
+            this.delUserVisible = true;
          } else {
             // 批量删除
-            this.selectedUsers = this.users.filter(u => u.selected);
+            if (this.selectedUsers.length > 0) {
+               this.delUserVisible = true;
+            } else {
+               this.$message({
+                  message: "请选择要删除的用户",
+                  type: "warning"
+               });
+            }
          }
-
-         this.showPopUp('popup2');
       },
       deleteUser() {
-         this.selectedUsers.forEach(user => {
-            const index = this.users.indexOf(user);
-            if (index !== -1) {
-               this.users.splice(index, 1);
-            }
+         //处理删除逻辑
+
+
+         this.$message({
+            message: "删除用户成功",
+            type: "success"
          });
-         alert('删除成功');
-         this.closePopup('popup2');
-         // 清空选中的用户数组
+         this.delUserVisible = false;
          this.selectedUsers = [];
       },
-      // 重置密码方法
-      prepareResetPassword(user = null) {
+
+
+      showResetPassword(user = null) {
          if (user) {
             // 单个用户重置密码
             this.selectedUsers = [user];
+            this.resetPasswordVisibel = true;
          } else {
             // 批量重置密码
-            this.selectedUsers = this.users.filter(u => u.selected);
+            if (this.selectedUsers.length > 0) {
+               this.resetPasswordVisibel = true;
+            } else {
+               this.$message({
+                  message: "请选择要重置密码的用户",
+                  type: "warning"
+               });
+            }
          }
-         this.showPopUp('popup3');
       },
       resetPassword() {
-         alert('密码重置成功');
-         this.closePopup('popup3');
+         //处理重置密码逻辑
+
+         this.$message({
+            message: "重置密码成功",
+            type: "success"
+         });
+         this.resetPasswordVisibel = false;
+         this.selectedUsers = [];
+      }, 
+
+
+      showEditUser(user) {
+         this.editingUser = user;
+         this.editUserVisible = true;
+
+      },
+      editUser(){
+         //处理编辑逻辑
+
+         this.$message({
+            message: "编辑用户成功",
+            type: "success"
+         });
+         this.editUserVisible = false;
+      },
+
+
+
+      handleSelectionChange(selected) {
+         this.selectedUsers = selected; // 更新 selectedUsers 数组
       },
 
 
 
 
 
-   },
-   computed: {
 
-      // 更新页数
-      pages() {
-         let pages = [];
-         console.log(this.totalPages);
-         for (let i = 1; i <= this.totalPages; i++) {
-            pages.push(i);
-         }
-         return pages;
-      },
    },
+
 
 }
 </script>
-
-
-<style scoped>
-.U_head {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   margin-right: 100px;
-   margin-left: 69px;
-   margin-top: 35px;
-
-}
-
-
-.U_head .left button {
-   width: 94px;
-   height: 37px;
-   margin-right: 18px;
-   border: none;
-}
-
-.btn1 {
-   background-color: #409eff;
-   color: #ffffff;
-   border: none;
-}
-
-.btn2 {
-   background-color: #f56c6c;
-   color: #ffffff;
-   border: none;
-}
-
-.btn3 {
-   background-color: #e99d42;
-   color: #ffffff;
-   border: none;
-}
-
-.table_btn {
-   width: 3vw;
-   height: 28px;
-   font-size: 0.8vw;
-   margin-left: 20px;
-   padding-left: 10px;
-   padding-right: 10px;
-}
-
-.table_btn:last-child {
-   width: 5vw;
-   height: 28px;
-   margin-left: 20px;
-   padding-left: 10px;
-   padding-right: 10px;
-}
-
-
-</style>
-
-<style scoped>
-table .user_operate {
-   width: 14vw;
-}
-
-
-
-
-/* 滑块样式 */
-.switch {
-   position: relative;
-   display: inline-block;
-   width: 40px;
-   height: 20px;
-}
-
-.switch input {
-   opacity: 0;
-   width: 0;
-   height: 0;
-}
-
-.slider {
-   position: absolute;
-   cursor: pointer;
-   top: 0;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   background-color: #ccc;
-   transition: .4s;
-   border-radius: 34px;
-}
-
-.slider:before {
-   position: absolute;
-   content: "";
-   height: 14px;
-   width: 14px;
-   left: 4px;
-   bottom: 3px;
-   background-color: white;
-   transition: .4s;
-   border-radius: 50%;
-}
-
-input:checked+.slider {
-   background-color: #67c23a;
-}
-
-input:checked+.slider:before {
-   transform: translateX(16px);
-}
-</style>
