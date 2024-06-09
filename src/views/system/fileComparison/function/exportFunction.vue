@@ -1,12 +1,10 @@
 <template>
     <div>
         <div class="intoFile" @dragover.prevent="handleDragOver" @drop.prevent="handleFileDrop">
-
             <div v-if="!files.length">
                 <div class="intoFile_title_1">+</div>
                 <div class="intoFile_title_2">请将导出文件从目录拖拽到此</div>
             </div>
-
 
             <!-- 文件列表展示 -->
             <ul class="file-list" v-if="files.length">
@@ -15,12 +13,11 @@
                     <span class="delete-btn" @click="removeFile(index)">×</span>
                 </li>
             </ul>
-
         </div>
 
         <div class="ctrl_btn">
-            <button class="ge_btn1" @click="exportFiles">导出</button>
-            <button class="ge_btn2" @click="clearFiles">清空</button>
+            <el-button type="primary" @click="exportFiles">导出</el-button>
+            <el-button type="danger" @click="clearFiles">清空</el-button>
         </div>
     </div>
 </template>
@@ -28,7 +25,7 @@
 export default {
     data() {
         return {
-            files: [],//存放拖拽的文件
+            files: [{name:"wenjian1"}],//存放拖拽的文件
         }
     },
     activated() {
@@ -43,7 +40,6 @@ export default {
         handleDragOver(event) {
             event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
         },
-
 
         handleFileDrop(event) {
             event.preventDefault();
@@ -61,16 +57,13 @@ export default {
         removeFile(index) {
             this.files.splice(index, 1); // 移除指定索引的文件
         }
-
     }
-
-
 }
 </script>
 <style>
 .intoFile {
-    width: 73vw;
-    height: 40vh;
+    width: 79vw;
+    height: 36vh;
     border: 3px dashed #6f86a0;
     position: relative;
     padding: 20px;
@@ -78,7 +71,6 @@ export default {
     overflow: hidden;
     /* 超过高度时显示滚动条 */
     overflow-y: auto;
-
 }
 
 .file-list {
@@ -86,12 +78,14 @@ export default {
     display: flex;
     flex-wrap: wrap;
     padding: 8px;
-    margin: 0;
-    
+    margin: 0;    
 }
 
 .file-item {
-    background-color: #f0f8ff;
+	width: 100px;
+	height: 20px;
+    background-color: #f0f8ff80;
+	color: white;
     margin: 4px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -144,26 +138,7 @@ export default {
 .ctrl_btn button {
     font-size: 1vw;
     font-weight: bold;
-
+	margin-top: 5vh;
 }
 
-.ge_btn1 {
-    background-color: #409eff;
-    color: #ffffff;
-    border: none;
-    width: 94px;
-    height: 37px;
-    margin-right: 18px;
-    margin-top: 2vw;
-}
-
-.ge_btn2 {
-    background-color: #f56c6c;
-    color: #ffffff;
-    border: none;
-    width: 94px;
-    height: 37px;
-    margin-right: 18px;
-    margin-top: 2vw;
-}
 </style>

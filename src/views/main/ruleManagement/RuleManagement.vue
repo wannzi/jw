@@ -3,19 +3,19 @@
       <div class="U_head">
 
          <el-row>
-            <el-button type="primary" @click="showAddRule()">新建规则</el-button>
-            <el-button type="danger" @click="showDelRule()">删除规则</el-button>
+            <el-button type="primary" @click="showAddRule()" size="medium">新建规则</el-button>
+            <el-button type="danger" @click="showDelRule()" size="medium">删除规则</el-button>
          </el-row>
 
          <div class="right">
-            <el-input v-model="input" placeholder="请输入关键词搜索"></el-input>
-            <el-button type="primary" icon="el-icon-search"></el-button>
+            <el-input v-model="input" placeholder="请输入关键词搜索" size="medium"></el-input>
+            <el-button type="primary" icon="el-icon-search" size="medium"></el-button>
          </div>
       </div>
 
       <!-- 表格 -->
 
-      <el-table ref="multipleTable" :data="rules" tooltip-effect="dark" border size="medium" fit style="width: 90%"
+      <el-table :header-cell-style="()=>'background:#409EFF20'" ref="multipleTable" :data="rules" stripe border size="medium" fit style="width: 90%"
          class="main_table" @selection-change="handleSelectionChange">
          <el-table-column type="selection" align="center" width="100" reserve-selection
             label-class-name="custom-header-color">
@@ -31,10 +31,10 @@
          <el-table-column prop="createTime" label="创建时间" align="center"
             label-class-name="custom-header-color"></el-table-column>
 
-         <el-table-column label="操作" width="400" align="center" label-class-name="custom-header-color" v-slot="{ row }">
-            <el-button type="primary" @click="showEditRule(row)">编辑</el-button>
-            <el-button type="danger" @click="showDelRule(row)">删除</el-button>
-            <el-button :type="row.isPublic ? 'success' : 'warning'" @click="handleChangeType(row)">
+         <el-table-column label="操作" width="300" align="center" label-class-name="custom-header-color" v-slot="{ row }">
+            <el-button type="primary" @click="showEditRule(row)" size="small">编辑</el-button>
+            <el-button type="danger" @click="showDelRule(row)" size="small">删除</el-button>
+            <el-button :type="row.isPublic ? 'success' : 'warning'" @click="handleChangeType(row)" size="small">
                {{ row.isPublic ? '设为私有规则' : '设为公共规则' }}
             </el-button>
          </el-table-column>
