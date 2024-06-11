@@ -14,7 +14,7 @@
 		<div class="SelectDraw">
 			<div style="display: flex; flex-direction: row; margin-top: 1vh;">
 				<el-input :placeholder="placeholder" v-model="keyword" class="input-with-select">
-					<el-select v-model="select" slot="prepend" placeholder="请选择">
+					<el-select v-model="select" slot="prepend" placeholder="请选择"  @change="updatePlaceholder">
 						<el-option label="个人" value="1"></el-option>
 						<el-option label="单位" value="2"></el-option>
 					</el-select>
@@ -30,11 +30,30 @@
 		name: 'SelectDraw',
 		data() {
 			return {
-				placeholder: "请输入内容",
+				placeholder: "请输入人员姓名和身份证号",
 				keyword: "",
 				select: "1"
 			}
 		}
+		, watch: {
+			select(newVal) {
+				if (newVal === "1") {
+					this.placeholder = "请输入人员姓名和身份证号";
+				} else if (newVal === "2") {
+					this.placeholder = "请输入单位名称或统一社会信用代码";
+				}
+			}
+		},
+		methods: {
+			updatePlaceholder() {
+				if (this.select === "1") {
+					this.placeholder = "请输入人员姓名和身份证号";
+				} else if (this.select === "2") {
+					this.placeholder = "请输入单位名称或统一社会信用代码";
+				}
+			}
+		}
+
 	}
 </script>
 
@@ -101,9 +120,6 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
-		/*text-align: center;*/
-		//margin-left: 38vw;
-		//margin: 0 auto;
 		margin-top: 20vh;
 	}
 
@@ -202,6 +218,6 @@
 	.input-with-select .el-input-group__append .el-button{
 		font-size: 20px;
 		height: 50px;
-		}	
+		}
 
 </style>

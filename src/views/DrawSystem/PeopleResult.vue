@@ -157,20 +157,20 @@
 <script>
 
 // import router from "@/router";
-import Vue from "vue";
-export default class SelectDraw extends Vue {
+
+export default  {
     data() {
         return {
             tabIndex: 0
         }
-    }
-    methods = {
+    },
+    methods:{
         updateTab(newTabs) {
             this.tabIndex = newTabs
             console.log("update")
         }
-    }
-    watch = {
+    },
+    watch: {
         tabIndex: {
             immediate: true,
             handler(newValue) {

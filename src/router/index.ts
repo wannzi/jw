@@ -9,9 +9,11 @@ import RuleManagement from '@/views/main/ruleManagement/RuleManagement.vue';
 import AddRules from '@/views/main/ruleManagement/newRules/addRules.vue';
 import FileComparison from '@/views/system/fileComparison/fileComparison.vue';
 import ExportFunction from '@/views/system/fileComparison/function/exportFunction.vue';
+import PeopleResult from "../views/DrawSystem/PeopleResult.vue";
 
 Vue.use(Router);
 
+// @ts-ignore
 export default new Router({
     mode: 'history',
     routes: [
@@ -83,20 +85,22 @@ export default new Router({
                 }
             ]
         },
+        // 路由配置
         {
             path: '/DrawSystem',
-            name: 'DrawSystem',
+            // name: 'DrawSystem',
             component: () => import('@/views/DrawSystem/SelectDraw.vue'),
-            // children: [
-            //     {
-            //         path: 'PeopleResult',
-            //         name: 'PeopleResult',
-            //         component: () => import('@/views/DrawSystem/PeopleResult.vue')
-            //     },
-            // ]
+            children: [
+                {
+                    path: '/PeopleResult',
+                    name: 'PeopleResult',
+                    component: PeopleResult
+                },
+            ]
         },
 		{
 		    path: '/PeopleResult',
+            // eslint-disable-next-line no-mixed-spaces-and-tabs
 		    name: 'PeopleResult',
 		    component: () => import('@/views/DrawSystem/PeopleResult.vue'),
 		}
