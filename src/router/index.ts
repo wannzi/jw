@@ -9,12 +9,18 @@ import RuleManagement from '@/views/main/ruleManagement/RuleManagement.vue';
 import AddRules from '@/views/main/ruleManagement/newRules/addRules.vue';
 import FileComparison from '@/views/system/fileComparison/fileComparison.vue';
 import ExportFunction from '@/views/system/fileComparison/function/exportFunction.vue';
-
+import test from '../App.vue'
 Vue.use(Router);
 
 export default new Router({
     mode: 'history',
     routes: [
+        // {
+        //     path:'/test',
+        //     component:test,
+        //     name:'test'
+        // },
+
         {
             path: '/',
             redirect: '/dashboard/userManagement'

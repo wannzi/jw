@@ -81,15 +81,19 @@
          </el-dialog>
 
          <!-- 预览表格 -->
-         <el-table :data="files" :key="tableKey" style="width: 100%" stripe border  height="600px" width="100px"
+         <!-- <el-table :data="files" :key="tableKey" style="width: 100%" stripe border height="600px" width="100px"
             v-if="fileContent && this.$route.path === '/fileComparison'">
-            <el-table-column v-for="(colItem, colIndex) in Object.keys(files[0])" :prop="colItem"  min-width="200px"
+            <el-table-column v-for="(colItem, colIndex) in Object.keys(files[0])" :prop="colItem" min-width="200px"
                :key="colIndex">
                <template slot-scope="scope">
                   {{ scope.row[colItem] }}
                </template>
-            </el-table-column>
-         </el-table>
+</el-table-column>
+
+</el-table> -->
+         <div v-if="fileContent && this.$route.path === '/fileComparison'">
+            <SpreadSheet :exceldata="yourExcelData" :mergecell="yourMergeCells" :readOnly="false" />
+         </div>
 
 
 
@@ -104,11 +108,13 @@
 </template>
 <script>
 import * as XLSX from 'xlsx';
-
+import SpreadSheet from '../../../components/SpreadSheet.vue';
 
 export default {
    data() {
       return {
+         yourExcelData: [['姓名', '年龄', '性别', '手机号'], ['张三', 20, '男', '13812345678'], ['李四', 25, '女', '13812345679']],
+         yourMergeCells: {},
          fileData: [
             {
                label: '公共库',
@@ -158,6 +164,9 @@ export default {
    activated() {
    },
    watch: {
+   },
+   components: {
+      SpreadSheet
    },
    created() {
    },
@@ -316,7 +325,7 @@ export default {
 
          if (node.label.endsWith('.xlsx') || node.label.endsWith('.xls')) {
             this.$message.success('正在打开文件...');
-            this.$router.push({ path: '/fileComparison' })
+            this.$router.push({ path: '/fileComparison', query: { filename: node.data.label } });
 
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -326,18 +335,22 @@ export default {
                const worksheet = workbook.Sheets[firstSheetName];
                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-               // 填充空白单元格
-               const rows = json.length;
-               const cols = Math.max(...json.map(row => row.length));
-               for (let i = 0; i < rows; i++) {
-                  for (let j = 0; j < cols; j++) {
-                     if (json[i][j] === undefined) {
-                        json[i][j] = ''; // 填充空白单元格
-                     }
-                  }
-               }
+               // // 填充空白单元格
+               // const rows = json.length;
+               // const cols = Math.max(...json.map(row => row.length));
+               // for (let i = 0; i < rows; i++) {
+               //    for (let j = 0; j < cols; j++) {
+               //       if (json[i][j] === undefined) {
+               //          json[i][j] = ''; // 填充空白单元格
+               //       }
+               //    }
+               // }
 
-               console.log('解析后的Excel数据:', json);
+               // console.log('解析后的Excel数据:', json);
+               
+               // 更新yourExcelData
+               this.yourExcelData = json;
+               console.log('yourExcelData:', this.yourExcelData);
 
                this.files = json.map((row) => {
                   return row.reduce((acc, curr, idx) => {
@@ -371,11 +384,12 @@ export default {
 
 
 <style>
-
-.el-table__footer-wrapper, .el-table__header-wrapper{
+.el-table__footer-wrapper,
+.el-table__header-wrapper {
    display: none;
 }
-.el-table .cell{
+
+.el-table .cell {
    line-height: none;
 }
 </style>
@@ -543,26 +557,21 @@ export default {
 }
 </style>
 <style>
-.right_title div {
-   font-size: 1.4vw;
-   color: #8498ae;
-   margin-top: 0.7vw;
-   margin-bottom: 0.7vw;
-}
-
 .right_title {
    display: flex;
    flex-direction: column;
    align-items: flex-start;
    position: absolute;
-   line-height: 40px;
-   opacity: 0.7;
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
+}
 
-
-
+.right_title div {
+   font-size: 1.4vw;
+   color: #8498ae;
+   margin-top: 0.7vw;
+   margin-bottom: 0.7vw;
 }
 
 .right_head {
@@ -584,10 +593,6 @@ export default {
 }
 </style>
 <style>
-.navActive {
-   color: aqua;
-}
-
 .child_view {
    margin-top: 2vw;
    margin-left: 2vw;
