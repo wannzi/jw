@@ -13,12 +13,12 @@
 
 		<div class="SelectDraw">
 			<div style="display: flex; flex-direction: row; margin-top: 1vh;">
-				<el-input :placeholder="placeholder" v-model="keyword" class="input-with-select">
-					<el-select v-model="select" slot="prepend" placeholder="请选择"  @change="updatePlaceholder">
+				<el-input :placeholder="placeholder" v-model="keyWord" class="input-with-select" >
+					<el-select v-model="select" slot="prepend" placeholder="请选择" style="width: 7vw"   @change="updatePlaceholder">
 						<el-option label="个人" value="1"></el-option>
 						<el-option label="单位" value="2"></el-option>
 					</el-select>
-					<el-button slot="append" icon="el-icon-search" style="background-color: #32FFF6;color: #2c3e50">搜索</el-button>
+					<el-button slot="append" icon="el-icon-search" style="background-color: #32FFF6;color: #2c3e50" @click="search">搜索</el-button>
 				</el-input>
 			</div>			
 		</div>
@@ -26,13 +26,17 @@
 </template>
 
 <script>
+import { getData } from "../../api/SelectDraw/index"; // 导入接口函数
 	export default {
 		name: 'SelectDraw',
 		data() {
 			return {
 				placeholder: "请输入人员姓名和身份证号",
-				keyword: "",
-				select: "1"
+				keyWord: "",
+				select: {
+					value: ""
+				}
+
 			}
 		}
 		, watch: {
@@ -51,8 +55,26 @@
 				} else if (this.select === "2") {
 					this.placeholder = "请输入单位名称或统一社会信用代码";
 				}
-			}
-		}
+			},
+			search() {
+				// 调用接口函数发送请求
+				const type = this.select.value;
+				const keyWord = this.keyword;
+				getData(type,keyWord).then((response) => {
+							// 处理返回的数据
+							console.log(response.data);
+							if (this.select === "1") {
+								this.$router.push("/PeopleResult");
+							} else if (this.select === "2") {
+								this.$router.push("/WorkResult");
+							}
+						})
+						.catch((error) => {
+							// 处理请求错误
+							console.error(error);
+						});
+			},
+		},
 
 	}
 </script>

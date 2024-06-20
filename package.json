@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^1.7.2",
     "core-js": "^3.8.3",
     "element-ui": "^2.15.14",
+    "pnpm": "^9.3.0",
     "vue": "^2.6.14",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",

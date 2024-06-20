@@ -9,7 +9,7 @@ import RuleManagement from '@/views/main/ruleManagement/RuleManagement.vue';
 import AddRules from '@/views/main/ruleManagement/newRules/addRules.vue';
 import FileComparison from '@/views/system/fileComparison/fileComparison.vue';
 import ExportFunction from '@/views/system/fileComparison/function/exportFunction.vue';
-import PeopleResult from "../views/DrawSystem/PeopleResult.vue";
+// import PeopleResult from "../views/DrawSystem/PeopleResult.vue";
 
 Vue.use(Router);
 
@@ -90,19 +90,26 @@ export default new Router({
             path: '/DrawSystem',
             // name: 'DrawSystem',
             component: () => import('@/views/DrawSystem/SelectDraw.vue'),
-            children: [
-                {
-                    path: '/PeopleResult',
-                    name: 'PeopleResult',
-                    component: PeopleResult
-                },
-            ]
+            // children: [
+            //     {
+            //         path: '/PeopleResult',
+            //         name: 'PeopleResult',
+            //         component:() => import('@/views/DrawSystem/PeopleResult.vue')
+            //     },
+            // ]
         },
 		{
+            // eslint-disable-next-line no-mixed-spaces-and-tabs
 		    path: '/PeopleResult',
             // eslint-disable-next-line no-mixed-spaces-and-tabs
 		    name: 'PeopleResult',
+            // eslint-disable-next-line no-mixed-spaces-and-tabs
 		    component: () => import('@/views/DrawSystem/PeopleResult.vue'),
-		}
+		},
+        {
+        path:'/WorkResult',
+            name:'WorkResult',
+            component:() =>import('@/views/DrawSystem/WorkResult.vue')
+        }
     ]
 });
