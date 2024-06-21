@@ -21,11 +21,23 @@
 
          <el-tabs @tab-click="handleClick" class="right_head">
             <el-tab-pane label="导入" name="upload">
-               <span slot="label"><img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="" v-if="uploadImg">
+               <span slot="label">
+                  <img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="" v-if="uploadImg">
                   <img src="../../../assets/UserManagement/传入(绿)_afferent.png" v-else>
-                  导入</span>
-
+                  <el-dropdown :class="{ 'change_color': !uploadImg }" @command="handleCommand"
+                     trigger="click" >
+                     <span>
+                        导入
+                     </span>
+                     <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="online">在线导入</el-dropdown-item>
+                        <el-dropdown-item command="local">本地导入</el-dropdown-item>
+                     </el-dropdown-menu>
+                  </el-dropdown>
+               </span>
             </el-tab-pane>
+
+
             <el-tab-pane label="导出" name="export">
                <span slot="label"> <img src="../../../assets/UserManagement/传入(白)_afferent.png" v-if="exportImg"
                      style="transform: scaleX(-1);">
@@ -80,17 +92,7 @@
 
          </el-dialog>
 
-         <!-- 预览表格 -->
-         <!-- <el-table :data="files" :key="tableKey" style="width: 100%" stripe border height="600px" width="100px"
-            v-if="fileContent && this.$route.path === '/fileComparison'">
-            <el-table-column v-for="(colItem, colIndex) in Object.keys(files[0])" :prop="colItem" min-width="200px"
-               :key="colIndex">
-               <template slot-scope="scope">
-                  {{ scope.row[colItem] }}
-               </template>
-</el-table-column>
-
-</el-table> -->
+       
          <div class="box" v-if="fileContent && this.$route.path === '/fileComparison'" @change="isSaveBtn()">
             <div>
                <SpreadSheet :exceldata="yourExcelData" :mergecell="yourMergeCells" :readOnly="false" />
@@ -164,6 +166,7 @@ export default {
          deleteImg: true,
          searchImg: true,
          compareImg: true,
+        
 
       }
    },
@@ -179,7 +182,7 @@ export default {
    mounted() {
    },
    methods: {
-      //蠢但是好用
+
       calculateColumnWidth(colIndex) {
          // 根据内容长度动态计算表格列宽度
          const maxWidth = 400; // 最大宽度
@@ -188,10 +191,10 @@ export default {
          const maxContentLength = Math.max(...contentLengths);
          return maxContentLength < maxWidth ? maxContentLength + 'px' : maxWidth + 'px';
       },
-
+      //蠢但是好用
       handleClick(tab) {
          if (tab.name === 'upload') {
-            this.showUpLoadView();
+            // this.showUpLoadView();
             this.uploadImg = false;
             this.exportImg = true;
             this.deleteImg = true;
@@ -238,6 +241,14 @@ export default {
             this.compareImg = true;
             this.isSave = true;
 
+         }
+      },
+      //下拉
+      handleCommand(command){
+         if(command === 'online'){
+            this.$message.success('在线导入功能暂未开通！');
+         }else if(command === 'local'){
+            this.showUpLoadView();
          }
       },
 
@@ -387,7 +398,7 @@ export default {
                   }, {});
                });
                this.fileContent = true;
-             
+
             };
             reader.onerror = (error) => {
                console.error('文件读取出错:', error);
@@ -576,6 +587,16 @@ export default {
    margin: 0 auto;
    overflow-x: auto;
    overflow-y: auto;
+}
+
+.el-dropdown {
+
+   color: white;
+
+}
+
+.change_color {
+   color: #7af0f3;
 }
 </style>
 
