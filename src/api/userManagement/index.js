@@ -168,7 +168,7 @@ export const uploadFile = (formData) => {
 
 
 /**
- * 获取文件列表接口
+ * 获取在线文件列表接口（未使用）
  * @param {String} userId 用户ID
  * @returns {Promise} 包含文件列表的 Promise 对象
  *  - data {Array} 返回数据数组
@@ -185,7 +185,7 @@ export const getOnlineFiles = () => {
 
 
 /**
- * 导入在线库文件接口
+ * 导入在线库文件接口（未使用）
  * @param {String} userId 用户ID
  * @param {Array} fileIdArray 文件ID数组
  */

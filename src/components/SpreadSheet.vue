@@ -113,12 +113,39 @@ export default {
         }
     },
     props: ["exceldata", "mergecell", "readOnly"],
+    watch: {
+        exceldata: {
+            handler(newData) {
+                if (this.$refs.jexcel) {
+                    this.destroySpreadsheet();
+                    const spreadsheet = jexcel(this.$refs.jexcel, {
+                        ...this.options,
+                        data: newData
+                    });
+                    Object.assign(this, spreadsheet);
+                }
+            },
+            deep: true
+        }
+    },
     mounted() {
         let spreadsheet = jexcel(this.$refs.jexcel, this.options);
         Object.assign(this, spreadsheet);
+       
         // spreadsheet.refresh();			
+    },
+    methods:{
+        destroySpreadsheet() {
+            if (this.$refs.jexcel && this.$refs.jexcel.jexcel) {
+                this.$refs.jexcel.jexcel.destroy();
+            }
+        }
     }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+    #app {
+        height: 100%;
+    }
+</style>

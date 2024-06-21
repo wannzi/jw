@@ -32,8 +32,8 @@
                   <img src="../../../assets/UserManagement/传入(绿)_afferent.png" style="transform: scaleX(-1);" v-else>
                   导出</span>
             </el-tab-pane>
-            <el-tab-pane label="保存" name="save" :disabled="true">保存
-               <span slot="label"><img src="../../../assets/UserManagement/保存_save.png" alt="" v-if="false">
+            <el-tab-pane label="保存" name="save" :disabled="!isSave">保存
+               <span slot="label"><img src="../../../assets/UserManagement/保存_save.png" alt="" v-if="isSave">
                   <img src="../../../assets/UserManagement/保存(灰)_save.png" v-else>
                   保存</span>
 
@@ -91,9 +91,12 @@
 </el-table-column>
 
 </el-table> -->
-         <div v-if="fileContent && this.$route.path === '/fileComparison'">
-            <SpreadSheet :exceldata="yourExcelData" :mergecell="yourMergeCells" :readOnly="false" />
+         <div class="box" v-if="fileContent && this.$route.path === '/fileComparison'" @change="isSaveBtn()">
+            <div>
+               <SpreadSheet :exceldata="yourExcelData" :mergecell="yourMergeCells" :readOnly="false" />
+            </div>
          </div>
+
 
 
 
@@ -109,6 +112,8 @@
 <script>
 import * as XLSX from 'xlsx';
 import SpreadSheet from '../../../components/SpreadSheet.vue';
+
+
 
 export default {
    data() {
@@ -146,6 +151,7 @@ export default {
          publicListIsShow: false,
          privateListIsShow: false,
          resultsListIsShow: false,
+         isSave: false,
          fileContent: '',
          files: [],  // 用于存储文件内容
 
@@ -191,6 +197,7 @@ export default {
             this.deleteImg = true;
             this.searchImg = true;
             this.compareImg = true;
+            this.isSave = false;
          } else if (tab.name === 'export') {
             this.$router.push({ name: 'ExportFunction' });
             this.exportImg = false;
@@ -198,6 +205,7 @@ export default {
             this.deleteImg = true;
             this.searchImg = true;
             this.compareImg = true;
+            this.isSave = false;
          } else if (tab.name === 'delete') {
             this.$router.push({ name: 'DeleteFunction' });
             this.deleteImg = false;
@@ -205,6 +213,7 @@ export default {
             this.exportImg = true;
             this.searchImg = true;
             this.compareImg = true;
+            this.isSave = false;
          } else if (tab.name === 'search') {
             this.$router.push({ name: 'SearchFunction' });
             this.searchImg = false;
@@ -212,6 +221,7 @@ export default {
             this.exportImg = true;
             this.deleteImg = true;
             this.compareImg = true;
+            this.isSave = false;
          } else if (tab.name === 'compare') {
             this.$router.push({ name: 'CompareFunction' });
             this.compareImg = false;
@@ -219,10 +229,28 @@ export default {
             this.exportImg = true;
             this.deleteImg = true;
             this.searchImg = true;
+            this.isSave = false;
+         } else {
+            this.uploadImg = true;
+            this.exportImg = true;
+            this.deleteImg = true;
+            this.searchImg = true;
+            this.compareImg = true;
+            this.isSave = true;
+
          }
       },
 
 
+      //保存按钮是否开启
+      isSaveBtn() {
+         if (this.yourMergeCells) {
+            console.log('可编辑');
+            this.isSave = true;
+         } else {
+            this.isSave = false;
+         }
+      },
 
 
 
@@ -347,7 +375,7 @@ export default {
                // }
 
                // console.log('解析后的Excel数据:', json);
-               
+
                // 更新yourExcelData
                this.yourExcelData = json;
                console.log('yourExcelData:', this.yourExcelData);
@@ -359,6 +387,7 @@ export default {
                   }, {});
                });
                this.fileContent = true;
+             
             };
             reader.onerror = (error) => {
                console.error('文件读取出错:', error);
@@ -531,6 +560,22 @@ export default {
 /* 隐藏选中标签下方的指示条 */
 .el-tabs>>>.el-tabs__active-bar {
    height: 0;
+}
+</style>
+
+<style scoped>
+::v-deep .jexcel {
+   width: 100%;
+
+   overflow: auto;
+}
+
+.box {
+   width: 80vw;
+   height: 80vh;
+   margin: 0 auto;
+   overflow-x: auto;
+   overflow-y: auto;
 }
 </style>
 

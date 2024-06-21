@@ -109,6 +109,8 @@
    </div>
 </template>
 <script>
+import { addRule, delRule, getRuleList, swichRuleStatus } from '@/api/userManagement';
+
 
 
 export default {
@@ -193,7 +195,9 @@ export default {
 
 
 
-      handleChangeType(row) {
+      async handleChangeType(row) {
+         const res = await swichRuleStatus();
+         console.log(res);
          this.$message({
             message: '规则状态已更新',
             type: 'success'
@@ -204,17 +208,24 @@ export default {
          this.selectedRules = selected; // 更新 selectedUsers 数组
       },
       //获取表格数据接口
-      getTableData() {
-
+      async getTableData() {
+         const res = await getRuleList();
+         this.rules = res.data.list;
+         this.totalEntries = res.data.total;
+         this.totalPages = Math.ceil(this.totalEntries / this.pageSize);
       },
       //新建规则接口
-      addRuleApi() {
-
+      async addRuleApi() {
+         const res = await addRule();
+         console.log(res);
       },
       //删除规则接口
-      delRuleApi() {
+      async delRuleApi() {
+         const res = await delRule();
+         console.log(res);
 
       },
+      
       //编辑规则接口
       editRuleApi() {
 
