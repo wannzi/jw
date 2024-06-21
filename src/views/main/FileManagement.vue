@@ -30,7 +30,7 @@
             label-class-name="custom-header-color"></el-table-column>
          <el-table-column prop="isRead" label="页面内可见" align="center" label-class-name="custom-header-color"
             v-slot="{ row }">
-            <el-switch v-model="row.status" active-color="#13ce66"></el-switch>
+            <el-switch v-model="row.status" @change="changeIsRead(row)" active-color="#13ce66"></el-switch>
          </el-table-column>
 
          <el-table-column label="操作" width="200" align="center" label-class-name="custom-header-color" v-slot="{ row }">
@@ -49,7 +49,7 @@
       <!-- 上传文件弹窗 -->
 
       <el-dialog :visible.sync="uploadVisible" title="上传文件" :modal-append-to-body="false" width="40%">
-         <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple>
+         <el-upload class="upload-demo" drag :before-upload="uploadFile" multiple>
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
             <div class="el-upload__tip" slot="tip">请上传xls/xlsx/sql文件</div>
@@ -79,22 +79,24 @@
    </div>
 </template>
 <script>
+import { delFile, getFileList, swichFileStatus, uploadFile } from '@/api/userManagement/index.js';
+
 export default {
    name: 'UserManagement',
    data() {
       return {
          // 表格数据
          files: [
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
-            { fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"1", fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"2", fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"3", fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"4", fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"4", fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"4",  fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"4",  fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"4",  fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"4",  fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
+            { fileId:"4",  fileName: '党员库', fileType: '数据库文件', uploadUser: '张三', uploadTime: '2021-01-01', isRead: true, selected: false },
          ],
          //当前页码
          currentPage: 2,
@@ -139,20 +141,63 @@ export default {
          this.selectedUsers = selected; // 更新 selectedUsers 数组
       },
       //获取表格数据
-      getTableData() {
-
+      async getTableData() {
+         const res = await getFileList();
+         if (res.code === 200) {
+            this.files = res.data.list;
+            this.totalEntries = res.data.total;
+            this.totalPages = Math.ceil(this.totalEntries / this.pageSize);
+         } else {
+            this.$message.error(res.msg);
+         }
+      
       },
       //删除操作接口
-      deleteFile() {
-
+      async deleteFile() {
+         console.log(this.selectedUsers);
+         const fileId = this.selectedUsers.map(item => item.fileId);
+         console.log(fileId);
+         const res = await delFile(fileId);
+         if (res.code === 200) {
+            this.$message.success('删除成功');
+            this.deleteVisible = false;
+            this.selectedUsers = [];
+            this.getTableData();
+         } else {
+            this.$message.error(res.msg);
+         }
+      
       },
       //上传文件接口
-      uploadFile() {
+      /* eslint-disable no-unused-vars */
+      async uploadFile(file) {
+         const fileType  = file.type;
+         const fileName = file.name;
+         
+         console.log(fileName,fileType,file);
+         const userId = this.$store.getters.userId;
+         const res = await uploadFile(userId,file);
+         if (res.code === 200) {
+            this.$message.success('上传成功');
+            this.uploadVisible = false;
+            this.getTableData();
+         } else {
+            this.$message.error(res.msg);
+         }
+      
 
       },
       //修改页面内是否可见接口
-      changeIsRead() {
-
+      async changeIsRead(row) {
+            console.log(row.fileId,row.status);
+            const res = await swichFileStatus(row.fileId,row.status);
+            if (res.code === 200) {
+               this.$message.success('修改成功');
+               this.getTableData();
+            } else {
+               this.$message.error(res.msg);
+            }
+      
       },
       //搜索接口
       searchApi() {
