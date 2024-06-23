@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = 'http://your-api-url'; // 替换为你的实际 API 地址
+const API_URL = 'http://your-api-url';
 
 export const getData = (type, keyWord) => {
     return axios({

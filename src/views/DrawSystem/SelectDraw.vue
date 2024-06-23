@@ -64,9 +64,12 @@ import { getData } from "../../api/SelectDraw/index"; // 导入接口函数
 							// 处理返回的数据
 							console.log(response.data);
 							if (this.select === "1") {
-								this.$router.push("/PeopleResult");
+								// this.$router.push("/PeopleResult");
+								this.$router.push({ name: "PeopleResult", params: { data: response.data } });
 							} else if (this.select === "2") {
-								this.$router.push("/WorkResult");
+								// this.$router.push("/WorkResult");
+								this.$router.push({ name: "WorkResult", params: { data: response.data } });
+
 							}
 						})
 						.catch((error) => {

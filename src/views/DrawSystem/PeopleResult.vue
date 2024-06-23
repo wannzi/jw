@@ -10,8 +10,18 @@
                 <div style="color: lightgrey;margin-top:11vh;font-size: 20px;display: flex;justify-content: flex-start">
                         <i class="el-icon-search" style="margin-right: 0.5vw"/>搜索结果
                 </div>
+<!--                <div style="color: #32FFF6;">-->
+<!--                    <p v-for="person in basicInfo" :key="person.id" style="font-size:1vw;display: flex;justify-content: flex-start;margin-left: 0.5vw ">{{ person.name }} ({{ person.id }})</p>-->
+<!--                </div>-->
                 <div style="color: #32FFF6;">
-                    <p v-for="person in searchResults" :key="person.id" style="font-size:1vw;display: flex;justify-content: flex-start;margin-left: 0.5vw ">{{ person.name }} ({{ person.id }})</p>
+                    <template v-if="basicInfo.length > 0">
+                        <p v-for="person in basicInfo" :key="person.id" style="font-size: 1vw; display: flex; justify-content: flex-start; margin-left: 0.5vw">
+                            {{ person.name }} ({{ person.id }})
+                        </p>
+                    </template>
+                    <template v-else>
+                        <p style="font-size: 1vw;">无数据</p>
+                    </template>
                 </div>
             </div>
 
@@ -21,7 +31,7 @@
                      <div style="display: flex;flex-direction: row;">
                          <div  class="bigDiv" >
                              <div class="divOne" >姓名</div>
-                             <div class="divTwo" >路六</div>
+                             <div class="divTwo" >路六{{basicInfo.name}}</div>
                          </div>
                          <div  class="bigDiv" >
                              <div class="divOne" >联系电话</div>
@@ -93,47 +103,66 @@
                 </div>
                 <div style="width: 81vw;height: 60vh; margin-top:2vh; background-color: rgba(64, 149, 229, 0.2);padding: 1vw;">
                     <div style="width: 30%; display: flex; flex-direction: row">
-                        <div class="myTabs" @click="updateTab(1)">
-                            家庭关系
-							<!-- <div class="horizontal-line"></div> -->
-                        </div>
-                        <div class="vertical-line"></div>
+<!--                        <div class="myTabs" @click="updateTab(1)">-->
+<!--                            家庭关系-->
+<!--							&lt;!&ndash; <div class="horizontal-line"></div> &ndash;&gt;-->
+<!--                        </div>-->
+<!--                        <div class="vertical-line"></div>-->
 
-                        <div class="myTabs">
-                            资产信息
-                            <!-- <div class="horizontal-line"></div> -->
-                        </div>
-                        <div class="vertical-line"></div>
-                        <div class="myTabs">
-                            投资关系
-                            <!-- <div class="horizontal-line"></div> -->
-                        </div>
+<!--                        <div class="myTabs">-->
+<!--                            资产信息-->
+<!--                            &lt;!&ndash; <div class="horizontal-line"></div> &ndash;&gt;-->
+<!--                        </div>-->
+<!--                        <div class="vertical-line"></div>-->
+<!--                        <div class="myTabs">-->
+<!--                            投资关系-->
+<!--                            &lt;!&ndash; <div class="horizontal-line"></div> &ndash;&gt;-->
+<!--                        </div>-->
+
+                        <el-tabs v-model="activeName" @tab-click="handleClick" style="color: white;" :stretch="false">
+                            <el-tab-pane label="家庭信息" name="first" >
+                            <div style="display: flex;flex-direction: row;justify-content: left;width: 80vw" >
+                            <div style="width: 20vw;margin-left: 4vw;margin-top: 2vh">
+                                    <img src="../../assets/DrawSystem/img.png" style="width: 20vw;height: 35vh;">
+                            </div>
+                            <div>
+                                    <table style="margin-left: 5vw; width: 50vw;border-color: #5cbee0">
+                                        <thead style="color: #32fff6">
+                                        <tr>
+                                            <th>关系</th>
+                                            <th>姓名</th>
+                                            <th>身份证号</th>
+                                            <th>工作单位</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody style="color: white">
+                                        <tr v-for="item in homeRelation" :key="item.idNumber">
+                                            <td>{{ item.family.relative }}</td>
+                                            <td>{{ item.family.name }}</td>
+                                            <td>{{ item.idNumber }}</td>
+                                            <td>{{ item.company }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                            </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="资产信息" name="second">
+                               <div style="width: 80vw">
+                                   资产信息
+                               </div>
+
+                            </el-tab-pane>
+                            <el-tab-pane label="投资关系" name="third">
+
+                                <div style="width: 80vw">
+                                    投资关系
+                                </div>
+                            </el-tab-pane>
+<!--                            <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>-->
+                        </el-tabs>
                     </div>
-                    <div style="display: flex;flex-direction: row;justify-content: left">
-                    <div style="width: 20vw;margin-left: 4vw;margin-top: 2vh">
-                        <img src="../../assets/DrawSystem/img.png" style="width: 20vw;height: 35vh;">
-                    </div>
-                    <div>
-                        <table style="margin-left: 5vw; width: 50vw;border-color: #5cbee0">
-                            <thead style="color: #32fff6">
-                            <tr>
-                                <th>关系</th>
-                                <th>姓名</th>
-                                <th>身份证号</th>
-                                <th>工作单位</th>
-                            </tr>
-                            </thead>
-                            <tbody style="color: white">
-                            <tr v-for="item in tableData" :key="item.idNumber">
-                                <td>{{ item.relation }}</td>
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.idNumber }}</td>
-                                <td>{{ item.company }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -146,23 +175,36 @@ export default  {
     data() {
         return {
             tabIndex: 0,
-            searchResults: [
-                { id: '450889966523562358', name: '陆六' },
-                { id: '450889966523562358', name: '张三' },
-                { id: '450889966523562358', name: '李四' }
+            basicInfo: [
+                // { name: '', idNun: '' },
+                // { id: '450889966523562358', name: '陆六' },
+                // { id: '450889966523562358', name: '张三' },
+                // { id: '450889966523562358', name: '李四' }
             ]
-            , tableData: [
-                { relation: '父亲', name: '顺畅度', idNumber: '444555555555555555', company: '数据3比较好吧' },
-                { relation: '数据4', name: '数据5', idNumber: '数据6', company: '数据6' },
-                { relation: '数据7', name: '数据8', idNumber: '数据9', company: '数据9' },
-                { relation: '数据7', name: '数据8', idNumber: '数据9', company: '数据9' }
-            ]
+            ,
+            homeRelation: [
+                {
+                    label:'',
+                    family: [
+                        { relative: '父亲', name: '', age: '' },
+                        { relative: '母亲', name: '', age: '' }
+                    ]
+                },
+                // { relation: '父亲', name: '顺畅度', idNumber: '444555555555555555', company: '数据3比较好吧' },
+                // { relation: '数据4', name: '数据5', idNumber: '数据6', company: '数据6' },
+                // { relation: '数据7', name: '数据8', idNumber: '数据9', company: '数据9' },
+                // { relation: '数据7', name: '数据8', idNumber: '数据9', company: '数据9' }
+            ],
+            activeName: 'second',
         }
     },
     methods:{
         updateTab(newTabs) {
             this.tabIndex = newTabs
             console.log("update")
+        },
+        handleClick(tab, event) {
+            console.log(tab, event);
         }
     },
     watch: {
@@ -171,6 +213,13 @@ export default  {
             handler(newValue) {
                 console.log("标签选项：", newValue)
             }
+        }
+    },
+    created() {
+        if (this.$route.query && this.$route.query.data) {
+            const data = JSON.parse(this.$route.query.data);
+            this.basicInfo = data.basicInfo;
+            this.homeRelation = data.homeRelation;
         }
     }
 
@@ -288,4 +337,7 @@ td {
     border-top: 1px solid #ccc;
     padding: 8px;
 }
+
+
+
 </style>
