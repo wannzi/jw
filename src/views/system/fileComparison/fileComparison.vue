@@ -114,6 +114,7 @@
 <script>
 import * as XLSX from 'xlsx';
 import SpreadSheet from '../../../components/SpreadSheet.vue';
+import {  getTree, openFile } from '@/api/fileComparison';
 
 
 
@@ -407,8 +408,21 @@ export default {
          } else {
             this.$message.error('请选择一个Excel文件！');
          }
-      }
-
+      },
+      // 接口
+      // 获取文件树
+      async getTreeData() {
+         const res = await getTree();
+         console.log(res);
+         
+      },
+      //获取文件内容接口
+      async openFile(filename) {
+         const userId = this.$store.state.user.userId;
+         const res = await openFile(userId,filename);
+         console.log(res);
+      },
+     
 
 
 

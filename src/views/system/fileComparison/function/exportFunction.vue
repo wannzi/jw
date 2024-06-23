@@ -27,12 +27,14 @@
         </div>
 
         <div class="ctrl_btn">
-            <el-button type="primary" @click="exportFiles">导出</el-button>
+            <el-button type="primary" @click="exportFile">导出</el-button>
             <el-button type="danger" @click="clearFiles">清空</el-button>
         </div>
     </div>
 </template>
 <script>
+import { exportFile } from '@/api/fileComparison';
+
 export default {
     data() {
         return {
@@ -84,13 +86,18 @@ export default {
             this.files = [];
 
         },
-        exportFiles() {
-            // 实现文件的导出逻辑
-        },
+
         removeFile(index) {
             this.files.splice(index, 1);
 
+        },
+        //导出文件接口
+        async exportFile() {
+            const userId = this.$store.state.user.userId;
+            const res = await exportFile(userId, this.files);
+            console.log(res);
         }
+
     }
 
 

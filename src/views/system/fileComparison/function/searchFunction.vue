@@ -2,7 +2,7 @@
     <div>
 
         <div class="search_input">
-            <input type="text" placeholder="请输入检索关键词">
+            <input type="text" placeholder="请输入检索关键词" v-model="searchContent">
 
 
             <button>
@@ -35,10 +35,14 @@
     </div>
 </template>
 <script>
+import { queryFile } from '@/api/fileComparison';
+
 export default {
     data() {
         return {
-            files: []
+            files: [],
+            searchContent: ''
+        
         }
     },
     activated() {
@@ -86,6 +90,11 @@ export default {
 
         removeFile(index) {
             this.files.splice(index, 1); // 移除指定索引的文件
+        },
+        //检索内容接口
+        async queryFile(){
+            const res = await queryFile(this.searchContent);
+            console.log(res);
         }
     }
 
