@@ -3,20 +3,20 @@
       <div class="U_head">
 
          <el-row>
-            <el-button type="primary" @click="showAddRule()">新建规则</el-button>
-            <el-button type="danger" @click="showDelRule()">删除规则</el-button>
+            <el-button type="primary" @click="showAddRule()" size="medium">新建规则</el-button>
+            <el-button type="danger" @click="showDelRule()" size="medium">删除规则</el-button>
          </el-row>
 
          <div class="right">
-            <el-input v-model="input" placeholder="请输入关键词搜索"></el-input>
-            <el-button type="primary" icon="el-icon-search"></el-button>
+            <el-input v-model="input" placeholder="请输入关键词搜索" size="medium"></el-input>
+            <el-button type="primary" icon="el-icon-search" size="medium"></el-button>
          </div>
       </div>
 
       <!-- 表格 -->
 
-      <el-table ref="multipleTable" :data="rules" tooltip-effect="dark" border size="medium" fit style="width: 90%"
-         class="main_table" @selection-change="handleSelectionChange">
+      <el-table :header-cell-style="() => 'background:#409EFF20'" ref="multipleTable" :data="rules" stripe border
+         size="medium" fit style="width: 90%" class="main_table" @selection-change="handleSelectionChange">
          <el-table-column type="selection" align="center" width="100" reserve-selection
             label-class-name="custom-header-color">
          </el-table-column>
@@ -31,10 +31,10 @@
          <el-table-column prop="createTime" label="创建时间" align="center"
             label-class-name="custom-header-color"></el-table-column>
 
-         <el-table-column label="操作" width="400" align="center" label-class-name="custom-header-color" v-slot="{ row }">
-            <el-button type="primary" @click="showEditRule(row)">编辑</el-button>
-            <el-button type="danger" @click="showDelRule(row)">删除</el-button>
-            <el-button :type="row.isPublic ? 'success' : 'warning'" @click="handleChangeType(row)">
+         <el-table-column label="操作" width="300" align="center" label-class-name="custom-header-color" v-slot="{ row }">
+            <el-button type="primary" @click="showEditRule(row)" size="small">编辑</el-button>
+            <el-button type="danger" @click="showDelRule(row)" size="small">删除</el-button>
+            <el-button :type="row.isPublic ? 'success' : 'warning'" @click="handleChangeType(row)" size="small">
                {{ row.isPublic ? '设为私有规则' : '设为公共规则' }}
             </el-button>
          </el-table-column>
@@ -109,6 +109,8 @@
    </div>
 </template>
 <script>
+import { addRule, delRule, getRuleList, swichRuleStatus } from '@/api/userManagement';
+
 
 
 export default {
@@ -127,7 +129,6 @@ export default {
             { ruleName: '规则8', ruleDesc: '规则描述8', ruleType: '规则类型8', creator: '创建者8', createTime: '创建时间8', isPublic: false, selected: false },
             { ruleName: '规则9', ruleDesc: '规则描述9', ruleType: '规则类型9', creator: '创建者9', createTime: '创建时间9', isPublic: true, selected: false },
             { ruleName: '规则10', ruleDesc: '规则描述10', ruleType: '规则类型10', creator: '创建者10', createTime: '创建时间10', isPublic: false, selected: false },
-            { ruleName: '规则11', ruleDesc: '规则描述11', ruleType: '规则类型11', creator: '创建者11', createTime: '创建时间11', isPublic: true, selected: false },
 
 
          ],
@@ -193,8 +194,10 @@ export default {
 
 
 
-      
-      handleChangeType(row) {
+
+      async handleChangeType(row) {
+         const res = await swichRuleStatus();
+         console.log(res);
          this.$message({
             message: '规则状态已更新',
             type: 'success'
@@ -203,6 +206,33 @@ export default {
       },
       handleSelectionChange(selected) {
          this.selectedRules = selected; // 更新 selectedUsers 数组
+      },
+      //获取表格数据接口
+      async getTableData() {
+         const res = await getRuleList();
+         this.rules = res.data.list;
+         this.totalEntries = res.data.total;
+         this.totalPages = Math.ceil(this.totalEntries / this.pageSize);
+      },
+      //新建规则接口
+      async addRuleApi() {
+         const res = await addRule();
+         console.log(res);
+      },
+      //删除规则接口
+      async delRuleApi() {
+         const res = await delRule();
+         console.log(res);
+
+      },
+      
+      //编辑规则接口
+      editRuleApi() {
+
+      },
+      //搜索接口
+      searchApi() {
+
       },
 
 
@@ -217,3 +247,9 @@ export default {
    },
 }
 </script>
+
+<style scoped>
+::v-deep .el-table--medium .el-table__cell {
+   padding: 8px 0;
+}
+</style>

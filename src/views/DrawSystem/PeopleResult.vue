@@ -6,15 +6,14 @@
             </div>
         </div>
         <div style="width: 100%;height: 100%  ;display: flex;position: relative; ">
-
-
-            <div class="left" style="width: 13vw;background-color: rgba(166, 157, 157, 0.1);display: flex;position: relative">
-                <div style="color: white;margin-top:12vh;margin-left: 1vw;font-size: 25px"><i class="el-icon-search" style="margin-right: 0.5vw"/>搜索结果</div>
+            <div class="left" style="width: 13vw;background-color: rgba(64, 149, 229, 0.2);display: flex;position: relative">
+                <div style="color: lightgrey;margin-top:11vh;margin-left: 1.5vw;font-size: 20px">
+					<i class="el-icon-search" style="margin-right: 0.5vw"/>搜索结果</div>
             </div>
 
-            <div class= 'center' style="margin-left: 2vw;width: 83vw;height: 100%;display: flex;position: relative;flex-direction: column">
-                <div style="width: 83vw;height: 43vh; background-color: rgba(166, 157, 157, 0.1);margin-top: 13vh">
-                    <div style="color: #32fff6;display: flex;flex-direction: row;justify-content: left;margin:0.8vw;font-weight: bold;font-size: 25px;font-style: italic;">基本信息</div>
+            <div class= 'center' style="margin-left: 1vw; width: 85vw;height: 100%;display: flex;position: relative;flex-direction: column">
+                <div style="width: 85vw;height: 42vh; background-color: rgba(64, 149, 229, 0.2);;margin-top: 10vh; font-size: 12px;">
+                    <div style="color: #32fff6;display: flex;flex-direction: row;justify-content: left;margin:0.8vw;font-weight: bold;font-size: 28px;font-family: youshe;font-weight: lighter;">基本信息</div>
                      <div style="display: flex;flex-direction: row;">
                          <div  class="bigDiv" >
                              <div class="divOne" >姓名</div>
@@ -88,21 +87,22 @@
 
                     </div>
                 </div>
-                <div style="width: 83vw;height: 60vh; margin-top:2vh; background-color: rgba(166, 157, 157, 0.1);">
+                <div style="width: 85vw;height: 60vh; margin-top:2vh; background-color: rgba(64, 149, 229, 0.2);padding: 1vw;">
                     <div style="width: 30%; display: flex; flex-direction: row">
                         <div class="myTabs" @click="updateTab(1)">
-                            家庭关系<div class="horizontal-line"></div>
+                            家庭关系
+							<!-- <div class="horizontal-line"></div> -->
                         </div>
                         <div class="vertical-line"></div>
 
                         <div class="myTabs">
                             资产信息
-                            <div class="horizontal-line"></div>
+                            <!-- <div class="horizontal-line"></div> -->
                         </div>
                         <div class="vertical-line"></div>
                         <div class="myTabs">
                             投资关系
-                            <div class="horizontal-line"></div>
+                            <!-- <div class="horizontal-line"></div> -->
                         </div>
                     </div>
                     <div style="display: flex;flex-direction: row;justify-content: left">
@@ -110,27 +110,6 @@
                         <img src="../../assets/DrawSystem/img.png" style="width: 20vw;height: 35vh;">
                     </div>
                     <div>
-<!--                        <el-table-->
-<!--                            :data="tableData"-->
-<!--                            stripe-->
-<!--                            style="width: 100% ;background-color: transparent">-->
-<!--                            <el-table-column-->
-<!--                                prop="date"-->
-<!--                                label="日期"-->
-<!--                                width="180"-->
-<!--                            style="background-color: transparent">-->
-<!--                            </el-table-column>-->
-<!--                            <el-table-column-->
-<!--                                prop="name"-->
-<!--                                label="姓名"-->
-<!--                                width="180">-->
-<!--                            </el-table-column>-->
-<!--                            <el-table-column-->
-<!--                                prop="address"-->
-<!--                                label="地址">-->
-<!--                            </el-table-column>-->
-<!--                        </el-table>-->
-
                         <table style="margin-left: 5vw; width: 55vw">
                             <thead style="color: #32fff6">
                             <tr>
@@ -179,15 +158,6 @@
 
 // import router from "@/router";
 import Vue from "vue";
-// import {Component} from "vue-class-component";
-
-// @Component({
-//     methods: {
-//         router() {
-//             return router
-//         }
-//     }
-// })
 export default class SelectDraw extends Vue {
     data() {
         return {
@@ -254,29 +224,24 @@ button {
 }
 
 .head {
-    /* display: flex; */
-
-    position: fixed;
-    background-image: url('../../assets/UserManagement/head.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 70px;
-    width: 100%;
-    color: #32fff6;
-    z-index: 10;
-
-    padding-top: 8px;
-    font-size: 2vw; /* 默认字体大小 */
-
-
-
-}
+		position: fixed;
+		background-image: url('../../assets/UserManagement/head.png');
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		height: 50px;
+		width: 100%;
+		color: #32FFF6;
+		z-index: 10;
+		padding-top: 8px;
+		font-size: 2vw;
+		/* 默认字体大小 */
+	}
 
 .head .title {
-    padding-top: 8px;
-
+	font-family: youshe;
 }
+
 .left-nav button {
     width: 7vw;
     height:4.3vh;
@@ -293,7 +258,7 @@ button {
     margin: 1vh 1vw 1vh 1vw;
 }
 .divOne{
-    width: 100px;
+    width: 80px;
     color: white;
     height: 30px;
     text-align: center;
@@ -304,7 +269,7 @@ button {
     border: 2px solid rgb(31, 136, 247)
 }
 .divTwo{
-    width: 180px;
+    width: 160px;
     color:#32fff6 ;
     height: 30px;
     text-align: center;

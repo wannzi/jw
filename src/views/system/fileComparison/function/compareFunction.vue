@@ -10,12 +10,15 @@
 
 
          <!-- 文件列表展示 -->
-         <ul class="file-list" v-if="filesMain.length">
-            <li v-for="(file, index) in filesMain" :key="index" class="file-item">
-               {{ file.name }}
-               <span class="delete-btn" @click="removeFileMain(index)">×</span>
-            </li>
-         </ul>
+         <el-tooltip :key="tag" v-for="tag in filesMain" :content="tag.father +'/'+ tag.label">
+            <el-tag closable :disable-transitions="false" type="success" @close="handleCloseMain(tag)">
+               <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                  style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
+               {{ formatLabel(tag.label) }}
+
+            </el-tag>
+         </el-tooltip>
 
       </div>
       <div class="intoFile" @dragover.prevent="handleDragOver" @drop.prevent="handleFileDropCompare">
@@ -28,16 +31,21 @@
 
 
          <!-- 文件列表展示 -->
-         <ul class="file-list" v-if="filesCompare.length">
-            <li v-for="(file, index) in filesCompare" :key="index" class="file-item">
-               {{ file.name }}
-               <span class="delete-btn" @click="removeFileCompare(index)">×</span>
-            </li>
-         </ul>
+         <el-tooltip :key="tag" v-for="tag in filesCompare" :content="tag.father +'/'+ tag.label">
+            <el-tag closable :disable-transitions="false" type="success" @close="handleCloseCompare(tag)">
+               <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                  style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
+               {{ formatLabel(tag.label) }}
+
+            </el-tag>
+         </el-tooltip>
 
       </div>
 
-      <button class="ge_btn1">下一步</button>
+      <el-button type="primary" @click="handleCompare">下一步</el-button>
+
+
    </div>
 </template>
 <script>
@@ -57,8 +65,14 @@ export default {
    mounted() {
    },
    methods: {
-      handleDragOver(event) {
-         event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
+      formatLabel(label) {
+         if (label.length > 10) {
+            return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
+         }
+         return label; // 如果不超过10个字符，直接返回原文本
+      },
+      handleDragOver() {
+
       },
 
 
@@ -69,9 +83,14 @@ export default {
          this.filesMain.push(item); // 假设处理的是文件列表
 
       },
-      removeFileMain(index) {
-         this.filesMain.splice(index, 1); // 移除指定索引的文件
+      handleCloseMain(tag) {
+         const index = this.filesMain.indexOf(tag);
+         if (index !== -1) {
+
+            this.filesMain.splice(index, 1);
+         }
       },
+
       handleFileDropCompare(event) {
          event.preventDefault();
          const data = event.dataTransfer.getData('application/json');
@@ -79,18 +98,59 @@ export default {
          this.filesCompare.push(item); // 假设处理的是文件列表
 
       },
-      removeFileCompare(index) {
-         this.filesCompare.splice(index, 1); // 移除指定索引的文件
+
+
+      handleCloseCompare(tag) {
+         const index = this.filesCompare.indexOf(tag);
+         if (index !== -1) {
+
+            this.filesCompare.splice(index, 1);
+         }
       },
+      handleCompare() {
+         this.$router.push({ name: 'ConpareFunction2' })
+      }
    }
 
 
 }
 </script>
 <style scoped>
+.el-tag {
+   font-size: 14px;
+   /* 添加元素时候左侧排列 */
+   float: left;
+   margin-top: 10px;
+   margin-right: 20px;
+
+}
+
+::v-deep .el-tag.el-tag--success {
+   background-color: #f0f9eb;
+   border-color: #e1f3d8;
+   color: #67c23a;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 90px;
+   flex-direction: column;
+}
+
+::v-deep .el-tag.el-tag--success {
+   position: relative;
+}
+
+::v-deep .el-tag.el-tag--success .el-tag__close {
+   position: absolute;
+   transform: translate(45%, -45%);
+   background-color: #67c23a;
+   color: #FFF;
+}
+</style>
+<style scoped>
 .intoFile {
    height: 30vh;
    margin-top: 2vw;
-
+   margin-bottom: 2vw;
 }
 </style>

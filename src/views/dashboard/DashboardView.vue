@@ -1,7 +1,5 @@
 <template>
    <div class='app'>
-
-
       <!-- 左侧导航 -->
       <div class="left-nav">
          <div class="nav-title">
@@ -49,12 +47,8 @@ export default {
          } else if (nav === 4) {
             this.$router.push({ name: 'RuleManagement' });
          }
-
-
       }
    }
-
-
 }
 </script>
 <style>
@@ -65,18 +59,15 @@ export default {
    margin-right: 100px;
    margin-left: 69px;
    margin-top: 35px;
-
+   width: 90%;
 }
 
 .left-nav {
-   width: 10vw;
+   width: 12vw;
    height: 100%;
-
    position: fixed;
    top: 0;
    z-index: 5;
-
-
 }
 
 .left-nav .nav-title {
@@ -90,14 +81,19 @@ export default {
 }
 
 .left-nav button {
-   width: 7vw;
-   height: 4.3vh;
+   width: 9vw;
+   height: 6vh;
    margin-bottom: 39px;
-   color: #b4fdff;
-   background-color: #075a9a;
-   border: 1px;
+   /* font-family: youshe; */
+   color: #32FFF6;
+   font-size: 18px;
+   letter-spacing: 2px;
+   font-weight: bold;
+   background-image: linear-gradient(to top, rgba(4,104,175,1), rgba(4,104,175,0.5));
+   border: none;
    display: block;
-   margin-left: 15%;
+   margin-left: 12%;
+  border-radius: 5px;
 }
 
 .btnChange {
@@ -113,7 +109,7 @@ export default {
    /* 遮罩层宽度与左侧导航相同 */
    height: 100%;
    /* 遮罩层高度与左侧导航相同 */
-   background-color: rgba(166, 157, 157, 0.1);
+   background-color: rgba(64, 149, 229, 0.2);
    /* 半透明黑色背景 */
    z-index: 1;
    /* 确保遮罩层在左侧导航内容之上 */
@@ -123,14 +119,13 @@ export default {
 
 <style>
 .right-content {
-   padding-top: 90px;
+   padding-top: 55px;
    position: fixed;
    top: 0;
    right: 0px;
    z-index: 8;
-   width: 88vw;
+   width: 87vw;
    height: 100%;
-
 }
 
 .right-content::before {
@@ -140,8 +135,8 @@ export default {
    left: 0;
    width: 100%;
    height: 100%;
-   background-color: rgba(166, 157, 157, 0.1);
-   z-index: 1;
+   background-color: rgba(64, 149, 229, 0.2);
+   z-index: -1;
    pointer-events: none;
 }
 </style>
@@ -168,18 +163,19 @@ export default {
 
 <style>
 .main_table {
-   margin-left: 69px;
+   margin-left: 5%;
    height: 70vh;
    /* width: 80vw; */
    /* background-color: #ffffff; */
-   margin-top: 30px;
+   margin-top: 20px;
    /* border-collapse: collapse; */
    /* 移除单元格之间的间距 */
+   overflow: auto;
 }
 
 .el-table {
-   min-height: 200px;
-   max-height: 800px;
+   /* min-height: 200px;
+   max-height: 800px; */
 }
 
 /* 定义一个 CSS 类来改变标题颜色 */
@@ -192,11 +188,9 @@ export default {
 .page {
    display: flex;
    justify-content: center;
-   margin-top: 30px;
+   margin-top: 20px;
    position: absolute;
-   right: 8vw;
+   right: 5vw;
    height: 30px;
-
-
 }
 </style>

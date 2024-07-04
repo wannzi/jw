@@ -2,7 +2,7 @@
     <div>
 
         <div class="search_input">
-            <input type="text" placeholder="请输入检索关键词">
+            <input type="text" placeholder="请输入检索关键词" v-model="searchContent">
 
 
             <button>
@@ -22,21 +22,27 @@
 
 
             <!-- 文件列表展示 -->
-            <ul class="file-list" v-if="files.length">
-                <li v-for="(file, index) in files" :key="index" class="file-item">
-                    {{ file.name }}
-                    <span class="delete-btn" @click="removeFile(index)">×</span>
-                </li>
-            </ul>
+            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
+                <el-tag closable :disable-transitions="false" type="success"  @close="handleClose(tag)">
+                    <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
+                    {{ formatLabel(tag.label) }}
+
+                </el-tag>
+            </el-tooltip>
 
         </div>
     </div>
 </template>
 <script>
+import { queryFile } from '@/api/fileComparison';
+
 export default {
     data() {
         return {
-            files: []
+            files: [],
+            searchContent: ''
+        
         }
     },
     activated() {
@@ -48,32 +54,84 @@ export default {
     mounted() {
     },
     methods: {
-        handleDragOver(event) {
-            event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
+        formatLabel(label) {
+            if (label.length > 10) {
+                return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
+            }
+            return label; // 如果不超过10个字符，直接返回原文本
         },
+        handleDragOver() {
 
-
+        },
+        //处理拖拽并获取文件tag
         handleFileDrop(event) {
-            event.preventDefault();
             const data = event.dataTransfer.getData('application/json');
-            const item = JSON.parse(data);
-            this.files.push(item); // 假设处理的是文件列表
-            
+
+            if (data) {
+                const file = JSON.parse(data);
+                console.log(file);
+                this.files.push(file);
+
+                console.log('Dropped files:', this.files);
+            }
         },
+
+        handleClose(tag) {
+            const index = this.files.indexOf(tag);
+            if (index !== -1) {
+
+                this.files.splice(index, 1);
+            }
+        },
+       
         deleteFiles() {
             // 实现文件的导出逻辑
         },
-        clearFiles() {
-            this.files = [];
-        },
+
         removeFile(index) {
             this.files.splice(index, 1); // 移除指定索引的文件
+        },
+        //检索内容接口
+        async queryFile(){
+            const res = await queryFile(this.searchContent);
+            console.log(res);
         }
     }
 
 
 }
 </script>
+
+<style scoped>
+.el-tag {
+    font-size: 14px;
+    /* 添加元素时候左侧排列 */
+    float: left;
+    margin-top: 10px;
+    margin-right: 20px;     
+
+}
+::v-deep .el-tag.el-tag--success {
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+    color: #67c23a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90px;
+    flex-direction: column;
+}
+
+::v-deep .el-tag.el-tag--success {
+    position: relative;
+}
+::v-deep .el-tag.el-tag--success .el-tag__close {
+    position: absolute;
+    transform: translate(45%, -45%);
+    background-color: #67c23a;
+    color: #FFF;
+}
+</style>
 
 <style>
 .search_input {
@@ -127,12 +185,7 @@ export default {
 
 
 <style>
-.intoFile {
-    width: 73vw;
-    height: 40vh;
-    border: 3px dashed #6f86a0;
-    position: relative;
-}
+
 
 .intoFile_title_1 {
     position: absolute;

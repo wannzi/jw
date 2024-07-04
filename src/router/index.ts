@@ -9,15 +9,21 @@ import RuleManagement from '@/views/main/ruleManagement/RuleManagement.vue';
 import AddRules from '@/views/main/ruleManagement/newRules/addRules.vue';
 import FileComparison from '@/views/system/fileComparison/fileComparison.vue';
 import ExportFunction from '@/views/system/fileComparison/function/exportFunction.vue';
-
+import test from '../App.vue'
 Vue.use(Router);
 
 export default new Router({
     mode: 'history',
     routes: [
+        // {
+        //     path:'/test',
+        //     component:test,
+        //     name:'test'
+        // },
+
         {
             path: '/',
-            redirect: '/dashboard'
+            redirect: '/dashboard/userManagement'
         },
         {
             path: '/dashboard',
@@ -54,9 +60,16 @@ export default new Router({
                     name: 'AddRules',
                     component: AddRules
                 },
+              
+            ]
+        },
+        {
+            path: '/fileComparison',
+            name: 'FileComparison',
+            component: IndexView,
+            children:[
                 {
-                    path: 'fileComparison',
-                    name: 'FileComparison',
+                    path: '',
                     component: FileComparison,
                     children: [
                         {
@@ -78,7 +91,18 @@ export default new Router({
                             path: 'compareFunction',
                             name: 'CompareFunction',
                             component: () => import('@/views/system/fileComparison/function/compareFunction.vue')
-                        }
+        
+                        },
+                        {
+                            path: 'conpareFunction2',
+                            name: 'ConpareFunction2',
+                            component: () => import('@/views/system/fileComparison/function/compareView/compareFunction2.vue')
+                        },
+                        {
+                            path: 'conpareFunction3',
+                            name: 'ConpareFunction3',
+                            component: () => import('@/views/system/fileComparison/function/compareView/compareFunction3.vue')
+                        },
                     ]
                 }
             ]
@@ -87,13 +111,18 @@ export default new Router({
             path: '/DrawSystem',
             name: 'DrawSystem',
             component: () => import('@/views/DrawSystem/SelectDraw.vue'),
-            children: [
-                {
-                    path: 'PeopleResult',
-                    name: 'PeopleResult',
-                    component: () => import('@/views/DrawSystem/PeopleResult.vue')
-                },
-            ]
-        }
+            // children: [
+            //     {
+            //         path: 'PeopleResult',
+            //         name: 'PeopleResult',
+            //         component: () => import('@/views/DrawSystem/PeopleResult.vue')
+            //     },
+            // ]
+        },
+		{
+		    path: '/PeopleResult',
+		    name: 'PeopleResult',
+		    component: () => import('@/views/DrawSystem/PeopleResult.vue'),
+		}
     ]
 });

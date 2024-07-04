@@ -9,18 +9,23 @@
 
 
             <!-- 文件列表展示 -->
-            <ul class="file-list" v-if="files.length">
-                <li v-for="(file, index) in files" :key="index" class="file-item">
-                    {{ file.name }}
-                    <span class="delete-btn" @click="removeFile(index)">×</span>
-                </li>
-            </ul>
+            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
+                <el-tag closable :disable-transitions="false" type="success" @close="handleClose(tag)">
+                    <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                        style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
+                    {{  formatLabel(tag.label) }}
+
+                </el-tag>
+            </el-tooltip>
 
         </div>
 
         <div class="ctrl_btn">
-            <button class="ge_btn1" @click="deleteFiles">删除</button>
-            <button class="ge_btn2" @click="clearFiles">清空</button>
+            <el-button type="primary">删除</el-button>
+
+            <el-button type="danger" @click="clearFiles">清空</el-button>
+
         </div>
     </div>
 </template>
@@ -40,24 +45,43 @@ export default {
     mounted() {
     },
     methods: {
-        handleDragOver(event) {
-            event.dataTransfer.dropEffect = 'copy';  // 显示复制效果
+        formatLabel(label) {
+            if (label.length > 10) {
+                return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
+            }
+            return label; // 如果不超过10个字符，直接返回原文本
+        },
+        handleDragOver() {
+
+        },
+        //处理拖拽并获取文件tag
+        handleFileDrop(event) {
+            const data = event.dataTransfer.getData('application/json');
+
+            if (data) {
+                const file = JSON.parse(data);
+                console.log(file);
+                this.files.push(file);
+
+                console.log('Dropped files:', this.files);
+            }
         },
 
+        handleClose(tag) {
+            const index = this.files.indexOf(tag);
+            if (index !== -1) {
 
-        handleFileDrop(event) {
-            event.preventDefault();
-            const data = event.dataTransfer.getData('application/json');
-            const item = JSON.parse(data);
-            this.files.push(item); // 假设处理的是文件列表
-          
+                this.files.splice(index, 1);
+            }
+        },
+        clearFiles() {
+            this.files = [];
+
         },
         deleteFiles() {
             // 实现文件的导出逻辑
         },
-        clearFiles() {
-            this.files = [];
-        },
+
         removeFile(index) {
             this.files.splice(index, 1); // 移除指定索引的文件
         }
@@ -66,20 +90,39 @@ export default {
 
 }
 </script>
-<style>
-.intoFile {
-    width: 73vw;
-    height: 40vh;
-    border: 3px dashed #6f86a0;
-    position: relative;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow: hidden;
-    /* 超过高度时显示滚动条 */
-    overflow-y: auto;
+<style scoped>
+.el-tag {
+    font-size: 14px;
+    /* 添加元素时候左侧排列 */
+    float: left;
+    margin-top: 10px;
+    margin-right: 20px;
 
 }
 
+::v-deep .el-tag.el-tag--success {
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+    color: #67c23a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90px;
+    flex-direction: column;
+}
+
+::v-deep .el-tag.el-tag--success {
+    position: relative;
+}
+
+::v-deep .el-tag.el-tag--success .el-tag__close {
+    position: absolute;
+    transform: translate(45%, -45%);
+    background-color: #67c23a;
+    color: #FFF;
+}
+</style>
+<style>
 .file-list {
     list-style: none;
     display: flex;
@@ -134,18 +177,6 @@ export default {
 </style>
 
 <style>
-.ctrl_btn {
-    position: absolute;
-    right: 1.8vw;
-}
-
-
-.ctrl_btn button {
-    font-size: 1vw;
-    font-weight: bold;
-
-}
-
 .ge_btn1 {
     background-color: #409eff;
     color: #ffffff;
