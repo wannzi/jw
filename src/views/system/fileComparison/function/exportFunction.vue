@@ -6,7 +6,6 @@
                 <div class="intoFile_title_2">请将导出文件从目录拖拽到此</div>
             </div>
 
-
             <!-- 文件列表展示 -->
 
 
@@ -38,10 +37,7 @@ import { exportFile } from '@/api/fileComparison';
 export default {
     data() {
         return {
-            files: [
-
-            ],//存放拖拽的文件
-
+            files: [{name:"wenjian1"}],//存放拖拽的文件
         }
     },
     activated() {
@@ -97,7 +93,6 @@ export default {
             const res = await exportFile(userId, this.files);
             console.log(res);
         }
-
     }
 
 

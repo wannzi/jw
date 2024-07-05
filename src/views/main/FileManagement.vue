@@ -5,9 +5,13 @@
          <el-row>
             <el-button type="primary" size="medium" @click="showUploadFile()">上传文件</el-button>
             <el-button type="danger" size="medium" @click="showDeleteFile()">删除文件</el-button>
+            <el-button type="primary" size="medium" @click="showUploadFile()">上传文件</el-button>
+            <el-button type="danger" size="medium" @click="showDeleteFile()">删除文件</el-button>
          </el-row>
 
          <div class="right">
+            <el-input v-model="input" placeholder="请输入关键词搜索" size="medium"></el-input>
+            <el-button type="primary" icon="el-icon-search" size="medium"></el-button>
             <el-input v-model="input" placeholder="请输入关键词搜索" size="medium"></el-input>
             <el-button type="primary" icon="el-icon-search" size="medium"></el-button>
          </div>
