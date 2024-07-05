@@ -163,7 +163,7 @@ export default {
 <style>
 .main_table {
    margin-left: 5%;
-   height: 70vh;
+   height: 72vh;
    /* width: 80vw; */
    /* background-color: #ffffff; */
    margin-top: 20px;

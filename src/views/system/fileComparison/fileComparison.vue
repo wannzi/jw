@@ -438,10 +438,7 @@ export default {
 
 
 <style>
-.el-table__footer-wrapper,
-.el-table__header-wrapper {
-   display: none;
-}
+
 
 .el-table .cell {
    line-height: none;
