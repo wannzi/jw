@@ -7,6 +7,12 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
+import axios from 'axios'
+Vue.prototype.$axios = axios
+// axios.defaults.baseURL = window.webConfig.webApiBaseUrl
+import jsCookie from 'js-cookie'
+Vue.prototype.$cookie = jsCookie
+
 // Vue.component(Button.name, Button);
 // Vue.component(Select.name, Select);
 // Vue.component(Input.name, Input);

@@ -642,6 +642,8 @@ export default {
    flex-direction: column;
    align-items: flex-start;
    position: absolute;
+   line-height: 40px;
+   opacity: 0.7;
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
