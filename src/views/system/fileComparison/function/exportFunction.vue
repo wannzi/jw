@@ -7,27 +7,19 @@
             </div>
 
             <!-- 文件列表展示 -->
-
-
             <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
-                <el-tag closable :disable-transitions="false" type="success" @close="handleClose(tag)">
+                <el-tag closable :disable-transitions="true" type="success" @close="handleClose(tag)">
                     <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
-                        style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
-
+                        style="width: 50px; height: 50px; vertical-align: middle; margin-top: 10px;">
                     {{ formatLabel(tag.label) }}
-
                 </el-tag>
             </el-tooltip>
-
-
-
-
-
         </div>
 
         <div class="ctrl_btn">
-            <el-button type="primary" @click="exportFile">导出</el-button>
-            <el-button type="danger" @click="clearFiles">清空</el-button>
+            <!-- 是否可禁用完成 -->
+            <el-button type="primary" @click="exportFile" :disabled="btnDisabled">导出</el-button>
+            <el-button type="danger" @click="clearFiles" :disabled="btnDisabled">清空</el-button>
         </div>
     </div>
 </template>
@@ -37,12 +29,22 @@ import { exportFile } from '@/api/fileComparison';
 export default {
     data() {
         return {
-            files: [{name:"wenjian1"}],//存放拖拽的文件
+            files: [],//存放拖拽的文件
+            btnDisabled: true,
         }
     },
     activated() {
     },
     watch: {
+        files: {
+            handler(val) {
+                if (val.length) {
+                    this.btnDisabled = false;
+                } else {
+                    this.btnDisabled = true;
+                }
+            }
+        }
     },
     created() {
     },
@@ -50,7 +52,7 @@ export default {
     },
     methods: {
         formatLabel(label) {
-            if (label.length > 10) {
+            if (label.length > 6) {
                 return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
             }
             return label; // 如果不超过10个字符，直接返回原文本
@@ -65,27 +67,28 @@ export default {
             if (data) {
                 const file = JSON.parse(data);
                 console.log(file);
-                this.files.push(file);
+                if (this.files.some(item => item.id === file.id)) {
+                    this.$message.error('不能选择相同文件');
+                } else {
+                    this.files.push(file);
+                    console.log('Dropped files:', this.files);
+                }
 
-                console.log('Dropped files:', this.files);
             }
         },
 
         handleClose(tag) {
             const index = this.files.indexOf(tag);
             if (index !== -1) {
-
                 this.files.splice(index, 1);
             }
         },
         clearFiles() {
             this.files = [];
-
         },
 
         removeFile(index) {
             this.files.splice(index, 1);
-
         },
         //导出文件接口
         async exportFile() {
@@ -94,9 +97,6 @@ export default {
             console.log(res);
         }
     }
-
-
-
 }
 </script>
 <style scoped>
@@ -104,9 +104,8 @@ export default {
     font-size: 14px;
     /* 添加元素时候左侧排列 */
     float: left;
-    margin-top: 10px;
-    margin-right: 20px;
-
+    margin: 15px 40px 15px 0;
+    width: 100px;
 }
 
 ::v-deep .el-tag.el-tag--success {
@@ -133,17 +132,16 @@ export default {
 </style>
 <style>
 .intoFile {
-    width: 79vw;
-    height: 36vh;
-    border: 3px dashed #6f86a0;
+    width: 76vw;
+    height: 39vh;
+    border: 2px dashed #6f86a0;
     position: relative;
-    padding: 20px;
+    padding: 15px 30px;
     box-sizing: border-box;
     overflow: hidden;
     /* 超过高度时显示滚动条 */
     overflow-y: auto;
 }
-
 
 .intoFile_title_1 {
     position: absolute;
@@ -154,11 +152,9 @@ export default {
     color: #4e749e;
 }
 
-
-
 .intoFile_title_2 {
     position: absolute;
-    top: 65%;
+    top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2vw;
@@ -168,8 +164,14 @@ export default {
 
 <style>
 .ctrl_btn {
-    position: absolute;
-    margin-top: 2vh;
-    right: 3vw;
+    /* position: absolute; */
+    margin-top: 5vh;
+}
+
+.ctrl_btn .el-button {
+    padding: 1.5vh 2vw;
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 1vw;
 }
 </style>

@@ -23,13 +23,12 @@ export default {
                 defaultColWidth: "100px",
                 mergeCells: this.mergecell,
                 editable: !this.readOnly,
-                //方法移除了instance，origin参数，导致无法获取选中单元格的坐标信息，所以暂时注释掉onselection事件
+                onchange: this.handleChange,
                 onselection: function (x1, y1, x2, y2) {
                     this.currentCell = jexcel.getColumnNameFromId([x1, y1]);
                     this.colspan = x2 - x1 + 1;
                     this.rowspan = y2 - y1 + 1;
                 },
-                //移除e	
                 contextMenu: function (obj, x, y) {
                     var items = [];
                     if (x !== null && y !== null) {
@@ -78,7 +77,6 @@ export default {
                             });
                         }
 
-                        // Delete a column
                         if (obj.options.allowDeleteColumn == true && this.editable) {
                             items.push({
                                 title: "删除选中列",
@@ -126,19 +124,29 @@ export default {
                 }
             },
             deep: true
-        }
+        },
     },
     mounted() {
         let spreadsheet = jexcel(this.$refs.jexcel, this.options);
         Object.assign(this, spreadsheet);
-       
-        // spreadsheet.refresh();			
     },
-    methods:{
+    methods: {
         destroySpreadsheet() {
             if (this.$refs.jexcel && this.$refs.jexcel.jexcel) {
                 this.$refs.jexcel.jexcel.destroy();
             }
+        },
+
+        handleChange() {
+            const data = this.$refs.jexcel.jexcel.getData();
+            console.log('表格数据发生变化:', data);
+            this.$emit('data-changed', data);
+        },
+        getData() {
+            if (this.$refs.jexcel && this.$refs.jexcel.jexcel) {
+                return this.$refs.jexcel.jexcel.getData();
+            }
+            return [];
         }
     }
 }
@@ -146,6 +154,7 @@ export default {
 
 <style scoped>
     #app {
-        height: 100%;
+        height: 82vh;
+        overflow-y: auto;
     }
 </style>

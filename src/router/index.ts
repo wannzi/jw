@@ -11,10 +11,13 @@ import FileComparison from '@/views/system/fileComparison/fileComparison.vue';
 import ExportFunction from '@/views/system/fileComparison/function/exportFunction.vue';
 import MainView from '@/views/MainView.vue';
 import LoginView from '@/views/LoginView.vue';
+import HomeView from '@/views/HomeView.vue';
+
 import test from '../App.vue'
+import { Message, MessageBox } from 'element-ui';
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
     mode: 'history',
     routes: [
         // {
@@ -28,6 +31,11 @@ export default new Router({
             redirect: '/login'
         },
         {
+            path: '/home',
+            name: 'Home',
+            component: HomeView
+        },
+        {
             path: '/login',
             name: 'login',
             component: LoginView,
@@ -36,6 +44,10 @@ export default new Router({
             path: '/main',
             name: 'main',
             component: MainView,
+        },
+        {
+            path: '/dashboard',
+            redirect: '/dashboard/userManagement'
         },
         {
             path: '/dashboard',
@@ -72,14 +84,15 @@ export default new Router({
                     name: 'AddRules',
                     component: AddRules
                 },
-              
+
             ]
         },
         {
             path: '/fileComparison',
             name: 'FileComparison',
             component: IndexView,
-            children:[
+     
+            children: [
                 {
                     path: '',
                     component: FileComparison,
@@ -103,17 +116,19 @@ export default new Router({
                             path: 'compareFunction',
                             name: 'CompareFunction',
                             component: () => import('@/views/system/fileComparison/function/compareFunction.vue')
-        
+
                         },
                         {
-                            path: 'conpareFunction2',
-                            name: 'ConpareFunction2',
-                            component: () => import('@/views/system/fileComparison/function/compareView/compareFunction2.vue')
+                            path: 'compareFunction2',
+                            name: 'CompareFunction2',
+                            component: () => import('@/views/system/fileComparison/function/compareView/compareFunction2.vue'),
+                            meta: { allowedFrom: ['CompareFunction'] }
                         },
                         {
-                            path: 'conpareFunction3',
-                            name: 'ConpareFunction3',
-                            component: () => import('@/views/system/fileComparison/function/compareView/compareFunction3.vue')
+                            path: 'compareFunction3',
+                            name: 'CompareFunction3',
+                            component: () => import('@/views/system/fileComparison/function/compareView/compareFunction3.vue'),
+                            meta: { allowedFrom: ['CompareFunction', 'CompareFunction2'] }
                         },
                     ]
                 }
@@ -131,10 +146,46 @@ export default new Router({
             //     },
             // ]
         },
-		{
-		    path: '/PeopleResult',
-		    name: 'PeopleResult',
-		    component: () => import('@/views/DrawSystem/PeopleResult.vue'),
-		}
+        {
+            path: '/PeopleResult',
+            name: 'PeopleResult',
+            component: () => import('@/views/DrawSystem/PeopleResult.vue'),
+        }
     ]
 });
+
+// // 全局前置守卫
+// router.beforeEach((to, from, next) => {
+//   const isAuthenticated = localStorage.getItem('token'); // 假设登录后会在 localStorage 中存储 token
+
+//   if (to.name !== 'login' && !isAuthenticated) {
+//     next({ name: 'login' }); // 如果未登录且目标路由不是登录页，则重定向到登录页
+//   } else {
+//     next(); // 否则允许继续导航
+//   }
+// });
+
+
+// 比对页面拦截
+router.beforeEach((to, from, next) => {
+    const allowedFrom = to.meta.allowedFrom;
+
+    // 如果当前路由不在白名单中，则判断是否有权限进入
+    if (allowedFrom && !allowedFrom.includes(from.name)) {
+        next({ name: allowedFrom[0] });
+    } else {
+
+        next();
+    }
+
+  
+    
+    
+});
+
+
+
+
+
+
+export default router;

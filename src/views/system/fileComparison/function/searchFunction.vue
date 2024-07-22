@@ -13,24 +13,35 @@
 
         </div>
 
-        <div class="intoFile" @dragover.prevent="handleDragOver" @drop.prevent="handleFileDrop">
 
-            <div v-if="!files.length">
-                <div class="intoFile_title_1">+</div>
-                <div class="intoFile_title_2">请将检索文件从目录拖拽到此</div>
+        <div class="bottom_search">
+            <div class="intoFile" @dragover.prevent="handleDragOver" @drop.prevent="handleFileDrop">
+
+                <div v-if="!files.length">
+                    <div class="intoFile_title_1">+</div>
+
+                </div>
+
+
+                <!-- 文件列表展示 -->
+                <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
+                    <el-tag closable :disable-transitions="false" type="success" @close="handleClose(tag)">
+                        <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt=""
+                            style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
+
+                        {{ formatLabel(tag.label) }}
+
+                    </el-tag>
+                </el-tooltip>
+
             </div>
 
-
-            <!-- 文件列表展示 -->
-            <el-tooltip :key="tag" v-for="tag in files" :content="tag.father + '/' + tag.label">
-                <el-tag closable :disable-transitions="false" type="success"  @close="handleClose(tag)">
-                    <img src="../../../../assets/UserManagement/文件-excel_file-excel.png" alt="" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 5px;">
-
-                    {{ formatLabel(tag.label) }}
-
-                </el-tag>
-            </el-tooltip>
-
+            <div class="showFieId">
+                <el-tag v-for="(tag) in fieIds" :key="tag.id"
+                        >
+                        {{ tag.label }}
+                    </el-tag>
+            </div>
         </div>
     </div>
 </template>
@@ -41,8 +52,26 @@ export default {
     data() {
         return {
             files: [],
-            searchContent: ''
-        
+            searchContent: '',
+            fieIds: [
+                {
+                    id: "1",
+                    label: '文件一',
+                },
+                {
+                    id: "1",
+                    label: '文件一',
+                },
+                {
+                    id: "1",
+                    label: '文件一',
+                },
+                {
+                    id: "1",
+                    label: '文件一',
+                },
+            ]
+
         }
     },
     activated() {
@@ -55,7 +84,7 @@ export default {
     },
     methods: {
         formatLabel(label) {
-            if (label.length > 10) {
+            if (label.length > 6) {
                 return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
             }
             return label; // 如果不超过10个字符，直接返回原文本
@@ -70,9 +99,12 @@ export default {
             if (data) {
                 const file = JSON.parse(data);
                 console.log(file);
-                this.files.push(file);
-
-                console.log('Dropped files:', this.files);
+                if (this.files.some(item => item.id === file.id)) {
+                    this.$message.error('不能选择相同文件');
+                } else {
+                    this.files.push(file);
+                    console.log('Dropped files:', this.files);
+                }
             }
         },
 
@@ -83,7 +115,7 @@ export default {
                 this.files.splice(index, 1);
             }
         },
-       
+
         deleteFiles() {
             // 实现文件的导出逻辑
         },
@@ -92,7 +124,7 @@ export default {
             this.files.splice(index, 1); // 移除指定索引的文件
         },
         //检索内容接口
-        async queryFile(){
+        async queryFile() {
             const res = await queryFile(this.searchContent);
             console.log(res);
         }
@@ -107,10 +139,11 @@ export default {
     font-size: 14px;
     /* 添加元素时候左侧排列 */
     float: left;
-    margin-top: 10px;
-    margin-right: 20px;     
+    margin: 15px 40px 15px 0;
+    width: 100px;
 
 }
+
 ::v-deep .el-tag.el-tag--success {
     background-color: #f0f9eb;
     border-color: #e1f3d8;
@@ -125,6 +158,7 @@ export default {
 ::v-deep .el-tag.el-tag--success {
     position: relative;
 }
+
 ::v-deep .el-tag.el-tag--success .el-tag__close {
     position: absolute;
     transform: translate(45%, -45%);
@@ -179,31 +213,38 @@ export default {
     border-radius: 0;
     display: flex;
     justify-content: center;
-    align-items: center
+    align-items: center;
+    cursor: pointer;
 }
 </style>
 
 
-<style>
-
-
+<style scoped>
 .intoFile_title_1 {
     position: absolute;
-    top: 35%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 4vw;
     color: #4e749e;
 }
+</style>
 
+<style scoped>
+.intoFile {
 
+    width: 20vw;
+    height: 30vh;
+}
 
-.intoFile_title_2 {
-    position: absolute;
-    top: 65%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2vw;
-    color: #4e749e;
+.bottom_search {
+    display: flex;
+    justify-content: space-around;
+}
+
+.showFieId {
+    border: 1px solid #32fff6;
+    width: 20vw;
+    height: 30vh;
 }
 </style>

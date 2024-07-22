@@ -22,9 +22,9 @@
         </div>
 
         <div class="ctrl_btn">
-            <el-button type="primary">删除</el-button>
+            <el-button type="primary" :disabled="btnDisabled" @click="deleteFiles">删除</el-button>
 
-            <el-button type="danger" @click="clearFiles">清空</el-button>
+            <el-button type="danger" @click="clearFiles" :disabled="btnDisabled">清空</el-button>
 
         </div>
     </div>
@@ -33,12 +33,22 @@
 export default {
     data() {
         return {
-            files: []
+            files: [],
+            btnDisabled: true,
         }
     },
     activated() {
     },
     watch: {
+        files: {
+            handler(val) {
+                if (val.length) {
+                    this.btnDisabled = false;
+                } else {
+                    this.btnDisabled = true;
+                }
+            }
+        }
     },
     created() {
     },
@@ -46,7 +56,7 @@ export default {
     },
     methods: {
         formatLabel(label) {
-            if (label.length > 10) {
+            if (label.length > 6) {
                 return label.substring(0, 5) + '...'; // 截取前10个字符并添加省略号
             }
             return label; // 如果不超过10个字符，直接返回原文本
@@ -61,7 +71,14 @@ export default {
             if (data) {
                 const file = JSON.parse(data);
                 console.log(file);
-                this.files.push(file);
+                if(file.father ==='公共库') {
+                    this.$message.error('不能删除公共库文件');
+                }else if(this.files.some(item => item.id === file.id)){
+                    this.$message.error('不能重复选择文件');
+                }else {
+                    this.files.push(file);
+                }
+                
 
                 console.log('Dropped files:', this.files);
             }
@@ -95,8 +112,8 @@ export default {
     font-size: 14px;
     /* 添加元素时候左侧排列 */
     float: left;
-    margin-top: 10px;
-    margin-right: 20px;
+    margin: 15px 40px 15px 0;
+    width: 100px;
 
 }
 
