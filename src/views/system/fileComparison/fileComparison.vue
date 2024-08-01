@@ -13,7 +13,7 @@
 		</div>
 
 		<div class="fileComparison_right">
-			<el-tabs @tab-click="handleClick" class="right_head" >
+			<el-tabs @tab-click="handleClick" class="right_head">
 				<el-tab-pane label="导入" name="upload">
 					<span slot="label">
 						<img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="" v-if="uploadImg">
@@ -156,73 +156,77 @@ export default {
 			],
 			yourMergeCells: {},
 			fileList: [],
-			fileData: [{
-				label: '公共库',
-				draggable: false,
-				children: [{
-					id: '1',
-					label: '文件一',
-					draggable: true,
-					father: '公共库'
+			fileData: [
+				{
+					label: '公共库',
+					draggable: false,
+					children: [
+						{
+							id: '1',
+							label: '文件一',
+							draggable: true,
+							father: '公共库'
+						},
+						{
+							id: '2',
+							label: '市公安局所属信息文件',
+							draggable: true,
+							father: '公共库'
+						}
+					]
 				},
 				{
-					id: '2',
-					label: '市公安局所属信息文件',
-					draggable: true,
-					father: '公共库'
+					label: '私有库',
+					draggable: false,
+					children: [
+						{
+							id: '3',
+							label: '文件一',
+							draggable: true,
+							father: '私有库'
+						},
+						{
+							id: '4',
+							label: '公务人员信息文件',
+							draggable: true,
+							father: '私有库'
+						}
+					]
+				},
+				{
+					label: '结果库',
+					draggable: false,
+					children: [
+						{
+							id: '5',
+							label: '文件一',
+							draggable: true,
+							father: '结果库'
+						},
+						{
+							id: '6',
+							label: '文件二',
+							draggable: true,
+							father: '结果库',
+							children: [{
+								label: 'sheet1',
+								draggable: false,
+								father: '文件二',
+							}]
+						},
+						{
+							id: '7',
+							label: '文件二',
+							draggable: true,
+							father: '结果库',
+							children: [{
+								label: 'sheet1',
+								draggable: false,
+								father: '文件二',
+							}]
+						},
+					]
 				}
-				]
-			},
-			{
-				label: '私有库',
-				draggable: false,
-				children: [{
-					id: '3',
-					label: '文件一',
-					draggable: true,
-					father: '私有库'
-				},
-				{
-					id: '4',
-					label: '公务人员信息文件',
-					draggable: true,
-					father: '私有库'
-				}
-				]
-			},
-			{
-				label: '结果库',
-				draggable: false,
-				children: [{
-					id: '5',
-					label: '文件一',
-					draggable: true,
-					father: '结果库'
-				},
-				{
-					id: '6',
-					label: '文件二',
-					draggable: true,
-					father: '结果库',
-					children: [{
-						label: 'sheet1',
-						draggable: false,
-						father: '文件二',
-					}]
-				},
-				{
-					id: '7',
-					label: '文件二',
-					draggable: true,
-					father: '结果库',
-					children: [{
-						label: 'sheet1',
-						draggable: false,
-						father: '文件二',
-					}]
-				},
-				]
-			}
 			],
 			publicListIsShow: false,
 			privateListIsShow: false,
@@ -273,12 +277,15 @@ export default {
 
 	activated() { },
 	watch: {
-		
+
 	},
 	components: {
 		SpreadSheet
 	},
-	created() { },
+	created() {
+		//文件树
+		this.getTree();
+	},
 	mounted() { },
 	methods: {
 		calculateColumnWidth(colIndex) {
@@ -291,7 +298,7 @@ export default {
 		},
 		//蠢但是好用
 		handleClick(tab) {
-		
+
 			if (tab.name === 'upload') {
 				// this.showUpLoadView();
 				this.uploadImg = false;
@@ -446,6 +453,50 @@ export default {
 			return node.data.draggable;
 		},
 
+		// 添加draggable属性
+		addDraggableProperty(data) {
+			if (Array.isArray(data)) {
+				return data.map(item => {
+					if (item.label === '公共库' || item.label === '私有库' || item.label === '结果库') {
+						item.draggable = false; // 三个大的库不可拖拽
+					} else if (item.father && (item.father === '公共库' || item.father === '私有库' || item.father === '结果库')) {
+						item.draggable = true; // 库下面的文件可以拖拽
+					} else {
+						item.draggable = false; // 文件下面的内容不可拖拽
+					}
+					if (item.children) {
+						item.children = this.addDraggableProperty(item.children);
+					}
+					return item;
+				});
+			} else if (typeof data === 'object' && data !== null) {
+				const newData = {};
+				for (const key in data) {
+					if (Object.prototype.hasOwnProperty.call(data, key)) {
+						newData[key] = this.addDraggableProperty(data[key]);
+					}
+				}
+				return newData;
+			} else {
+				return data;
+			}
+		},
+		// 移除 __ob__ 属性
+		removeObserverProperties(data) {
+			if (Array.isArray(data)) {
+				return data.map(item => this.removeObserverProperties(item));
+			} else if (typeof data === 'object' && data !== null) {
+				const newData = {};
+				for (const key in data) {
+					if (key !== '__ob__' && Object.prototype.hasOwnProperty.call(data, key)) {
+						newData[key] = this.removeObserverProperties(data[key]);
+					}
+				}
+				return newData;
+			} else {
+				return data;
+			}
+		},
 
 		//渲染图标
 		renderContent(h, { node }) {
@@ -559,9 +610,17 @@ export default {
 			console.log(res);
 		},
 		// 获取文件树
-		async getTreeData() {
+		async getTree() {
 			const res = await getTree();
 			console.log(res);
+			this.fileData = res.data.data;
+			if (Array.isArray(res.data.data)) {
+				const processedData = this.addDraggableProperty(res.data.data);
+				this.fileData = this.removeObserverProperties(processedData);
+				console.log(this.fileData);
+			} else {
+				console.error('接口返回的数据不是数组:', res);
+			}
 
 		},
 

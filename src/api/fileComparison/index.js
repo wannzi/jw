@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/fileComparison';
+// const API_URL = 'http://localhost:5000/api/fileComparison';
+const API_URL = 'https://mock.presstime.cn/mock/66aba587eb79dbd24b81fe76/api';
 
 /**
  * 获取文件树接口
@@ -17,13 +18,13 @@ const API_URL = 'http://localhost:5000/api/fileComparison';
  *  - msg {String} 返回的消息
  */
 
-export const getTree = (userId) => {
+export const getTree = () => {
     return axios ({
         url: `${API_URL}/getTree`,
-        method: 'post',
-        data: {
-            userId
-        }
+        method: 'get',
+        // data: {
+        //     userId
+        // }
     })
 }
 
