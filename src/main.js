@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router/index.ts'
+import router from './router/index.js'
 import './assets/fonts/fonts.css'
 // import { Button, Select,Input } from 'element-ui';
 import ElementUI from 'element-ui';

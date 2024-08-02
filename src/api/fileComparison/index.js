@@ -42,8 +42,8 @@ export const openFile = (userId, fileId) => {
         url: `${API_URL}/openFile`,
         method: 'post',
         data: {
-            userId,
-            fileId
+            "userId":userId,
+            "fileId":fileId
         }
     })
 }

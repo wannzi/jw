@@ -50,16 +50,17 @@
         <!-- 显示字段的弹窗 -->
         <el-dialog :title="isFieid ? '选择字段后进行检索' : ''" :visible.sync="isFieid" width="50%">
 
-            <el-checkbox-group v-model="checkList" style="list-style:none; margin-top:-10px; overflow:auto; border:1px solid lightgrey; padding:10px 0 0 10px; text-align:left;">
+            <el-checkbox-group v-model="checkList"
+                style="list-style:none; margin-top:-10px; overflow:auto; border:1px solid lightgrey; padding:10px 0 0 10px; text-align:left;">
                 <el-checkbox v-for="(item) in checkFieid" :key="item.id" :label="item.label"
-                style="height:30px; width:22%; margin:0 19px 15px 0; float:left;"></el-checkbox>
-            
+                    style="height:30px; width:22%; margin:0 19px 15px 0; float:left;"></el-checkbox>
+
             </el-checkbox-group>
 
 
-            <el-button type="danger"  @click="isFieid = false">取消</el-button>
+            <el-button type="danger" @click="isFieid = false">取消</el-button>
             <el-button type="primary" @click="isFieid = false">检索</el-button>
-          
+
         </el-dialog>
     </div>
 </template>
@@ -92,35 +93,35 @@ export default {
             //打开弹窗显示字段
             isFieid: false,
             checkFieid: [
-                {   
+                {
                     id: "2003",
                     label: '选项一',
                 },
-                {   
+                {
                     id: "2001",
                     label: '选项二',
                 },
-                {   
+                {
                     id: "2001",
                     label: '三我i后后期何获取哦',
                 },
-                {   
+                {
                     id: "2001",
                     label: '选项二',
                 },
-                {   
+                {
                     id: "2001",
                     label: '选项二',
                 },
-                {   
+                {
                     id: "2001",
                     label: '选项二',
                 },
-                {   
+                {
                     id: "2001",
                     label: '选项二',
                 },
-                {   
+                {
                     id: "2001",
                     label: '选项二',
                 },
@@ -154,12 +155,22 @@ export default {
             if (data) {
                 const file = JSON.parse(data);
                 console.log(file);
-                if (this.files.some(item => item.id === file.id)) {
-                    this.$message.error('不能选择相同文件');
-                } else {
-                    this.files.push(file);
-                    console.log('Dropped files:', this.files);
+
+
+                // 限制只能选择一个文件
+                if (this.files.length !== 1) {
+                    this.files = [file];
+
+                }  else {
+                    this.$message.error('只能选择一个文件');
                 }
+
+                // if (this.files.some(item => item.id === file.id)) {
+                //     this.$message.error('不能选择相同文件');
+                // } else {
+                //     this.files.push(file);
+                //     console.log('Dropped files:', this.files);
+                // }
             }
         },
 

@@ -90,7 +90,7 @@
 
 			<!-- 上传文件弹窗 -->
 			<el-dialog :visible.sync="uploadVisible" title="上传文件" :modal-append-to-body="false" width="40%">
-				<el-upload :before-upload="beforeUpload" :file-list="fileList"
+				<el-upload  :file-list="fileList"
 					style="border: 1px solid lightgrey; padding: 30px; margin-top: -10px;">
 					<el-button size="small" type="primary">点击上传</el-button>
 					<div slot="tip" class="el-upload__tip">请上传excel文件或数据库文件</div>
@@ -119,10 +119,10 @@
 			</el-dialog>
 
 
-			<div class="box" v-if="fileContent && this.$route.path === '/fileComparison'" @change="isSaveBtn()">
+			<div class="box" v-if="fileContent && this.$route.path === '/fileComparison'">
 				<!-- <div> -->
 				<SpreadSheet @data-changed="handleDataChanged" :exceldata="yourExcelData" :mergecell="yourMergeCells"
-					:readOnly="false" />
+					:readOnly="false"  />
 				<!-- </div> -->
 			</div>
 
@@ -144,7 +144,8 @@ import {
 	openFile,
 	saveFile
 } from '@/api/fileComparison';
-import * as XLSX from 'xlsx/xlsx.mjs'
+// import * as XLSX from 'xlsx/xlsx.mjs'
+import Cookies from 'js-cookie'
 
 export default {
 	data() {
@@ -277,7 +278,16 @@ export default {
 
 	activated() { },
 	watch: {
-
+		yourExcelData: {
+			handler(newVal) {
+				this.$nextTick(() => {
+					if (this.$refs.spreadSheet) {
+						this.$refs.spreadSheet.reloadData(newVal); // SpreadSheet 组件有一个 reloadData 方法
+					}
+				});
+			},
+			deep: true
+		}
 	},
 	components: {
 		SpreadSheet
@@ -374,48 +384,48 @@ export default {
 		},
 
 		//测试上传，测试文件导入问题
-		beforeUpload(file) {
-			const fileReader = new FileReader();
-			fileReader.onload = (e) => {
-				const data = new Uint8Array(e.target.result);
-				const workbook = XLSX.read(data, { type: 'array' });
+		// beforeUpload(file) {
+		// 	const fileReader = new FileReader();
+		// 	fileReader.onload = (e) => {
+		// 		const data = new Uint8Array(e.target.result);
+		// 		const workbook = XLSX.read(data, { type: 'array' });
 
-				const fileInfo = {
-					label: file.name,
-					draggable: true,
-					father: '私有库'
-				};
+		// 		const fileInfo = {
+		// 			label: file.name,
+		// 			draggable: true,
+		// 			father: '私有库'
+		// 		};
 
-				const sheets = [];
-				workbook.SheetNames.forEach(sheetName => {
-					const worksheet = workbook.Sheets[sheetName];
-					const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+		// 		const sheets = [];
+		// 		workbook.SheetNames.forEach(sheetName => {
+		// 			const worksheet = workbook.Sheets[sheetName];
+		// 			const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-					sheets.push({
-						label: sheetName,
-						draggable: false,
-						father: file.name,
-						content: json // 存储 sheet 的内容
-					});
-				});
+		// 			sheets.push({
+		// 				label: sheetName,
+		// 				draggable: false,
+		// 				father: file.name,
+		// 				content: json // 存储 sheet 的内容
+		// 			});
+		// 		});
 
-				fileInfo.children = sheets;
+		// 		fileInfo.children = sheets;
 
-				// 找到私有库的索引
-				const privateLibraryIndex = this.fileData.findIndex(item => item.label === '私有库');
-				console.log(privateLibraryIndex);
-				if (privateLibraryIndex !== -1) {
-					this.fileData[privateLibraryIndex].children.push(fileInfo);
-				}
+		// 		// 找到私有库的索引
+		// 		const privateLibraryIndex = this.fileData.findIndex(item => item.label === '私有库');
+		// 		console.log(privateLibraryIndex);
+		// 		if (privateLibraryIndex !== -1) {
+		// 			this.fileData[privateLibraryIndex].children.push(fileInfo);
+		// 		}
 
-				this.$message({
-					type: 'success',
-					message: '文件预处理成功!'
-				});
-			};
-			fileReader.readAsArrayBuffer(file);
-			return false;
-		},
+		// 		this.$message({
+		// 			type: 'success',
+		// 			message: '文件预处理成功!'
+		// 		});
+		// 	};
+		// 	fileReader.readAsArrayBuffer(file);
+		// 	return false;
+		// },
 
 		// 上传文件
 		// uploadFiles() {
@@ -429,7 +439,10 @@ export default {
 		// 	this.selectedFiles = [];
 		// 	this.closePopup(); // 可以选择在上传后关闭弹窗
 		// },
-		//拖动文件
+
+
+
+		//拖动文件的两个方法
 		handleDragStart(node, event) {
 			console.log(node, event);
 			if (node.data.draggable) { // 拖拽只能是可以拖拽的元素
@@ -527,42 +540,54 @@ export default {
 		//双击预览(测试使用的方法)
 		handleDoubelclick(node) {
 			console.log('双击节点信息：', node);
-
+			console.log(node.data.id);
 			if (!node.data) {
 				this.$message.error('文件内容未找到！');
 				return;
 			}
 
-			if (node.data.father.endsWith('.xlsx') || node.data.father.endsWith('.xls')) {
-				this.$message.success('正在打开文件...');
-				this.$router.push({
-					path: '/fileComparison',
-					query: {
-						fileId: node.data.father,
-						filename: node.data.label
-					}
-				});
-
-				// 直接从 fileData 中获取 sheet 的内容
-				const sheetContent = this.fileData.find(item => item.label === '私有库')
-					.children.find(file => file.label === node.data.father)
-					.children.find(sheet => sheet.label === node.data.label)
-					.content;
-
-				// 更新 yourExcelData
-				this.yourExcelData = sheetContent;
-				this.files = sheetContent.map((row) => {
-					return row.reduce((acc, curr, idx) => {
-						acc[`column${idx}`] = curr;
-						return acc;
-					}, {});
-				});
-				this.fileContent = true;
+			// this.$message.success('正在打开文件...');
+			this.openFile(node.data.id);
+			// this.$router.push({
+			// 	path: '/fileComparison',
+			// 	query: {
+			// 		fileId: node.data.father,
+			// 		filename: node.data.label
+			// 	}
+			// });
 
 
-			} else {
-				this.$message.error('请选择一个Excel文件！');
-			}
+
+			// if (node.data.father.endsWith('.xlsx') || node.data.father.endsWith('.xls')) {
+			// 	this.$message.success('正在打开文件...');
+			// 	this.$router.push({
+			// 		path: '/fileComparison',
+			// 		query: {
+			// 			fileId: node.data.father,
+			// 			filename: node.data.label
+			// 		}
+			// 	});
+
+			// 	// 直接从 fileData 中获取 sheet 的内容
+			// 	const sheetContent = this.fileData.find(item => item.label === '私有库')
+			// 		.children.find(file => file.label === node.data.father)
+			// 		.children.find(sheet => sheet.label === node.data.label)
+			// 		.content;
+
+			// 	// 更新 yourExcelData
+			// 	this.yourExcelData = sheetContent;
+			// 	this.files = sheetContent.map((row) => {
+			// 		return row.reduce((acc, curr, idx) => {
+			// 			acc[`column${idx}`] = curr;
+			// 			return acc;
+			// 		}, {});
+			// 	});
+			// 	this.fileContent = true;
+
+
+			// } else {
+			// 	this.$message.error('请选择一个Excel文件！');
+			// }
 		},
 		//数据改变的时候监听
 		handleDataChanged(data) {
@@ -584,10 +609,22 @@ export default {
 		// },
 
 		//打开文件接口
-		async openFile() {
-			const res = await openFile();
+		async openFile(fileId) {
+			const userInfo = Cookies.get('userInfo');
+			console.log(userInfo, fileId);
+			const res = await openFile(Number(userInfo), Number(fileId));
 			console.log(res);
-			this.yourExcelData = res.data.content;
+			if (res) {
+				this.$message.success('文件打开成功！');
+				this.$router.push({ path: '/fileComparison', query: { fileId: fileId } })
+				console.log(this.yourExcelData);
+				console.log(res.data.data.excelData);
+				this.yourExcelData = res.data.data.excelData;
+				console.log(this.yourExcelData);
+			} else {
+				this.$message.error('文件打开失败！');
+			}
+
 		},
 		// 保存接口
 		async saveFile() {
@@ -624,7 +661,10 @@ export default {
 
 		},
 
-	}
+	},
+	
+	
+
 }
 </script>
 

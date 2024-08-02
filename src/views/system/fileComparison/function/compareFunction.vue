@@ -84,6 +84,8 @@ export default {
          console.log(this.filesMain);
          if (this.filesMain.length ===0) {
             this.$message.error('请选择文件');
+         }else if( this.filesMain.length === 1){
+            this.$message.error('请选择两个及以上文件');
          }else {
             this.$router.push({
             name: 'CompareFunction2',

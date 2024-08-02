@@ -75,26 +75,26 @@ export default {
             //储存字段，接口传入的字段将放置在这
             fieidArr: [
                 {
-                    id: "1",
+                    id: "111",
                     label: '文件一',
-                    draggable: false,
+                  
                     options: [
                         {
-                            value: '字段一',
+                            value: '字段001',
                             label: '字段一'
                         },
                         {
-                            value: '字段一',
-                            label: '字段一'
+                            value: '字段002',
+                            label: '字段二'
                         },
                         {
-                            value: '字段一',
-                            label: '字段一'
+                            value: '字段003',
+                            label: '字段三'
                         },
                     ]
                 },
                 {
-                    id: "2",
+                    id: "112",
                     label: '文件二',
                     draggable: false,
                     options: [
@@ -105,7 +105,7 @@ export default {
                     ]
                 },
                 {
-                    id: "4",
+                    id: "113",
                     label: '文件二',
                     draggable: false,
                     options: [
