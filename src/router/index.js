@@ -161,6 +161,7 @@ const router = new Router({
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
     // 获取用户信息
+    
     const userInfo = Cookies.get('userInfo');
     const parsedUserInfo = userInfo ? JSON.parse(userInfo) : null;
 
@@ -182,6 +183,19 @@ router.beforeEach((to, from, next) => {
         history.pushState(null, '', to.fullPath);
         next({ name: allowedFrom[0] });
     }
+    //对于是否需要保存的判断
+    const saveStatic = localStorage.getItem('saveStatic');
+  
+    if(saveStatic){
+      
+        next(false);
+        Message.error('请先保存！');
+        return;
+        
+    }else{
+        next();
+    }
+
     
     
     

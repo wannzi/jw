@@ -14,16 +14,16 @@
 
 		<div class="fileComparison_right">
 			<el-tabs @tab-click="handleClick" class="right_head">
-				<el-tab-pane label="导入" name="upload">
-					<span slot="label">
+				<el-tab-pane label="导入" name="upload" >
+					<span slot="label" class="import_box">
 						<img src="../../../assets/UserManagement/传入(白)_afferent.png" alt="" v-if="uploadImg">
 						<img src="../../../assets/UserManagement/传入(绿)_afferent.png" v-else>
-						<el-dropdown :class="{ 'change_color': !uploadImg }" @command="handleCommand" trigger="click">
+						<el-dropdown :class="{ 'change_color': !uploadImg }" @command="handleCommand" trigger="click" :disabled="saveStatic">
 							<div>
 								导入
 								<i class="el-icon-arrow-down"></i>
 							</div>
-							<el-dropdown-menu slot="dropdown">
+							<el-dropdown-menu slot="dropdown" >
 								<el-dropdown-item command="online">导入在线文件</el-dropdown-item>
 								<el-dropdown-item command="local">导入本地文件</el-dropdown-item>
 							</el-dropdown-menu>
@@ -39,11 +39,11 @@
 						导出</span>
 				</el-tab-pane>
 
-				<el-tab-pane label="保存" name="save" :disabled="!isSave">保存
+				<el-tab-pane label="保存" name="save" :disabled="!saveStatic">保存
 					<span slot="label">
-						<img src="../../../assets/UserManagement/保存(灰)_save.png" alt="" v-if="!isSave">
-						<img src="../../../assets/UserManagement/保存_save.png" alt="" v-else-if="isSave && !saveVisible">
-						<img src="../../../assets/UserManagement/保存(绿)_save.png" alt="" v-else>
+						<img src="../../../assets/UserManagement/保存(绿)_save.png" alt="" v-if="saveStatic">
+						<img src="../../../assets/UserManagement/保存_save.png" alt="" v-else-if="isSave && saveVisible">
+						<img src="../../../assets/UserManagement/保存(灰)_save.png" alt="" v-else>
 						保存
 					</span>
 				</el-tab-pane>
@@ -90,8 +90,7 @@
 
 			<!-- 上传文件弹窗 -->
 			<el-dialog :visible.sync="uploadVisible" title="上传文件" :modal-append-to-body="false" width="40%">
-				<el-upload  :file-list="fileList"
-					style="border: 1px solid lightgrey; padding: 30px; margin-top: -10px;">
+				<el-upload :file-list="fileList" style="border: 1px solid lightgrey; padding: 30px; margin-top: -10px;">
 					<el-button size="small" type="primary">点击上传</el-button>
 					<div slot="tip" class="el-upload__tip">请上传excel文件或数据库文件</div>
 				</el-upload>
@@ -122,13 +121,14 @@
 			<div class="box" v-if="fileContent && this.$route.path === '/fileComparison'">
 				<!-- <div> -->
 				<SpreadSheet @data-changed="handleDataChanged" :exceldata="yourExcelData" :mergecell="yourMergeCells"
-					:readOnly="false"  />
+					:readOnly="false" />
 				<!-- </div> -->
 			</div>
 
 			<!-- 保存弹窗 -->
 			<el-dialog :visible.sync="saveVisible" title="文件保存" :modal-append-to-body="false" width="20%">
 				<h2>是否需要保存修改</h2>
+				<el-button type="primary" @click="quitSave">取消保存</el-button>
 				<el-button @click="saveFile">保存修改</el-button>
 			</el-dialog>
 
@@ -308,8 +308,8 @@ export default {
 		},
 		//蠢但是好用
 		handleClick(tab) {
-
-			if (tab.name === 'upload') {
+			const saveStatic = localStorage.getItem('saveStatic');
+			if (tab.name === 'upload' && !saveStatic) {
 				// this.showUpLoadView();
 				this.uploadImg = false;
 				this.exportImg = true;
@@ -317,7 +317,8 @@ export default {
 				this.searchImg = true;
 				this.compareImg = true;
 				this.isSave = false;
-			} else if (tab.name === 'export') {
+				return false;
+			} else if (tab.name === 'export' && !saveStatic ) {
 				this.$router.push({
 					name: 'ExportFunction'
 				});
@@ -327,7 +328,7 @@ export default {
 				this.searchImg = true;
 				this.compareImg = true;
 				this.isSave = false;
-			} else if (tab.name === 'delete') {
+			} else if (tab.name === 'delete' && !saveStatic) {
 				this.$router.push({
 					name: 'DeleteFunction'
 				});
@@ -337,7 +338,8 @@ export default {
 				this.searchImg = true;
 				this.compareImg = true;
 				this.isSave = false;
-			} else if (tab.name === 'search') {
+				return false;
+			} else if (tab.name === 'search' && !saveStatic) {
 				this.$router.push({
 					name: 'SearchFunction'
 				});
@@ -347,7 +349,8 @@ export default {
 				this.deleteImg = true;
 				this.compareImg = true;
 				this.isSave = false;
-			} else if (tab.name === 'compare') {
+				return false;
+			} else if (tab.name === 'compare' && !saveStatic) {
 				this.$router.push({
 					name: 'CompareFunction'
 				});
@@ -357,13 +360,17 @@ export default {
 				this.deleteImg = true;
 				this.searchImg = true;
 				this.isSave = false;
-			} else {
+				return false;
+			} else if (tab.name ==='save') {
 				this.uploadImg = true;
 				this.exportImg = true;
 				this.deleteImg = true;
 				this.searchImg = true;
 				this.compareImg = true;
-				this.isSave = true;
+				// this.isSave = true;
+				this.saveVisible = true;
+				return false;
+			} else {
 				this.saveVisible = true;
 			}
 		},
@@ -548,6 +555,7 @@ export default {
 
 			// this.$message.success('正在打开文件...');
 			this.openFile(node.data.id);
+			return false;
 			// this.$router.push({
 			// 	path: '/fileComparison',
 			// 	query: {
@@ -593,56 +601,90 @@ export default {
 		handleDataChanged(data) {
 			this.isSave = true;
 			this.saveStatic = true;
+
 			// this.changeStatus();
 			//用于接口使用
 			this.changeData = data;
+			//将保存的状态 存入本地
+
+			localStorage.setItem('saveStatic', JSON.stringify(this.isSave));
 
 		},
-		// changeStatus() {
-		// 	if (this.saveStatic) {
-		// 		this.$route.meta.requiresConfirm = true; // 设置标志
-		// 		console.log(this.$route.meta.requiresConfirm);
-		// 	}else {
-		// 		this.$route.meta.requiresConfirm = false; // 清除标志
-		// 		console.log(this.$route.meta.requiresConfirm);
-		// 	}
-		// },
+
 
 		//打开文件接口
 		async openFile(fileId) {
+			//为了让导航栏美观
+			this.uploadImg = true;
+			this.exportImg = true;
+			this.deleteImg = true;
+			this.searchImg = true;
+			this.compareImg = true;
+			this.isSave = false;
+
+
+
+
 			const userInfo = Cookies.get('userInfo');
+			this.fileContent = true;
 			console.log(userInfo, fileId);
-			const res = await openFile(Number(userInfo), Number(fileId));
-			console.log(res);
-			if (res) {
-				this.$message.success('文件打开成功！');
-				this.$router.push({ path: '/fileComparison', query: { fileId: fileId } })
-				console.log(this.yourExcelData);
-				console.log(res.data.data.excelData);
-				this.yourExcelData = res.data.data.excelData;
-				console.log(this.yourExcelData);
-			} else {
+			try {
+				const saveStatic = localStorage.getItem('saveStatic');
+				if (saveStatic) {
+					this.$message.error('请先保存文件！');
+					return;
+				} else {
+					const res = await openFile(Number(userInfo), Number(fileId));
+					console.log(res);
+					if (res.data.data.code === 200) {
+						this.$message.success('文件打开成功！');
+						this.$router.push({ path: '/fileComparison', query: { fileId: fileId } })
+
+						console.log(res, res.data.data.excelData);
+						this.yourExcelData = res.data.data.excelData;
+						console.log(this.yourExcelData);
+					}
+				}
+
+			} catch (error) {
+				console.log(error);
 				this.$message.error('文件打开失败！');
 			}
 
+
+
+		},
+		quitSave() {
+			localStorage.removeItem('saveStatic');
+			this.saveStatic = false;
+			this.isSave = false;
+			this.fileContent = false;
+			this.saveVisible = false;
+			this.$router.push({ path: '/fileComparison' });
 		},
 		// 保存接口
 		async saveFile() {
 			//改变的数据
 			console.log(this.changeData);
 
-			if (this.changeData.length > 0) {
-				this.$message({
-					type: 'success',
-					message: '文件保存成功!'
-				});
-				this.isSave = false;
-			} else {
-				// this.$message.error('文件保存失败！');
-			}
-			this.saveVisible = false;
+			// if (this.changeData.length > 0) {
+			// 	this.$message({
+			// 		type: 'success',
+			// 		message: '文件保存成功!'
+			// 	});
+			// 	this.isSave = false;
+			// } else {
+			// 	// this.$message.error('文件保存失败！');
+			// }
+			// this.saveVisible = false;
+			// this.saveStatic = false;
+			// this.changeStatus();
+
+
+			//首先解除路由设置
+			localStorage.removeItem('saveStatic');
 			this.saveStatic = false;
-			this.changeStatus();
+			this.saveVisible = false;
 			const res = await saveFile(this.changeData);
 			console.log(res);
 		},
@@ -662,8 +704,8 @@ export default {
 		},
 
 	},
-	
-	
+
+
 
 }
 </script>
@@ -807,9 +849,9 @@ v-deep .el-tree-node__content:hover {
 	color: #7691af;
 }
 
-.el-tabs>>>.el-tabs__item.is-active {
+/* .el-tabs>>>.el-tabs__item.is-active {
 	color: #7af0f3;
-}
+} */
 
 /* 隐藏选中标签下方的指示条 */
 .el-tabs>>>.el-tabs__active-bar {
@@ -834,9 +876,9 @@ v-deep .el-tree-node__content:hover {
 	color: white;
 }
 
-.change_color {
+/* .change_color {
 	color: #7af0f3;
-}
+} */
 </style>
 
 <style>
